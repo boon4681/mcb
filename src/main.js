@@ -12,7 +12,7 @@ const input = `
 if block 1 2 4 == wheat then
 endif
 
-x = y+((y+y)*3) - 4/3
+x = y+(((y+y)*3) - 4)/3
 u = y+x
 `
 
@@ -60,7 +60,7 @@ class Visitor extends mcbVisitor {
     visitExpr(c) {
         if(c.children.length == 3){
             const x = this.visitChildren(c)
-            // console.log(x)
+            console.log(x)
             if(!x[0] && !x[2]){
                 return {
                     'expr':true,
@@ -110,8 +110,8 @@ class Visitor extends mcbVisitor {
                         'maindef':false,
                         'data':[
                             ...x[0].data,
-                            `scoreboard players operation ${name}${this.autoScoreboard} = ${x[2]}`,
-                            `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${name}${this.autoScoreboard-1}`
+                            `scoreboard players operation ${name}${this.autoScoreboard} = ${name}${this.autoScoreboard-1}`,
+                            `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${x[2]}`,
                         ]
                     }
                     // return {
@@ -153,8 +153,8 @@ class Visitor extends mcbVisitor {
                         'maindef':false,
                         'data':[
                             ...x[2].data,
-                            `scoreboard players operation ${name}${this.autoScoreboard} = ${x[0]}`,
-                            `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${name}${this.autoScoreboard-1}`
+                            `scoreboard players operation ${name}${this.autoScoreboard} = ${name}${this.autoScoreboard-1}`,
+                            `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${x[0]}`,
                         ]
                     }
                     // return {
