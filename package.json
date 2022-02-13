@@ -1,0 +1,12 @@
+{
+  "name": "mcb",
+  "author": "boon4681 <46645814+boon4681@users.noreply.github.com>",
+  "homepage": "https://www.boon4681.com/",
+  "version": "1.0.0",
+  "license": "MIT",
+  "type": "module",
+  "repository": "https://github.com/boon4681/mcb.git",
+  "dependencies": {
+    "antlr4": "^4.9.3"
+  }
+}

@@ -1,0 +1,1 @@
+java org.antlr.v4.Tool -Dlanguage=JavaScript -o "./src/.antlr/" -visitor ./src/mcb.g4
