@@ -5,7 +5,7 @@ block: stat*;
 stat: def
     | statmentIF
     | NEWLINE
-    | equat
+    | equation
     | annotation
     ;
 
@@ -16,23 +16,25 @@ exestat: 'block' position expEqual CHAR;
 expEqual: '==';
 expGreaterThanEqual: '>=';
 
-annotation: '@' annPosition position | block;
+annotation: '@' annPosition position;
 annPosition:'position';
 
-number: INT'.'INT
+number:
+    INT'.'INT
     | INT
     ;
 
-position: number number number
+position:
+    number number number
     | 'here'
     ;
     
 
-equat: CHAR '=' expr*;
+equation: CHAR '=' expr*;
 
 def: '#' defNamespace
-    | '#' defNamespace CHAR CHAR 'at' CHAR
-    | '#' defNamespace CHAR 'as' CHAR CHAR?
+    | '#' 'dict' CHAR CHAR 'at' CHAR
+    | '#' 'score' CHAR 'as' CHAR CHAR?
     ;
 
 defNamespace: 'dict'|'score';

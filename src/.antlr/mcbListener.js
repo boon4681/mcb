@@ -104,12 +104,12 @@ export default class mcbListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by mcbParser#equat.
-	enterEquat(ctx) {
+	// Enter a parse tree produced by mcbParser#equation.
+	enterEquation(ctx) {
 	}
 
-	// Exit a parse tree produced by mcbParser#equat.
-	exitEquat(ctx) {
+	// Exit a parse tree produced by mcbParser#equation.
+	exitEquation(ctx) {
 	}
 
 

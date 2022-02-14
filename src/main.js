@@ -6,11 +6,10 @@ import mcbVisitor from './.antlr/mcbVisitor.js';
 
 const input = `
 #score x as dummy
-#score y as dummy
-#dict entity item at boon4681
 
-x = 90
-y = 4*x*(180-x)/(40500-x*(180-x))
+x.input = 90
+x.sub = (180-x.sub)*x.sub
+x.sine = 4*x.sub/(40500-x.sub)
 `
 
 const chars = new antlr4.InputStream(input);
@@ -23,12 +22,13 @@ const name = 'mcb.sb.'
 class Visitor extends mcbVisitor {
     autoScoreboard = 0
     maindef = ''
+    target = ''
+
     text(c, i) {
         if(c.children[i])
         return c.children[i].getText()
         return undefined
     }
-
     visitDef(c) {
         switch(this.text(c,1)){
             case 'score':
@@ -39,20 +39,23 @@ class Visitor extends mcbVisitor {
                 return `say @a mcb transpiler error ${c.getText()}`
         }
     }
-    visitAnnotation(c){
-        console.log(c.getText())
-    }
-    visitEquat(c) {
-        this.maindef = c.children[0]
+    visitEquation(c) {
+        const c0 = this.text(c,0)
+        const remove = c0.slice(c0.indexOf('.'))
+        this.maindef = c0.replace(remove,'')
+        this.target = c0
         let equation = this.visitChildren(c)[2]
         if(equation.expr){
             if(equation.maindef){
                 equation = equation.data
             }else{
-                equation = [...equation.data,`scoreboard players operation ${this.maindef} = ${name}${this.autoScoreboard}`]
+                equation = [
+                    ...equation.data,
+                    `scoreboard players operation ${this.target} ${this.maindef} = ${name}${this.autoScoreboard} ${this.maindef}`
+                ]
             }
         }else{
-            equation = `scoreboard players operation ${this.maindef} = ${equation}`
+            equation = `scoreboard players set ${this.target} ${this.maindef} ${equation}`
         }
         // console.log(equation)
         return equation
@@ -60,7 +63,7 @@ class Visitor extends mcbVisitor {
     visitExpr(c) {
         if(c.children.length == 3){
             const x = this.visitChildren(c)
-            console.log(x)
+            // console.log(x)
             if(!x[0] && !x[2]){
                 return {
                     'expr':true,
@@ -76,8 +79,8 @@ class Visitor extends mcbVisitor {
                     'expr':true,
                     'maindef':false,
                     'data':[
-                        `scoreboard players operation ${name}${this.autoScoreboard} = ${this.text(c,0)}`,
-                        `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${this.text(c,2)}`
+                        `scoreboard players set ${name}${this.autoScoreboard} ${this.maindef} ${this.text(c,0)}`,
+                        `scoreboard players operation ${name}${this.autoScoreboard} ${this.maindef} ${this.text(c,1)}= ${this.text(c,2)}`
                     ]
                 }
             }else{
@@ -88,7 +91,7 @@ class Visitor extends mcbVisitor {
                             'maindef':true,
                             'data':[
                                 ...x[0].data,
-                                `scoreboard players operation ${this.maindef} ${this.text(c,1)}= ${x[2]}`
+                                `scoreboard players operation ${this.target} ${this.maindef} ${this.text(c,1)}= ${x[2]}`
                             ]
                         }
                     }
@@ -99,8 +102,8 @@ class Visitor extends mcbVisitor {
                             'maindef':false,
                             'data':[
                                 ...x[0].data,
-                                `scoreboard players operation ${name}${this.autoScoreboard} = ${name}${this.autoScoreboard-1}`,
-                                `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${x[2]}`,
+                                `scoreboard players operation ${name}${this.autoScoreboard} ${this.maindef} = ${name}${this.autoScoreboard-1} ${this.maindef}`,
+                                `scoreboard players operation ${name}${this.autoScoreboard} ${this.maindef} ${this.text(c,1)}= ${x[2]}`,
                             ]
                         }
                     }
@@ -109,18 +112,9 @@ class Visitor extends mcbVisitor {
                         'maindef':false,
                         'data':[
                             ...x[0].data,
-                            `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${x[2]}`,
+                            `scoreboard players operation ${name}${this.autoScoreboard} ${this.maindef} ${this.text(c,1)}= ${x[2]}`,
                         ]
                     }
-                    // return {
-                    //     'expr':true,
-                    //     'maindef':true,
-                    //     'data':[
-                    //         ...x[0].data,
-                    //         `scoreboard players operation ${this.maindef} = ${x[2]}`,
-                    //         `scoreboard players operation ${this.maindef} ${this.text(c,1)}= ${name}${this.autoScoreboard}`
-                    //     ]
-                    // }
                 }
                 if(!x[0].expr && x[2].expr){
                     if(x[2].maindef){
@@ -129,7 +123,7 @@ class Visitor extends mcbVisitor {
                             'maindef':true,
                             'data':[
                                 ...x[2].data,
-                                `scoreboard players operation ${this.maindef} ${this.text(c,1)}= ${x[0]}`
+                                `scoreboard players operation ${this.target} ${this.maindef} ${this.text(c,1)}= ${x[0]}`
                             ]
                         }
                     }
@@ -140,8 +134,8 @@ class Visitor extends mcbVisitor {
                             'maindef':false,
                             'data':[
                                 ...x[2].data,
-                                `scoreboard players operation ${name}${this.autoScoreboard} = ${name}${this.autoScoreboard-1}`,
-                                `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${x[0]}`,
+                                `scoreboard players operation ${name}${this.autoScoreboard} ${this.maindef} = ${name}${this.autoScoreboard-1} ${this.maindef}`,
+                                `scoreboard players operation ${name}${this.autoScoreboard} ${this.maindef} ${this.text(c,1)}= ${x[0]}`,
                             ]
                         }
                     }
@@ -152,8 +146,8 @@ class Visitor extends mcbVisitor {
                             'maindef':false,
                             'data':[
                                 ...x[2].data,
-                                `scoreboard players operation ${name}${this.autoScoreboard} = ${x[0]}`,
-                                `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${name}${this.autoScoreboard-1}`,
+                                `scoreboard players set ${name}${this.autoScoreboard} ${this.maindef} ${x[0]}`,
+                                `scoreboard players operation ${name}${this.autoScoreboard} ${this.maindef} ${this.text(c,1)}= ${name}${this.autoScoreboard-1} ${this.maindef}`,
                             ]
                         }
                     }
@@ -162,18 +156,9 @@ class Visitor extends mcbVisitor {
                         'maindef':false,
                         'data':[
                             ...x[2].data,
-                            `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${x[0]}`,
+                            `scoreboard players operation ${name}${this.autoScoreboard} ${this.maindef} ${this.text(c,1)}= ${x[0]}`,
                         ]
                     }
-                    // return {
-                    //     'expr':true,
-                    //     'maindef':true,
-                    //     'data':[
-                    //         ...x[2].data,
-                    //         `scoreboard players operation ${this.maindef} = ${x[0]}`,
-                    //         `scoreboard players operation ${this.maindef} ${this.text(c,1)}= ${name}${this.autoScoreboard}`
-                    //     ]
-                    // }
                 }
                 if(x[0].maindef || x[2].maindef)
                 return {
@@ -182,7 +167,7 @@ class Visitor extends mcbVisitor {
                     'data':[
                         ...x[0].data,
                         ...x[2].data,
-                        `scoreboard players operation ${this.maindef} ${this.text(c,1)}= ${name}${this.autoScoreboard}`
+                        `scoreboard players operation ${this.target} ${this.maindef} ${this.text(c,1)}= ${name}${this.autoScoreboard} ${this.maindef}`
                     ]
                 }
                 return {
@@ -191,8 +176,8 @@ class Visitor extends mcbVisitor {
                     'data':[
                         ...x[0].data,
                         ...x[2].data,
-                        `scoreboard players operation ${this.maindef} = ${name}${this.autoScoreboard-1}`,
-                        `scoreboard players operation ${this.maindef} ${this.text(c,1)}= ${name}${this.autoScoreboard}`
+                        `scoreboard players operation ${this.target} ${this.maindef} = ${name}${this.autoScoreboard-1} ${this.maindef}`,
+                        `scoreboard players operation ${this.target} ${this.maindef} ${this.text(c,1)}= ${name}${this.autoScoreboard} ${this.maindef}`
                     ]
                 }
             }
@@ -203,4 +188,4 @@ class Visitor extends mcbVisitor {
 
 //console.log((tree.accept(new Visitor)));
 // console.log(JSON.stringify((tree.accept(new Visitor)).flat(Infinity).join('\n')))
-console.log((tree.accept(new Visitor)).flat(Infinity).join('\n'))
+console.log((tree.accept(new Visitor)).flat(Infinity).filter(a=>a!=null).join('\n'))

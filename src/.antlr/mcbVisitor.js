@@ -72,8 +72,8 @@ export default class mcbVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
-	// Visit a parse tree produced by mcbParser#equat.
-	visitEquat(ctx) {
+	// Visit a parse tree produced by mcbParser#equation.
+	visitEquation(ctx) {
 	  return this.visitChildren(ctx);
 	}
 
