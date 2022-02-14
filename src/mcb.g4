@@ -18,12 +18,6 @@ expGreaterThanEqual: '>=';
 
 annotation: '@' annPosition position;
 annPosition:'position';
-
-number:
-    INT'.'INT
-    | INT
-    ;
-
 position:
     number number number
     | 'here'
@@ -35,6 +29,7 @@ equation: CHAR '=' expr*;
 def: '#' defNamespace
     | '#' 'dict' CHAR CHAR 'at' CHAR
     | '#' 'score' CHAR 'as' CHAR CHAR?
+    | '#' 'score' 'float' CHAR 'as' CHAR CHAR?
     ;
 
 defNamespace: 'dict'|'score';
@@ -42,9 +37,16 @@ defNamespace: 'dict'|'score';
 expr:
 	expr ('*' | '/' | '%') expr
 	| expr ('+' | '-') expr
-	| INT
-	| CHAR
+	| numberInt
+	| exprVariable
 	| '(' expr ')';
+
+number:
+    INT'.'INT
+    | INT
+    ;
+numberInt: INT;
+exprVariable:CHAR;
 
 NEWLINE: [\r\n]+;
 INT: [0-9]+;

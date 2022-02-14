@@ -86,15 +86,6 @@ export default class mcbListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by mcbParser#number.
-	enterNumber(ctx) {
-	}
-
-	// Exit a parse tree produced by mcbParser#number.
-	exitNumber(ctx) {
-	}
-
-
 	// Enter a parse tree produced by mcbParser#position.
 	enterPosition(ctx) {
 	}
@@ -137,6 +128,33 @@ export default class mcbListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by mcbParser#expr.
 	exitExpr(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#number.
+	enterNumber(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#number.
+	exitNumber(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#numberInt.
+	enterNumberInt(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#numberInt.
+	exitNumberInt(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#exprVariable.
+	enterExprVariable(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#exprVariable.
+	exitExprVariable(ctx) {
 	}
 
 

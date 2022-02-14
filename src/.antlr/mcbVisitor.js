@@ -60,12 +60,6 @@ export default class mcbVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
-	// Visit a parse tree produced by mcbParser#number.
-	visitNumber(ctx) {
-	  return this.visitChildren(ctx);
-	}
-
-
 	// Visit a parse tree produced by mcbParser#position.
 	visitPosition(ctx) {
 	  return this.visitChildren(ctx);
@@ -92,6 +86,24 @@ export default class mcbVisitor extends antlr4.tree.ParseTreeVisitor {
 
 	// Visit a parse tree produced by mcbParser#expr.
 	visitExpr(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#number.
+	visitNumber(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#numberInt.
+	visitNumberInt(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#exprVariable.
+	visitExprVariable(ctx) {
 	  return this.visitChildren(ctx);
 	}
 

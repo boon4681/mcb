@@ -5,10 +5,10 @@ import mcbListener from './.antlr/mcbListener.js';
 import mcbVisitor from './.antlr/mcbVisitor.js';
 
 const input = `
-#score x as dummy
+#score float x as dummy
 
 x.input = 90
-x.sub = (180-x.sub)*x.sub
+x.sub = (180-x.input)*x.input
 x.sine = 4*x.sub/(40500-x.sub)
 `
 
@@ -23,15 +23,30 @@ class Visitor extends mcbVisitor {
     autoScoreboard = 0
     maindef = ''
     target = ''
-
+    dictScore = {}
+    float = ''
     text(c, i) {
+        if(c.type) return c.data
         if(c.children[i])
         return c.children[i].getText()
         return undefined
     }
+    isINT(c){
+        return c.type == 'INT'
+    }
+    getFloat(c){
+        return this.text(c) + (this.isINT(c))?this.float:''
+    }
+    length(c){
+        return c.children.length
+    }
     visitDef(c) {
         switch(this.text(c,1)){
             case 'score':
+                if(this.length(c)>5){
+                    this.dictScore[this.text(c,3)] = 'float'
+                    return `scoreboard objectives add ${this.text(c,3)} ${this.text(c,5)} ${this.text(c,6)?this.text(c,6):''}`
+                }
                 return `scoreboard objectives add ${this.text(c,2)} ${this.text(c,4)} ${this.text(c,5)?this.text(c,5):''}`
             case 'dict':
                 return `data modify ${this.text(c,2)} ${this.text(c,5)} ${this.text(c,3)} set value {}`
@@ -44,6 +59,7 @@ class Visitor extends mcbVisitor {
         const remove = c0.slice(c0.indexOf('.'))
         this.maindef = c0.replace(remove,'')
         this.target = c0
+        this.float = (this.dictScore[this.maindef]=='float') ? '00000' : ''
         let equation = this.visitChildren(c)[2]
         if(equation.expr){
             if(equation.maindef){
@@ -59,6 +75,18 @@ class Visitor extends mcbVisitor {
         }
         // console.log(equation)
         return equation
+    }
+    visitNumberInt(c){
+        return {
+            'type':'INT',
+            'data':c.getText()
+        }
+    }
+    visitExprVariable(c){
+        return {
+            'type':'VARIABLE',
+            'data':c.getText()
+        }
     }
     visitExpr(c) {
         if(c.children.length == 3){
