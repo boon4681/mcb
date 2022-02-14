@@ -1,4 +1,4 @@
-// Generated from ./src/mcb.g4 by ANTLR 4.9.2
+// Generated from e:\_Project\nodejs\mcb\src\mcb.g4 by ANTLR 4.9.2
 // jshint ignore: start
 import antlr4 from 'antlr4';
 
@@ -77,6 +77,15 @@ export default class mcbListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by mcbParser#annPosition.
+	enterAnnPosition(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#annPosition.
+	exitAnnPosition(ctx) {
+	}
+
+
 	// Enter a parse tree produced by mcbParser#number.
 	enterNumber(ctx) {
 	}
@@ -110,6 +119,15 @@ export default class mcbListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by mcbParser#def.
 	exitDef(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#defNamespace.
+	enterDefNamespace(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#defNamespace.
+	exitDefNamespace(ctx) {
 	}
 
 

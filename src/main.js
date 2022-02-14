@@ -9,11 +9,8 @@ const input = `
 #score y as dummy
 #dict entity item at boon4681
 
-if block 1 2 4 == wheat then
-endif
-
-x = y+(((y+y)*3) - 4)/3
-u = y+x
+x = 90
+y = 4*x*(180-x)/(40500-x*(180-x))
 `
 
 const chars = new antlr4.InputStream(input);
@@ -42,6 +39,9 @@ class Visitor extends mcbVisitor {
                 return `say @a mcb transpiler error ${c.getText()}`
         }
     }
+    visitAnnotation(c){
+        console.log(c.getText())
+    }
     visitEquat(c) {
         this.maindef = c.children[0]
         let equation = this.visitChildren(c)[2]
@@ -54,7 +54,7 @@ class Visitor extends mcbVisitor {
         }else{
             equation = `scoreboard players operation ${this.maindef} = ${equation}`
         }
-        console.log(equation)
+        // console.log(equation)
         return equation
     }
     visitExpr(c) {
@@ -92,25 +92,23 @@ class Visitor extends mcbVisitor {
                             ]
                         }
                     }
-                    // if(this.text(c,1).search(/\/|\*\%/)>-1){
-                    //     this.autoScoreboard += 1
-                    //     return {
-                    //         'expr':true,
-                    //         'maindef':false,
-                    //         'data':[
-                    //             ...x[0].data,
-                    //             `scoreboard players operation ${name}${this.autoScoreboard} = ${x[2]}`,
-                    //             `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${name}${this.autoScoreboard-1}`
-                    //         ]
-                    //     }
-                    // }
-                    this.autoScoreboard += 1
+                    if(this.text(c,1).search(/\/|\*\%/)>-1){
+                        this.autoScoreboard += 1
+                        return {
+                            'expr':true,
+                            'maindef':false,
+                            'data':[
+                                ...x[0].data,
+                                `scoreboard players operation ${name}${this.autoScoreboard} = ${name}${this.autoScoreboard-1}`,
+                                `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${x[2]}`,
+                            ]
+                        }
+                    }
                     return {
                         'expr':true,
                         'maindef':false,
                         'data':[
                             ...x[0].data,
-                            `scoreboard players operation ${name}${this.autoScoreboard} = ${name}${this.autoScoreboard-1}`,
                             `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${x[2]}`,
                         ]
                     }
@@ -135,25 +133,35 @@ class Visitor extends mcbVisitor {
                             ]
                         }
                     }
-                    // if(this.text(c,1).search(/\/|\*\%/)>-1){
-                    //     this.autoScoreboard += 1
-                    //     return {
-                    //         'expr':true,
-                    //         'maindef':false,
-                    //         'data':[
-                    //             ...x[2].data,
-                    //             `scoreboard players operation ${name}${this.autoScoreboard} = ${x[0]}`,
-                    //             `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${name}${this.autoScoreboard-1}`
-                    //         ]
-                    //     }
-                    // }
-                    this.autoScoreboard += 1
+                    if(this.text(c,1).search(/\/|\*\%/)>-1){
+                        this.autoScoreboard += 1
+                        return {
+                            'expr':true,
+                            'maindef':false,
+                            'data':[
+                                ...x[2].data,
+                                `scoreboard players operation ${name}${this.autoScoreboard} = ${name}${this.autoScoreboard-1}`,
+                                `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${x[0]}`,
+                            ]
+                        }
+                    }
+                    if(this.text(c,1)=='-'){
+                        this.autoScoreboard += 1
+                        return {
+                            'expr':true,
+                            'maindef':false,
+                            'data':[
+                                ...x[2].data,
+                                `scoreboard players operation ${name}${this.autoScoreboard} = ${x[0]}`,
+                                `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${name}${this.autoScoreboard-1}`,
+                            ]
+                        }
+                    }
                     return {
                         'expr':true,
                         'maindef':false,
                         'data':[
                             ...x[2].data,
-                            `scoreboard players operation ${name}${this.autoScoreboard} = ${name}${this.autoScoreboard-1}`,
                             `scoreboard players operation ${name}${this.autoScoreboard} ${this.text(c,1)}= ${x[0]}`,
                         ]
                     }

@@ -1,4 +1,4 @@
-// Generated from ./src/mcb.g4 by ANTLR 4.9.2
+// Generated from e:\_Project\nodejs\mcb\src\mcb.g4 by ANTLR 4.9.2
 // jshint ignore: start
 import antlr4 from 'antlr4';
 
@@ -54,6 +54,12 @@ export default class mcbVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
+	// Visit a parse tree produced by mcbParser#annPosition.
+	visitAnnPosition(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
 	// Visit a parse tree produced by mcbParser#number.
 	visitNumber(ctx) {
 	  return this.visitChildren(ctx);
@@ -74,6 +80,12 @@ export default class mcbVisitor extends antlr4.tree.ParseTreeVisitor {
 
 	// Visit a parse tree produced by mcbParser#def.
 	visitDef(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#defNamespace.
+	visitDefNamespace(ctx) {
 	  return this.visitChildren(ctx);
 	}
 

@@ -3,9 +3,10 @@ chunk: block EOF;
 block: stat*;
 
 stat: def
+    | statmentIF
     | NEWLINE
     | equat
-    | statmentIF
+    | annotation
     ;
 
 statmentIF: 'if' exestat 'then' stat 'endif';
@@ -15,8 +16,8 @@ exestat: 'block' position expEqual CHAR;
 expEqual: '==';
 expGreaterThanEqual: '>=';
 
-annotation: '@' CHAR position;
-
+annotation: '@' annPosition position | block;
+annPosition:'position';
 
 number: INT'.'INT
     | INT
@@ -29,10 +30,12 @@ position: number number number
 
 equat: CHAR '=' expr*;
 
-def: '#'CHAR
-    | '#' CHAR CHAR CHAR 'at' CHAR
-    | '#' CHAR CHAR 'as' CHAR CHAR?
+def: '#' defNamespace
+    | '#' defNamespace CHAR CHAR 'at' CHAR
+    | '#' defNamespace CHAR 'as' CHAR CHAR?
     ;
+
+defNamespace: 'dict'|'score';
 
 expr:
 	expr ('*' | '/' | '%') expr
@@ -43,6 +46,7 @@ expr:
 
 NEWLINE: [\r\n]+;
 INT: [0-9]+;
-CHAR: [a-zA-Z_@][a-zA-Z_0-9.]*;
+
+CHAR: [a-zA-Z_][a-zA-Z_0-9.]*;
 
 WS: [ \t\u000C\r\n]+ -> skip;
