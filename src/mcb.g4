@@ -24,7 +24,7 @@ position:
     ;
     
 
-equation: CHAR '=' expr*;
+equation: exprVariable '=' expr*;
 
 def: '#' defNamespace
     | '#' 'dict' CHAR CHAR 'at' CHAR
@@ -46,7 +46,7 @@ number:
     | INT
     ;
 numberInt: INT;
-exprVariable:CHAR;
+exprVariable:CHAR '[' CHAR ']';
 
 NEWLINE: [\r\n]+;
 INT: [0-9]+;
