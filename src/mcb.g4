@@ -29,7 +29,6 @@ equation: exprVariable '=' expr*;
 def: '#' defNamespace
     | '#' 'dict' CHAR CHAR 'at' CHAR
     | '#' 'score' CHAR 'as' CHAR CHAR?
-    | '#' 'score' 'float' CHAR 'as' CHAR CHAR?
     ;
 
 defNamespace: 'dict'|'score';

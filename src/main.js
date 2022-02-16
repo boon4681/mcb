@@ -5,7 +5,7 @@ import mcbListener from './.antlr/mcbListener.js';
 import mcbVisitor from './.antlr/mcbVisitor.js';
 
 const input = `
-#score float x as dummy
+#score x as dummy
 
 x[input] = -30
 x[sub] = x[input]*(180-x[input])
@@ -42,19 +42,11 @@ class Visitor extends mcbVisitor {
     visitDef(c) {
         switch(this.text(c,1)){
             case 'score':
-                if(this.length(c)>5){
-                    this.dictScore[this.text(c,3)] = {
-                        type:'float',
-                        autoInc:0
-                    }
-                    return `scoreboard objectives add ${this.text(c,3)} ${this.text(c,5)} ${this.text(c,6)?this.text(c,6):''}`
-                }else{
-                    this.dictScore[this.text(c,2)] = {
-                        type:'int',
-                        autoInc:0
-                    }
-                    return `scoreboard objectives add ${this.text(c,2)} ${this.text(c,4)} ${this.text(c,5)?this.text(c,5):''}`
+                this.dictScore[this.text(c,2)] = {
+                    type:'int',
+                    autoInc:0
                 }
+                return `scoreboard objectives add ${this.text(c,2)} ${this.text(c,4)} ${this.text(c,5)?this.text(c,5):''}`
             case 'dict':
                 return `data modify ${this.text(c,2)} ${this.text(c,5)} ${this.text(c,3)} set value {}`
             default:
