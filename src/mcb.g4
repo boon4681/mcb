@@ -37,6 +37,7 @@ defNamespace: 'dict'|'score';
 expr:
 	expr ('*' | '/' | '%') expr
 	| expr ('+' | '-') expr
+    | minusNumberInt
 	| numberInt
 	| exprVariable
 	| '(' expr ')';
@@ -45,6 +46,7 @@ number:
     INT'.'INT
     | INT
     ;
+minusNumberInt: '-'numberInt;
 numberInt: INT;
 exprVariable:CHAR '[' CHAR ']';
 

@@ -140,6 +140,15 @@ export default class mcbListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by mcbParser#minusNumberInt.
+	enterMinusNumberInt(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#minusNumberInt.
+	exitMinusNumberInt(ctx) {
+	}
+
+
 	// Enter a parse tree produced by mcbParser#numberInt.
 	enterNumberInt(ctx) {
 	}

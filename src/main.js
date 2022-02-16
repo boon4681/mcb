@@ -7,7 +7,7 @@ import mcbVisitor from './.antlr/mcbVisitor.js';
 const input = `
 #score float x as dummy
 
-x[input] = 90
+x[input] = -30
 x[sub] = x[input]*(180-x[input])
 x[sine] = 4*x[sub]/(40500-x[sub])
 `
@@ -74,11 +74,18 @@ class Visitor extends mcbVisitor {
             'target':this.text(c,2)
         }
     }
+    visitMinusNumberInt(c){
+        return {
+            'type':'INT',
+            'int':c.getText()
+        }
+    }
     visitEquation(c) {
         const variable = this.visit(c.children[0])
         this.maindef = variable.maindef
         this.target = variable.target
         let equation = this.visit(c.children[2])
+        console.log(equation)
         if(equation.done){
             if(equation.maindef){
                 equation = equation.data
@@ -150,9 +157,9 @@ class Visitor extends mcbVisitor {
                 }
                 if(this.isINT(x[2])){
                     data.push(this.scoreSet(
-                        this.temp,
+                        temp,
                         this.maindef,
-                        x[0].int
+                        x[2].int
                     ))
                     data.push(this.scoreOperationSet(
                         name+(this.dictScore[this.maindef].autoInc),

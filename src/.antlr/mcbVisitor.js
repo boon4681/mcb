@@ -96,6 +96,12 @@ export default class mcbVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
+	// Visit a parse tree produced by mcbParser#minusNumberInt.
+	visitMinusNumberInt(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
 	// Visit a parse tree produced by mcbParser#numberInt.
 	visitNumberInt(ctx) {
 	  return this.visitChildren(ctx);
