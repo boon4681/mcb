@@ -5,11 +5,17 @@ import mcbListener from './.antlr/mcbListener.js';
 import mcbVisitor from './.antlr/mcbVisitor.js';
 
 const input = `
-#score x as dummy
+fun main:
+    #score x as dummy
+    @position 1 2 3
+    @position 1 4 5
+    x[input] = 30
+    x[sub] = x[input]*(180-x[input])
+    x[sine] = 4*x[sub]/(40500-x[sub])
+end
+fun test:
 
-x[input] = -30
-x[sub] = x[input]*(180-x[input])
-x[sine] = 4*x[sub]/(40500-x[sub])
+end
 `
 
 const chars = new antlr4.InputStream(input);
@@ -24,6 +30,7 @@ class Visitor extends mcbVisitor {
     dictScore = {}
     maindef = ''
     target = ''
+    funcs = {}
     text(c, i) {
         if(c.type) return c.data
         if(c.children[i])
@@ -38,6 +45,19 @@ class Visitor extends mcbVisitor {
     }
     length(c){
         return c.children.length
+    }
+    visitFunc(c){
+        const funcName = this.text(c,1)
+        if(!this.funcs[funcName]){
+            this.funcs[funcName] = {
+                name:funcName,
+                statement:this.visitChildren(c).flat(Infinity).filter(a=>a!=null)
+            }
+        }else{
+            throw Error('intersected function name')
+        }
+        console.log(this.funcs[funcName])
+        // console.log(this.visitChildren(c))
     }
     visitDef(c) {
         switch(this.text(c,1)){
@@ -72,12 +92,16 @@ class Visitor extends mcbVisitor {
             'int':c.getText()
         }
     }
+    visitAnnotation(c){
+        console.log(this.text(c,0),'end')
+        return this.visitChildren(c)
+    }
     visitEquation(c) {
         const variable = this.visit(c.children[0])
         this.maindef = variable.maindef
         this.target = variable.target
         let equation = this.visit(c.children[2])
-        console.log(equation)
+        // console.log(equation)
         if(equation.done){
             if(equation.maindef){
                 equation = equation.data
@@ -109,7 +133,7 @@ class Visitor extends mcbVisitor {
                 )
             }
         }
-        console.log("DONEDONEONDE")
+        // console.log("DONEDONEONDE")
         return equation
     }
     scoreSet(target,maindef,value){
@@ -121,7 +145,7 @@ class Visitor extends mcbVisitor {
     visitExpr(c) {
         if(this.length(c)==3){
             const x = this.visitChildren(c)
-            console.log(x)
+            // console.log(x)
             if(!x[0] && !x[2]){
                 return {
                     done:true,

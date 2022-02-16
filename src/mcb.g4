@@ -1,23 +1,28 @@
 grammar mcb;
 chunk: block EOF;
-block: stat*;
+block: func*;
+
+func: 'fun' CHAR ':' stat* 'end';
 
 stat: def
-    | statmentIF
+    | statementIF
     | NEWLINE
     | equation
     | annotation
     ;
 
-statmentIF: 'if' exestat 'then' stat 'endif';
+annotation: '@' annTarget | annotation '@' annTarget;
+
+annTarget:
+    'position' position
+    ;
+statementIF: 'if' exestat 'then' stat 'endif';
 
 exestat: 'block' position expEqual CHAR;
 
 expEqual: '==';
 expGreaterThanEqual: '>=';
 
-annotation: '@' annPosition position;
-annPosition:'position';
 position:
     number number number
     | 'here'
@@ -49,7 +54,7 @@ minusNumberInt: '-'numberInt;
 numberInt: INT;
 exprVariable:CHAR '[' CHAR ']';
 
-NEWLINE: [\r\n]+;
+NEWLINE: [\r\n]+ -> skip;
 INT: [0-9]+;
 
 CHAR: [a-zA-Z_][a-zA-Z_0-9.]*;

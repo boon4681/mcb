@@ -18,14 +18,32 @@ export default class mcbVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
+	// Visit a parse tree produced by mcbParser#func.
+	visitFunc(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
 	// Visit a parse tree produced by mcbParser#stat.
 	visitStat(ctx) {
 	  return this.visitChildren(ctx);
 	}
 
 
-	// Visit a parse tree produced by mcbParser#statmentIF.
-	visitStatmentIF(ctx) {
+	// Visit a parse tree produced by mcbParser#annotation.
+	visitAnnotation(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#annTarget.
+	visitAnnTarget(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#statementIF.
+	visitStatementIF(ctx) {
 	  return this.visitChildren(ctx);
 	}
 
@@ -44,18 +62,6 @@ export default class mcbVisitor extends antlr4.tree.ParseTreeVisitor {
 
 	// Visit a parse tree produced by mcbParser#expGreaterThanEqual.
 	visitExpGreaterThanEqual(ctx) {
-	  return this.visitChildren(ctx);
-	}
-
-
-	// Visit a parse tree produced by mcbParser#annotation.
-	visitAnnotation(ctx) {
-	  return this.visitChildren(ctx);
-	}
-
-
-	// Visit a parse tree produced by mcbParser#annPosition.
-	visitAnnPosition(ctx) {
 	  return this.visitChildren(ctx);
 	}
 
