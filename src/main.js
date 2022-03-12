@@ -7,8 +7,6 @@ import mcbVisitor from './.antlr/mcbVisitor.js';
 const input = `
 fun main:
     #score x as dummy
-    @position 1 2 3
-    @position 1 4 5
     x[input] = 30
     x[sub] = x[input]*(180-x[input])
     x[sine] = 4*x[sub]/(40500-x[sub])

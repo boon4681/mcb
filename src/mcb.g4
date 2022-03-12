@@ -5,29 +5,36 @@ block: func*;
 func: 'fun' CHAR ':' stat* 'end';
 
 stat: def
-    | statementIF
     | NEWLINE
     | equation
-    | annotation
     ;
 
-annotation: '@' annTarget | annotation '@' annTarget;
-
-annTarget:
-    'position' position
-    ;
-statementIF: 'if' exestat 'then' stat 'endif';
-
-exestat: 'block' position expEqual CHAR;
 
 expEqual: '==';
 expGreaterThanEqual: '>=';
 
 position:
     number number number
-    | 'here'
+    | '~' '~' '~'
+    | '~'number '~' '~'
+    | '~' '~'number '~'
+    | '~' '~' '~'number
+    | '~'number '~'number '~'
+    | '~' '~'number '~'number
+    | '~'number '~' '~'number
+    | '~'number '~'number '~'number
     ;
-    
+
+anchor: 
+    '^' '^' '^'
+    | '^'number '^' '^'
+    | '^' '^'number '^'
+    | '^' '^' '^'number
+    | '^'number '^'number '^'
+    | '^' '^'number '^'number
+    | '^'number '^' '^'number
+    | '^'number '^'number '^'number
+    ;
 
 equation: exprVariable '=' expr*;
 
@@ -47,9 +54,12 @@ expr:
 	| '(' expr ')';
 
 number:
-    INT'.'INT
-    | INT
+    INT
+    | INT'.'INT
+    | '-'INT
+    | '-'INT'.'INT
     ;
+
 minusNumberInt: '-'numberInt;
 numberInt: INT;
 exprVariable:CHAR '[' CHAR ']';
@@ -58,5 +68,4 @@ NEWLINE: [\r\n]+ -> skip;
 INT: [0-9]+;
 
 CHAR: [a-zA-Z_][a-zA-Z_0-9.]*;
-
 WS: [ \t\u000C\r\n]+ -> skip;

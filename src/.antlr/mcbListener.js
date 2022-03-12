@@ -41,42 +41,6 @@ export default class mcbListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by mcbParser#annotation.
-	enterAnnotation(ctx) {
-	}
-
-	// Exit a parse tree produced by mcbParser#annotation.
-	exitAnnotation(ctx) {
-	}
-
-
-	// Enter a parse tree produced by mcbParser#annTarget.
-	enterAnnTarget(ctx) {
-	}
-
-	// Exit a parse tree produced by mcbParser#annTarget.
-	exitAnnTarget(ctx) {
-	}
-
-
-	// Enter a parse tree produced by mcbParser#statementIF.
-	enterStatementIF(ctx) {
-	}
-
-	// Exit a parse tree produced by mcbParser#statementIF.
-	exitStatementIF(ctx) {
-	}
-
-
-	// Enter a parse tree produced by mcbParser#exestat.
-	enterExestat(ctx) {
-	}
-
-	// Exit a parse tree produced by mcbParser#exestat.
-	exitExestat(ctx) {
-	}
-
-
 	// Enter a parse tree produced by mcbParser#expEqual.
 	enterExpEqual(ctx) {
 	}
@@ -101,6 +65,15 @@ export default class mcbListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by mcbParser#position.
 	exitPosition(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#anchor.
+	enterAnchor(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#anchor.
+	exitAnchor(ctx) {
 	}
 
 
