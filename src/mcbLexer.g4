@@ -29,11 +29,11 @@ SUB: '-';
 COLON: ':';
 
 ASSIGNMENT: '=';
-MULT_ASSIGNMENT: '*';
-MOD_ASSIGNMENT: '%';
-DIVINE_ASSIGNMENT: '/';
-ADD_ASSIGNMENT: '+';
-SUB_ASSIGNMENT: '-';
+MULT_ASSIGNMENT: '*=';
+MOD_ASSIGNMENT: '%=';
+DIVINE_ASSIGNMENT: '/=';
+ADD_ASSIGNMENT: '+=';
+SUB_ASSIGNMENT: '-=';
 LANGLE: '<';
 RANGLE: '>';
 LE: '<=';
@@ -43,6 +43,8 @@ AT_N_WS: '@';
 AT_P_WS: Hidden '@';
 AT_S_WS: '@' Hidden;
 AT_B_WS: Hidden '@' Hidden;
+
+ENTITY: '@' [asrep];
 
 // KEYWORDS
 FUN: 'fun';
@@ -61,7 +63,7 @@ fragment DigitNoZero: '1'..'9';
 fragment DIGITS: DIGIT DIGIT*;
 fragment Double: DIGITS? '.' DIGITS;
 
-RealLiteral: FloatLiteral | DoubleLiteral | IntegerLiteral;
+RealLiteral: FloatLiteral | DoubleLiteral;
 FloatLiteral: Double [fF];
 DoubleLiteral: Double [dD];
 IntegerLiteral: DigitNoZero DIGIT*;
@@ -109,17 +111,18 @@ Inside_ADD: ADD  -> type(ADD);
 Inside_SUB: SUB  -> type(SUB);
 Inside_COLON: COLON  -> type(COLON);
 Inside_ASSIGNMENT: ASSIGNMENT  -> type(ASSIGNMENT);
-Inside_MULT_ASSIGNMENT: '*';
-Inside_MOD_ASSIGNMENT: '%';
-Inside_DIVINE_ASSIGNMENT: '/';
-Inside_ADD_ASSIGNMENT: '+';
-Inside_SUB_ASSIGNMENT: '-';
+Inside_MULT_ASSIGNMENT: MULT_ASSIGNMENT-> type(MULT_ASSIGNMENT);
+Inside_MOD_ASSIGNMENT: MOD_ASSIGNMENT-> type(MOD_ASSIGNMENT);
+Inside_DIVINE_ASSIGNMENT: DIVINE_ASSIGNMENT-> type(DIVINE_ASSIGNMENT);
+Inside_ADD_ASSIGNMENT: ADD_ASSIGNMENT-> type(ADD_ASSIGNMENT);
+Inside_SUB_ASSIGNMENT: SUB_ASSIGNMENT-> type(SUB_ASSIGNMENT);
 
 Inside_RANGE: RANGE  -> type(RANGE);
 Inside_AT_N_WS: AT_N_WS  -> type(AT_N_WS);
 InsideAT_S_WS: AT_S_WS  -> type(AT_S_WS);
 Inside_AT_P_WS: AT_P_WS  -> type(AT_P_WS);
 Inside_AT_B_WS: AT_B_WS  -> type(AT_B_WS);
+Inside_ENTITY: ENTITY  -> type(ENTITY);
 Inside_LANGLE: LANGLE  -> type(LANGLE);
 Inside_RANGLE: RANGLE  -> type(RANGLE);
 Inside_LE: LE  -> type(LE);
@@ -137,7 +140,7 @@ Inside_DO: DO -> type(DO);
 Inside_WHILE: WHILE -> type(WHILE);
 
 Inside_RealLiteral: RealLiteral -> type(RealLiteral);
-
+Inside_IntegerLiteral: IntegerLiteral-> type(IntegerLiteral);
 Inside_Identifier: Identifier -> type(Identifier);
 Inside_Comment: Comment -> channel(HIDDEN);
 Inside_WS: WS -> channel(HIDDEN);

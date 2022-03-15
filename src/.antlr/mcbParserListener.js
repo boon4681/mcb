@@ -14,15 +14,6 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by mcbParser#functionDeclare.
-	enterFunctionDeclare(ctx) {
-	}
-
-	// Exit a parse tree produced by mcbParser#functionDeclare.
-	exitFunctionDeclare(ctx) {
-	}
-
-
 	// Enter a parse tree produced by mcbParser#statements.
 	enterStatements(ctx) {
 	}
@@ -38,6 +29,24 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by mcbParser#statement.
 	exitStatement(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#declaration.
+	enterDeclaration(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#declaration.
+	exitDeclaration(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#functionDeclare.
+	enterFunctionDeclare(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#functionDeclare.
+	exitFunctionDeclare(ctx) {
 	}
 
 
@@ -119,6 +128,24 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by mcbParser#multiplicativeOperator.
 	exitMultiplicativeOperator(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#nl.
+	enterNl(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#nl.
+	exitNl(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#nls.
+	enterNls(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#nls.
+	exitNls(ctx) {
 	}
 
 

@@ -1,18 +1,22 @@
 parser grammar mcbParser;
 options { tokenVocab = mcbLexer;}
 
-script: NL* EOF;
-
-functionDeclare
-    : FUN (NL*)? Identifier block
-    ;
+script: NL* (statement nl)* EOF;
 
 statements
-    : (statement (EOF statement)*)? EOF?
+    : (statement (nls statement)*)? nls?
     ;
 
 statement
-    : ( assignment | loopStatement )
+    : ( declaration | assignment | loopStatement )
+    ;
+
+declaration
+    : functionDeclare
+    ;
+
+functionDeclare
+    : FUN Identifier block
     ;
 
 block
@@ -30,19 +34,19 @@ doWhile
     ;
     
 assignment
-    : scoreboardIdentifier ASSIGNMENT expression
+    : scoreboardIdentifier ASSIGNMENT expression*
     ;
 
 expression
-    : expression multiplicativeOperator expression
+    : LPAREN NL* expression NL* RPAREN
+    | expression multiplicativeOperator expression
     | expression additiveOperator expression
-    | scoreboardIdentifier
     | IntegerLiteral
-    | LPAREN expression RPAREN
+    | scoreboardIdentifier
     ;
 
 scoreboardIdentifier
-    : Identifier LSQUARE Identifier RSQUARE
+    : Identifier LSQUARE (Identifier|ENTITY) RSQUARE
     ;
 
 additiveOperator
@@ -54,4 +58,14 @@ multiplicativeOperator
     : MULT
     | DIV
     | MOD
+    ;
+
+nl
+    : NL NL*
+    | EOF
+    ;
+
+nls
+    : NL+
+    | EOF
     ;
