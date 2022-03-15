@@ -14,18 +14,18 @@ fragment Hidden:  Comment | WS;
 
 DOT: '.';
 COMMA: ',';
-LPAREN: '(';
+LPAREN: '('-> pushMode(Inside);
 RPAREN: ')';
-LSQUARE: '[';
+LSQUARE: '['-> pushMode(Inside);
 RSQUARE: ']';
-LCURL: '{';
-RCURL: '}';
+LCURL: '{'-> pushMode(DEFAULT_MODE);
+RCURL: '}'{ if (!_modeStack.isEmpty()) { popMode(); } };
 RANGE: '..';
 MULT: '*';
 MOD: '%';
 DIVINE: '/';
 ADD: '+';
-REMO: '-';
+SUB: '-';
 COLON: ':';
 
 ASSIGN: '=';
@@ -84,3 +84,49 @@ QUOTE_CLOSE
 LineStrText
     : ~('"')+
     ;
+
+mode Inside;
+
+Inside_RPAREN: RPAREN -> popMode, type(RPAREN);
+Inside_RSQUARE: RSQUARE -> popMode, type(RSQUARE);
+Inside_LPAREN: LPAREN -> pushMode(Inside), type(LPAREN);
+Inside_LSQUARE: LSQUARE -> pushMode(Inside), type(LSQUARE);
+Inside_LCURL: LCURL -> pushMode(DEFAULT_MODE), type(LCURL);
+Inside_RCURL: RCURL -> popMode, type(RCURL);
+
+
+Inside_DOT: DOT -> type(DOT);
+Inside_COMMA: COMMA  -> type(COMMA);
+Inside_MULT: MULT -> type(MULT);
+Inside_MOD: MOD  -> type(MOD);
+Inside_DIV: DIVINE -> type(DIVINE);
+Inside_ADD: ADD  -> type(ADD);
+Inside_SUB: SUB  -> type(SUB);
+Inside_COLON: COLON  -> type(COLON);
+Inside_ASSIGNMENT: ASSIGN  -> type(ASSIGN);
+Inside_RANGE: RANGE  -> type(RANGE);
+Inside_AT_N_WS: AT_N_WS  -> type(AT_N_WS);
+InsideAT_S_WS: AT_S_WS  -> type(AT_S_WS);
+Inside_AT_P_WS: AT_P_WS  -> type(AT_P_WS);
+Inside_AT_B_WS: AT_B_WS  -> type(AT_B_WS);
+Inside_LANGLE: LANGLE  -> type(LANGLE);
+Inside_RANGLE: RANGLE  -> type(RANGLE);
+Inside_LE: LE  -> type(LE);
+Inside_GE: GE  -> type(GE);
+Inside_QUOTE_OPEN: QUOTE_OPEN -> pushMode(LineString), type(QUOTE_OPEN);
+
+Inside_FUN: FUN -> type(FUN);
+
+Inside_IF: IF -> type(IF);
+Inside_UNLESS: UNLESS -> type(UNLESS);
+Inside_THEN: THEN-> type(THEN);
+Inside_ELSE: ELSE-> type(ELSE);
+Inside_END: END -> type(END);
+
+Inside_DO: DO -> type(DO);
+Inside_WHILE: WHILE -> type(WHILE);
+
+
+mode DEFAULT_MODE;
+
+ErrorCharacter: .;
