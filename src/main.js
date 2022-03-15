@@ -6,8 +6,8 @@ import mcbVisitor from './.antlr/mcbParserVisitor.js';
 
 const input = `
 fun main:
-    x[x] = 30
-    x[x] = (x[x]+30)
+    x[@s[scores={x=5}]] = 30
+    x[x] = x[x]+30*50
     x[sub] = x[input]*(180 - x[input])
     x[sine] = 4*x[sub]/(40500-x[sub])
 end
@@ -23,6 +23,32 @@ const name = 'mcb.sb.'
 const temp = 'mcb.temp'
 class Visitor extends mcbVisitor {
     
+    child(c,i){
+        return c.children[i].getText()
+    }
+
+    visitScoreboardIdentifier(c){
+        // console.log(c.children[2].getText())
+        return {
+            'type':'scoreboardIdentifier',
+            'value':{
+                'objective' : this.child(c,0),
+                'target': this.child(c,2)
+            }
+        }
+    }
+    visitScoreboardLiteral(c){
+        return {
+            'type':'scoreboardLiteral',
+            'value': c.getText(c,0)
+        }
+    }
+    visitAsExpression(c){
+        console.log(this.visitChildren(c))
+    }
+    visitParentAssignableExpression(c){
+        // console.log(c.getText())
+    }
 }
 
 //console.log((tree.accept(new Visitor)));

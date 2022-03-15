@@ -38,15 +38,43 @@ assignment
     ;
 
 expression
-    : LPAREN NL* expression NL* RPAREN
-    | expression multiplicativeOperator expression
-    | expression additiveOperator expression
-    | IntegerLiteral
+    : additiveExpression
+    ;
+
+asExpression
+    : scoreboardLiteral
     | scoreboardIdentifier
+    | parentAssignableExpression
+    ;
+
+parentAssignableExpression
+    : LPAREN NL* expression NL* RPAREN
+    ;
+
+additiveExpression
+    : multiplicativeExpression (additiveOperator multiplicativeExpression)*
+    ;
+
+multiplicativeExpression
+    : asExpression (multiplicativeOperator asExpression)*
     ;
 
 scoreboardIdentifier
-    : Identifier LSQUARE (Identifier|ENTITY) RSQUARE
+    : Identifier LSQUARE (Identifier|scoreboardTarget) RSQUARE
+    ;
+
+scoreboardLiteral
+    : IntegerLiteral
+    ;
+
+scoreboardTarget
+    : ENTITY nbt
+    ;
+
+literalConstant
+    : RealLiteral
+    | IntegerLiteral
+    | stringLiteral
     ;
 
 additiveOperator
@@ -58,6 +86,30 @@ multiplicativeOperator
     : MULT
     | DIV
     | MOD
+    ;
+
+nbt
+    : LSQUARE nbtEquality (COMMA nbtEquality)* RSQUARE
+    ;
+
+nbtEquality
+    : Identifier ASSIGNMENT asNBT
+    ;
+
+asNBT
+    : (literalConstant | nbtArray | Identifier | nbtSet)
+    ;
+
+nbtSet
+    : LCURL Identifier ASSIGNMENT literalConstant RCURL
+    ;
+
+nbtArray
+    : LSQUARE literalConstant (COMMA literalConstant)* RSQUARE
+    ;
+
+stringLiteral
+    : QUOTE_OPEN LineStrText* QUOTE_CLOSE
     ;
 
 nl

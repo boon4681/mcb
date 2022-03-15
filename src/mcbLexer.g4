@@ -14,12 +14,12 @@ fragment Hidden:  Comment | WS;
 
 DOT: '.';
 COMMA: ',';
-LPAREN: '('-> pushMode(Inside);
+LPAREN: '('-> pushMode(I);
 RPAREN: ')';
-LSQUARE: '['-> pushMode(Inside);
+LSQUARE: '['-> pushMode(I);
 RSQUARE: ']';
 LCURL: '{'-> pushMode(DEFAULT_MODE);
-RCURL: '}'{ if (!_modeStack.isEmpty()) { popMode(); } };
+RCURL: '}';
 RANGE: '..';
 MULT: '*';
 MOD: '%';
@@ -92,59 +92,59 @@ LineStrText
     : ~('"')+
     ;
 
-mode Inside;
+mode I;
 
-Inside_RPAREN: RPAREN -> popMode, type(RPAREN);
-Inside_RSQUARE: RSQUARE -> popMode, type(RSQUARE);
-Inside_LPAREN: LPAREN -> pushMode(Inside), type(LPAREN);
-Inside_LSQUARE: LSQUARE -> pushMode(Inside), type(LSQUARE);
-Inside_LCURL: LCURL -> pushMode(DEFAULT_MODE), type(LCURL);
-Inside_RCURL: RCURL -> popMode, type(RCURL);
+I_RPAREN: RPAREN -> popMode, type(RPAREN);
+I_RSQUARE: RSQUARE -> popMode, type(RSQUARE);
+I_LPAREN: LPAREN -> pushMode(I), type(LPAREN);
+I_LSQUARE: LSQUARE -> pushMode(I), type(LSQUARE);
+I_LCURL: LCURL -> pushMode(DEFAULT_MODE), type(LCURL);
+I_RCURL: RCURL -> popMode, type(RCURL);
 
 
-Inside_DOT: DOT -> type(DOT);
-Inside_COMMA: COMMA  -> type(COMMA);
-Inside_MULT: MULT -> type(MULT);
-Inside_MOD: MOD  -> type(MOD);
-Inside_DIV: DIV -> type(DIV);
-Inside_ADD: ADD  -> type(ADD);
-Inside_SUB: SUB  -> type(SUB);
-Inside_COLON: COLON  -> type(COLON);
-Inside_ASSIGNMENT: ASSIGNMENT  -> type(ASSIGNMENT);
-Inside_MULT_ASSIGNMENT: MULT_ASSIGNMENT-> type(MULT_ASSIGNMENT);
-Inside_MOD_ASSIGNMENT: MOD_ASSIGNMENT-> type(MOD_ASSIGNMENT);
-Inside_DIVINE_ASSIGNMENT: DIVINE_ASSIGNMENT-> type(DIVINE_ASSIGNMENT);
-Inside_ADD_ASSIGNMENT: ADD_ASSIGNMENT-> type(ADD_ASSIGNMENT);
-Inside_SUB_ASSIGNMENT: SUB_ASSIGNMENT-> type(SUB_ASSIGNMENT);
+I_DOT: DOT -> type(DOT);
+I_COMMA: COMMA  -> type(COMMA);
+I_MULT: MULT -> type(MULT);
+I_MOD: MOD  -> type(MOD);
+I_DIV: DIV -> type(DIV);
+I_ADD: ADD  -> type(ADD);
+I_SUB: SUB  -> type(SUB);
+I_COLON: COLON  -> type(COLON);
+I_ASSIGNMENT: ASSIGNMENT  -> type(ASSIGNMENT);
+I_MULT_ASSIGNMENT: MULT_ASSIGNMENT-> type(MULT_ASSIGNMENT);
+I_MOD_ASSIGNMENT: MOD_ASSIGNMENT-> type(MOD_ASSIGNMENT);
+I_DIVINE_ASSIGNMENT: DIVINE_ASSIGNMENT-> type(DIVINE_ASSIGNMENT);
+I_ADD_ASSIGNMENT: ADD_ASSIGNMENT-> type(ADD_ASSIGNMENT);
+I_SUB_ASSIGNMENT: SUB_ASSIGNMENT-> type(SUB_ASSIGNMENT);
 
-Inside_RANGE: RANGE  -> type(RANGE);
-Inside_AT_N_WS: AT_N_WS  -> type(AT_N_WS);
-InsideAT_S_WS: AT_S_WS  -> type(AT_S_WS);
-Inside_AT_P_WS: AT_P_WS  -> type(AT_P_WS);
-Inside_AT_B_WS: AT_B_WS  -> type(AT_B_WS);
-Inside_ENTITY: ENTITY  -> type(ENTITY);
-Inside_LANGLE: LANGLE  -> type(LANGLE);
-Inside_RANGLE: RANGLE  -> type(RANGLE);
-Inside_LE: LE  -> type(LE);
-Inside_GE: GE  -> type(GE);
-Inside_QUOTE_OPEN: QUOTE_OPEN -> pushMode(LineString), type(QUOTE_OPEN);
+I_RANGE: RANGE  -> type(RANGE);
+I_AT_N_WS: AT_N_WS  -> type(AT_N_WS);
+IAT_S_WS: AT_S_WS  -> type(AT_S_WS);
+I_AT_P_WS: AT_P_WS  -> type(AT_P_WS);
+I_AT_B_WS: AT_B_WS  -> type(AT_B_WS);
+I_ENTITY: ENTITY  -> type(ENTITY);
+I_LANGLE: LANGLE  -> type(LANGLE);
+I_RANGLE: RANGLE  -> type(RANGLE);
+I_LE: LE  -> type(LE);
+I_GE: GE  -> type(GE);
+I_QUOTE_OPEN: QUOTE_OPEN -> pushMode(LineString), type(QUOTE_OPEN);
 
-Inside_FUN: FUN -> type(FUN);
+I_FUN: FUN -> type(FUN);
 
-Inside_IF: IF -> type(IF);
-Inside_UNLESS: UNLESS -> type(UNLESS);
-Inside_ELSE: ELSE-> type(ELSE);
-Inside_END: END -> type(END);
+I_IF: IF -> type(IF);
+I_UNLESS: UNLESS -> type(UNLESS);
+I_ELSE: ELSE-> type(ELSE);
+I_END: END -> type(END);
 
-Inside_DO: DO -> type(DO);
-Inside_WHILE: WHILE -> type(WHILE);
+I_DO: DO -> type(DO);
+I_WHILE: WHILE -> type(WHILE);
 
-Inside_RealLiteral: RealLiteral -> type(RealLiteral);
-Inside_IntegerLiteral: IntegerLiteral-> type(IntegerLiteral);
-Inside_Identifier: Identifier -> type(Identifier);
-Inside_Comment: Comment -> channel(HIDDEN);
-Inside_WS: WS -> channel(HIDDEN);
-Inside_NL: NL -> channel(HIDDEN);
+I_RealLiteral: RealLiteral -> type(RealLiteral);
+I_IntegerLiteral: IntegerLiteral-> type(IntegerLiteral);
+I_Identifier: Identifier -> type(Identifier);
+I_Comment: Comment -> channel(HIDDEN);
+I_WS: WS -> channel(HIDDEN);
+I_NL: NL -> channel(HIDDEN);
 
 mode DEFAULT_MODE;
 
