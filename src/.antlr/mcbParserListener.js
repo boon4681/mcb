@@ -158,6 +158,15 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by mcbParser#scoreboardUnaryPrefix.
+	enterScoreboardUnaryPrefix(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#scoreboardUnaryPrefix.
+	exitScoreboardUnaryPrefix(ctx) {
+	}
+
+
 	// Enter a parse tree produced by mcbParser#scoreboardTarget.
 	enterScoreboardTarget(ctx) {
 	}

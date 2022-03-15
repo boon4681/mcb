@@ -65,6 +65,11 @@ scoreboardIdentifier
 
 scoreboardLiteral
     : IntegerLiteral
+    | scoreboardUnaryPrefix
+    ;
+
+scoreboardUnaryPrefix
+    : SUB IntegerLiteral
     ;
 
 scoreboardTarget

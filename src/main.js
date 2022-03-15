@@ -3,10 +3,13 @@ import mcbLexer from './.antlr/mcbLexer.js';
 import mcbParser from './.antlr/mcbParser.js';
 import mcbListener from './.antlr/mcbParserListener.js';
 import mcbVisitor from './.antlr/mcbParserVisitor.js';
+import * as SCBuidler from './utils/ScoreboardBuilder.js'
+import * as debug from './utils/debug.js'
 
 const input = `
 fun main:
-    x[@s[scores={x=5}]] = 30
+    x[@s[scores={x=5}]] = 10
+    x[y] = -15
     x[x] = x[x]+30*50
     x[sub] = x[input]*(180 - x[input])
     x[sine] = 4*x[sub]/(40500-x[sub])
@@ -23,34 +26,47 @@ const name = 'mcb.sb.'
 const temp = 'mcb.temp'
 class Visitor extends mcbVisitor {
     
-    child(c,i){
-        return c.children[i].getText()
+    child(c,i,t){
+        if(i!==undefined)
+        return t ? c.children[i].getText() : c.children[i]
+        return c.getText()
     }
 
     visitScoreboardIdentifier(c){
-        // console.log(c.children[2].getText())
         return {
             'type':'scoreboardIdentifier',
             'value':{
-                'objective' : this.child(c,0),
-                'target': this.child(c,2)
+                'objective' : this.child(c,0,true),
+                'target': this.child(c,2,true)
             }
         }
     }
     visitScoreboardLiteral(c){
         return {
             'type':'scoreboardLiteral',
-            'value': c.getText(c,0)
+            'value': this.child(c,0,true)
         }
     }
     visitAsExpression(c){
-        console.log(this.visitChildren(c))
+        return debug.checkVisit(c,this.visitChildren(c))[0]
     }
     visitParentAssignableExpression(c){
-        // console.log(c.getText())
+        return debug.checkVisit(c,this.visitChildren(this.child(c,1)))[0]
+    }
+    visitAdditiveExpression(c){
+        return debug.checkVisit(c,this.visitChildren(c))
+    }
+    visitMultiplicativeExpression(c){
+        const p = debug.checkVisit(c,this.visitChildren(c))
+        if(p.length==3){
+            throw Error
+        }
+        return p
+    }
+    visitMultiplicativeOperator(c){
+        return debug.checkVisit(c,this.child(c))
     }
 }
-
 //console.log((tree.accept(new Visitor)));
 // console.log(JSON.stringify((tree.accept(new Visitor)).flat(Infinity).join('\n')))
-console.log((tree.accept(new Visitor)).flat(Infinity).filter(a=>a!=null).join('\n'))
+console.log("END",(tree.accept(new Visitor)).flat(Infinity).filter(a=>a!=null).join('\n'))
