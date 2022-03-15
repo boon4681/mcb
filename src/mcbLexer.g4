@@ -5,7 +5,7 @@ import UnicodeClasses;
 Comment: '//' ~[\r\n]* -> channel(HIDDEN);
 
 WS: [\u0020\u0009\u000C] -> channel(HIDDEN);
-NEWLINE: '\n' | '\r' '\n'?;
+NL: '\n' | '\r' '\n'?;
 
 fragment Hidden:  Comment | WS;
 
@@ -44,7 +44,6 @@ FUN: 'fun';
 END: 'end';
 IF:  'if';
 UNLESS: 'unless';
-THEN: 'then';
 ELSE: 'else';
 
 WHILE: 'while';
@@ -53,13 +52,14 @@ DO: 'do';
 // LITERALS
 
 fragment DIGIT: '0'..'9';
+fragment DigitNoZero: '1'..'9';
+fragment DIGITS: DIGIT DIGIT*;
+fragment Double: DIGITS? '.' DIGITS;
 
-fragment DIGITS: DIGIT*;
-fragment Double: DIGITS '.' DIGITS;
-
-RealLiteral: FloatLiteral | DoubleLiteral;
+RealLiteral: FloatLiteral | DoubleLiteral | IntegerLiteral;
 FloatLiteral: Double [fF];
 DoubleLiteral: Double [dD];
+IntegerLiteral: DigitNoZero DIGIT*;
 
 fragment UnicodeDigit: UNICODE_CLASS_ND;
 
@@ -119,13 +119,18 @@ Inside_FUN: FUN -> type(FUN);
 
 Inside_IF: IF -> type(IF);
 Inside_UNLESS: UNLESS -> type(UNLESS);
-Inside_THEN: THEN-> type(THEN);
 Inside_ELSE: ELSE-> type(ELSE);
 Inside_END: END -> type(END);
 
 Inside_DO: DO -> type(DO);
 Inside_WHILE: WHILE -> type(WHILE);
 
+Inside_RealLiteral: RealLiteral -> type(RealLiteral);
+
+Inside_Identifier: Identifier -> type(Identifier);
+Inside_Comment: Comment -> channel(HIDDEN);
+Inside_WS: WS -> channel(HIDDEN);
+Inside_NL: NL -> channel(HIDDEN);
 
 mode DEFAULT_MODE;
 
