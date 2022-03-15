@@ -25,6 +25,7 @@ NEWLINE=24
 INT=25
 CHAR=26
 WS=27
+LineComment=28
 'fun'=1
 ':'=2
 'end'=3

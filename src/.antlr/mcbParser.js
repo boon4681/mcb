@@ -6,7 +6,7 @@ import mcbVisitor from './mcbVisitor.js';
 
 
 const serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786",
-    "\u5964\u0003\u001d\u00e3\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004",
+    "\u5964\u0003\u001e\u00e3\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004",
     "\u0004\t\u0004\u0004\u0005\t\u0005\u0004\u0006\t\u0006\u0004\u0007\t",
     "\u0007\u0004\b\t\b\u0004\t\t\t\u0004\n\t\n\u0004\u000b\t\u000b\u0004",
     "\f\t\f\u0004\r\t\r\u0004\u000e\t\u000e\u0004\u000f\t\u000f\u0004\u0010",
@@ -162,7 +162,7 @@ export default class mcbParser extends antlr4.Parser {
     static symbolicNames = [ null, null, null, null, null, null, null, null, 
                              null, null, null, null, null, null, null, null, 
                              null, null, null, null, null, null, null, null, 
-                             "NEWLINE", "INT", "CHAR", "WS" ];
+                             "NEWLINE", "INT", "CHAR", "WS", "LineComment" ];
     static ruleNames = [ "chunk", "block", "func", "stat", "expEqual", "expGreaterThanEqual", 
                          "position", "anchor", "equation", "def", "defNamespace", 
                          "expr", "number", "minusNumberInt", "numberInt", 
@@ -1077,6 +1077,7 @@ mcbParser.NEWLINE = 24;
 mcbParser.INT = 25;
 mcbParser.CHAR = 26;
 mcbParser.WS = 27;
+mcbParser.LineComment = 28;
 
 mcbParser.RULE_chunk = 0;
 mcbParser.RULE_block = 1;
