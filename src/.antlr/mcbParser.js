@@ -6,46 +6,95 @@ import mcbParserVisitor from './mcbParserVisitor.js';
 
 
 const serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786",
-    "\u5964\u00037B\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t",
-    "\u0004\u0004\u0005\t\u0005\u0004\u0006\t\u0006\u0003\u0002\u0007\u0002",
-    "\u000e\n\u0002\f\u0002\u000e\u0002\u0011\u000b\u0002\u0003\u0002\u0003",
-    "\u0002\u0003\u0003\u0003\u0003\u0007\u0003\u0017\n\u0003\f\u0003\u000e",
-    "\u0003\u001a\u000b\u0003\u0005\u0003\u001c\n\u0003\u0003\u0003\u0003",
-    "\u0003\u0003\u0003\u0003\u0004\u0003\u0004\u0007\u0004#\n\u0004\f\u0004",
-    "\u000e\u0004&\u000b\u0004\u0003\u0004\u0003\u0004\u0007\u0004*\n\u0004",
-    "\f\u0004\u000e\u0004-\u000b\u0004\u0003\u0004\u0003\u0004\u0003\u0005",
-    "\u0003\u0005\u0007\u00053\n\u0005\f\u0005\u000e\u00056\u000b\u0005\u0003",
-    "\u0005\u0003\u0005\u0003\u0005\u0007\u0005;\n\u0005\f\u0005\u000e\u0005",
-    ">\u000b\u0005\u0003\u0006\u0003\u0006\u0003\u0006\u0002\u0002\u0007",
-    "\u0002\u0004\u0006\b\n\u0002\u0002\u0002C\u0002\u000f\u0003\u0002\u0002",
-    "\u0002\u0004\u0014\u0003\u0002\u0002\u0002\u0006 \u0003\u0002\u0002",
-    "\u0002\b0\u0003\u0002\u0002\u0002\n?\u0003\u0002\u0002\u0002\f\u000e",
-    "\u0007\u0005\u0002\u0002\r\f\u0003\u0002\u0002\u0002\u000e\u0011\u0003",
-    "\u0002\u0002\u0002\u000f\r\u0003\u0002\u0002\u0002\u000f\u0010\u0003",
-    "\u0002\u0002\u0002\u0010\u0012\u0003\u0002\u0002\u0002\u0011\u000f\u0003",
-    "\u0002\u0002\u0002\u0012\u0013\u0007\u0002\u0002\u0003\u0013\u0003\u0003",
-    "\u0002\u0002\u0002\u0014\u001b\u0007\u001e\u0002\u0002\u0015\u0017\u0007",
-    "\u0005\u0002\u0002\u0016\u0015\u0003\u0002\u0002\u0002\u0017\u001a\u0003",
-    "\u0002\u0002\u0002\u0018\u0016\u0003\u0002\u0002\u0002\u0018\u0019\u0003",
-    "\u0002\u0002\u0002\u0019\u001c\u0003\u0002\u0002\u0002\u001a\u0018\u0003",
-    "\u0002\u0002\u0002\u001b\u0018\u0003\u0002\u0002\u0002\u001b\u001c\u0003",
-    "\u0002\u0002\u0002\u001c\u001d\u0003\u0002\u0002\u0002\u001d\u001e\u0007",
-    ")\u0002\u0002\u001e\u001f\u0005\u0006\u0004\u0002\u001f\u0005\u0003",
-    "\u0002\u0002\u0002 $\u0007\u0014\u0002\u0002!#\u0007\u0005\u0002\u0002",
-    "\"!\u0003\u0002\u0002\u0002#&\u0003\u0002\u0002\u0002$\"\u0003\u0002",
-    "\u0002\u0002$%\u0003\u0002\u0002\u0002%\'\u0003\u0002\u0002\u0002&$",
-    "\u0003\u0002\u0002\u0002\'+\u0005\n\u0006\u0002(*\u0007\u0005\u0002",
-    "\u0002)(\u0003\u0002\u0002\u0002*-\u0003\u0002\u0002\u0002+)\u0003\u0002",
-    "\u0002\u0002+,\u0003\u0002\u0002\u0002,.\u0003\u0002\u0002\u0002-+\u0003",
-    "\u0002\u0002\u0002./\u0007\u001f\u0002\u0002/\u0007\u0003\u0002\u0002",
-    "\u000204\u0007#\u0002\u000213\u0007\u0005\u0002\u000221\u0003\u0002",
-    "\u0002\u000236\u0003\u0002\u0002\u000242\u0003\u0002\u0002\u000245\u0003",
-    "\u0002\u0002\u000257\u0003\u0002\u0002\u000264\u0003\u0002\u0002\u0002",
-    "78\u0007\b\u0002\u00028<\u0007\t\u0002\u00029;\u0007\u0005\u0002\u0002",
-    ":9\u0003\u0002\u0002\u0002;>\u0003\u0002\u0002\u0002<:\u0003\u0002\u0002",
-    "\u0002<=\u0003\u0002\u0002\u0002=\t\u0003\u0002\u0002\u0002><\u0003",
-    "\u0002\u0002\u0002?@\u0003\u0002\u0002\u0002@\u000b\u0003\u0002\u0002",
-    "\u0002\t\u000f\u0018\u001b$+4<"].join("");
+    "\u5964\u0003A\u009b\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004",
+    "\t\u0004\u0004\u0005\t\u0005\u0004\u0006\t\u0006\u0004\u0007\t\u0007",
+    "\u0004\b\t\b\u0004\t\t\t\u0004\n\t\n\u0004\u000b\t\u000b\u0004\f\t\f",
+    "\u0004\r\t\r\u0004\u000e\t\u000e\u0003\u0002\u0007\u0002\u001e\n\u0002",
+    "\f\u0002\u000e\u0002!\u000b\u0002\u0003\u0002\u0003\u0002\u0003\u0003",
+    "\u0003\u0003\u0007\u0003\'\n\u0003\f\u0003\u000e\u0003*\u000b\u0003",
+    "\u0005\u0003,\n\u0003\u0003\u0003\u0003\u0003\u0003\u0003\u0003\u0004",
+    "\u0003\u0004\u0003\u0004\u0007\u00044\n\u0004\f\u0004\u000e\u00047\u000b",
+    "\u0004\u0005\u00049\n\u0004\u0003\u0004\u0005\u0004<\n\u0004\u0003\u0005",
+    "\u0003\u0005\u0005\u0005@\n\u0005\u0003\u0006\u0003\u0006\u0007\u0006",
+    "D\n\u0006\f\u0006\u000e\u0006G\u000b\u0006\u0003\u0006\u0003\u0006\u0007",
+    "\u0006K\n\u0006\f\u0006\u000e\u0006N\u000b\u0006\u0003\u0006\u0003\u0006",
+    "\u0003\u0007\u0003\u0007\u0005\u0007T\n\u0007\u0003\b\u0003\b\u0007",
+    "\bX\n\b\f\b\u000e\b[\u000b\b\u0003\b\u0003\b\u0003\b\u0007\b`\n\b\f",
+    "\b\u000e\bc\u000b\b\u0003\b\u0003\b\u0003\t\u0003\t\u0007\ti\n\t\f\t",
+    "\u000e\tl\u000b\t\u0003\t\u0003\t\u0003\t\u0007\tq\n\t\f\t\u000e\tt",
+    "\u000b\t\u0003\t\u0003\t\u0003\n\u0003\n\u0003\n\u0003\n\u0003\u000b",
+    "\u0003\u000b\u0003\u000b\u0003\u000b\u0003\u000b\u0003\u000b\u0003\u000b",
+    "\u0005\u000b\u0083\n\u000b\u0003\u000b\u0003\u000b\u0003\u000b\u0003",
+    "\u000b\u0003\u000b\u0003\u000b\u0003\u000b\u0003\u000b\u0007\u000b\u008d",
+    "\n\u000b\f\u000b\u000e\u000b\u0090\u000b\u000b\u0003\f\u0003\f\u0003",
+    "\f\u0003\f\u0003\f\u0003\r\u0003\r\u0003\u000e\u0003\u000e\u0003\u000e",
+    "\u0002\u0003\u0014\u000f\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014",
+    "\u0016\u0018\u001a\u0002\u0004\u0003\u0002\u0012\u0013\u0003\u0002\u000f",
+    "\u0011\u0002\u009f\u0002\u001f\u0003\u0002\u0002\u0002\u0004$\u0003",
+    "\u0002\u0002\u0002\u00068\u0003\u0002\u0002\u0002\b?\u0003\u0002\u0002",
+    "\u0002\nA\u0003\u0002\u0002\u0002\fS\u0003\u0002\u0002\u0002\u000eU",
+    "\u0003\u0002\u0002\u0002\u0010f\u0003\u0002\u0002\u0002\u0012w\u0003",
+    "\u0002\u0002\u0002\u0014\u0082\u0003\u0002\u0002\u0002\u0016\u0091\u0003",
+    "\u0002\u0002\u0002\u0018\u0096\u0003\u0002\u0002\u0002\u001a\u0098\u0003",
+    "\u0002\u0002\u0002\u001c\u001e\u0007\u0005\u0002\u0002\u001d\u001c\u0003",
+    "\u0002\u0002\u0002\u001e!\u0003\u0002\u0002\u0002\u001f\u001d\u0003",
+    "\u0002\u0002\u0002\u001f \u0003\u0002\u0002\u0002 \"\u0003\u0002\u0002",
+    "\u0002!\u001f\u0003\u0002\u0002\u0002\"#\u0007\u0002\u0002\u0003#\u0003",
+    "\u0003\u0002\u0002\u0002$+\u0007#\u0002\u0002%\'\u0007\u0005\u0002\u0002",
+    "&%\u0003\u0002\u0002\u0002\'*\u0003\u0002\u0002\u0002(&\u0003\u0002",
+    "\u0002\u0002()\u0003\u0002\u0002\u0002),\u0003\u0002\u0002\u0002*(\u0003",
+    "\u0002\u0002\u0002+(\u0003\u0002\u0002\u0002+,\u0003\u0002\u0002\u0002",
+    ",-\u0003\u0002\u0002\u0002-.\u0007.\u0002\u0002./\u0005\n\u0006\u0002",
+    "/\u0005\u0003\u0002\u0002\u000205\u0005\b\u0005\u000212\u0007\u0002",
+    "\u0002\u000324\u0005\b\u0005\u000231\u0003\u0002\u0002\u000247\u0003",
+    "\u0002\u0002\u000253\u0003\u0002\u0002\u000256\u0003\u0002\u0002\u0002",
+    "69\u0003\u0002\u0002\u000275\u0003\u0002\u0002\u000280\u0003\u0002\u0002",
+    "\u000289\u0003\u0002\u0002\u00029;\u0003\u0002\u0002\u0002:<\u0007\u0002",
+    "\u0002\u0003;:\u0003\u0002\u0002\u0002;<\u0003\u0002\u0002\u0002<\u0007",
+    "\u0003\u0002\u0002\u0002=@\u0005\u0012\n\u0002>@\u0005\f\u0007\u0002",
+    "?=\u0003\u0002\u0002\u0002?>\u0003\u0002\u0002\u0002@\t\u0003\u0002",
+    "\u0002\u0002AE\u0007\u0014\u0002\u0002BD\u0007\u0005\u0002\u0002CB\u0003",
+    "\u0002\u0002\u0002DG\u0003\u0002\u0002\u0002EC\u0003\u0002\u0002\u0002",
+    "EF\u0003\u0002\u0002\u0002FH\u0003\u0002\u0002\u0002GE\u0003\u0002\u0002",
+    "\u0002HL\u0005\u0006\u0004\u0002IK\u0007\u0005\u0002\u0002JI\u0003\u0002",
+    "\u0002\u0002KN\u0003\u0002\u0002\u0002LJ\u0003\u0002\u0002\u0002LM\u0003",
+    "\u0002\u0002\u0002MO\u0003\u0002\u0002\u0002NL\u0003\u0002\u0002\u0002",
+    "OP\u0007$\u0002\u0002P\u000b\u0003\u0002\u0002\u0002QT\u0005\u000e\b",
+    "\u0002RT\u0005\u0010\t\u0002SQ\u0003\u0002\u0002\u0002SR\u0003\u0002",
+    "\u0002\u0002T\r\u0003\u0002\u0002\u0002UY\u0007(\u0002\u0002VX\u0007",
+    "\u0005\u0002\u0002WV\u0003\u0002\u0002\u0002X[\u0003\u0002\u0002\u0002",
+    "YW\u0003\u0002\u0002\u0002YZ\u0003\u0002\u0002\u0002Z\\\u0003\u0002",
+    "\u0002\u0002[Y\u0003\u0002\u0002\u0002\\]\u0007\b\u0002\u0002]a\u0007",
+    "\t\u0002\u0002^`\u0007\u0005\u0002\u0002_^\u0003\u0002\u0002\u0002`",
+    "c\u0003\u0002\u0002\u0002a_\u0003\u0002\u0002\u0002ab\u0003\u0002\u0002",
+    "\u0002bd\u0003\u0002\u0002\u0002ca\u0003\u0002\u0002\u0002de\u0005\n",
+    "\u0006\u0002e\u000f\u0003\u0002\u0002\u0002fj\u0007)\u0002\u0002gi\u0007",
+    "\u0005\u0002\u0002hg\u0003\u0002\u0002\u0002il\u0003\u0002\u0002\u0002",
+    "jh\u0003\u0002\u0002\u0002jk\u0003\u0002\u0002\u0002km\u0003\u0002\u0002",
+    "\u0002lj\u0003\u0002\u0002\u0002mn\u0007\b\u0002\u0002nr\u0007\t\u0002",
+    "\u0002oq\u0007\u0005\u0002\u0002po\u0003\u0002\u0002\u0002qt\u0003\u0002",
+    "\u0002\u0002rp\u0003\u0002\u0002\u0002rs\u0003\u0002\u0002\u0002su\u0003",
+    "\u0002\u0002\u0002tr\u0003\u0002\u0002\u0002uv\u0005\n\u0006\u0002v",
+    "\u0011\u0003\u0002\u0002\u0002wx\u0005\u0016\f\u0002xy\u0007\u0015\u0002",
+    "\u0002yz\u0005\u0014\u000b\u0002z\u0013\u0003\u0002\u0002\u0002{|\b",
+    "\u000b\u0001\u0002|\u0083\u0005\u0016\f\u0002}\u0083\u0007-\u0002\u0002",
+    "~\u007f\u0007\b\u0002\u0002\u007f\u0080\u0005\u0014\u000b\u0002\u0080",
+    "\u0081\u0007\t\u0002\u0002\u0081\u0083\u0003\u0002\u0002\u0002\u0082",
+    "{\u0003\u0002\u0002\u0002\u0082}\u0003\u0002\u0002\u0002\u0082~\u0003",
+    "\u0002\u0002\u0002\u0083\u008e\u0003\u0002\u0002\u0002\u0084\u0085\f",
+    "\u0007\u0002\u0002\u0085\u0086\u0005\u001a\u000e\u0002\u0086\u0087\u0005",
+    "\u0014\u000b\b\u0087\u008d\u0003\u0002\u0002\u0002\u0088\u0089\f\u0006",
+    "\u0002\u0002\u0089\u008a\u0005\u0018\r\u0002\u008a\u008b\u0005\u0014",
+    "\u000b\u0007\u008b\u008d\u0003\u0002\u0002\u0002\u008c\u0084\u0003\u0002",
+    "\u0002\u0002\u008c\u0088\u0003\u0002\u0002\u0002\u008d\u0090\u0003\u0002",
+    "\u0002\u0002\u008e\u008c\u0003\u0002\u0002\u0002\u008e\u008f\u0003\u0002",
+    "\u0002\u0002\u008f\u0015\u0003\u0002\u0002\u0002\u0090\u008e\u0003\u0002",
+    "\u0002\u0002\u0091\u0092\u0007.\u0002\u0002\u0092\u0093\u0007\n\u0002",
+    "\u0002\u0093\u0094\u0007.\u0002\u0002\u0094\u0095\u0007\u000b\u0002",
+    "\u0002\u0095\u0017\u0003\u0002\u0002\u0002\u0096\u0097\t\u0002\u0002",
+    "\u0002\u0097\u0019\u0003\u0002\u0002\u0002\u0098\u0099\t\u0003\u0002",
+    "\u0002\u0099\u001b\u0003\u0002\u0002\u0002\u0013\u001f(+58;?ELSYajr",
+    "\u0082\u008c\u008e"].join("");
 
 
 const atn = new antlr4.atn.ATNDeserializer().deserialize(serializedATN);
@@ -58,26 +107,32 @@ export default class mcbParser extends antlr4.Parser {
 
     static grammarFileName = "mcbParser.g4";
     static literalNames = [ null, null, null, null, "'.'", "','", "'('", 
-                            "')'", "'['", "']'", "'{'", "'}'", "'..'", "'*'", 
-                            "'%'", "'/'", "'+'", "'-'", "':'", "'='", "'<'", 
-                            "'>'", "'<='", "'>='", "'@'", null, null, null, 
-                            "'fun'", "'end'", "'if'", "'unless'", "'else'", 
-                            "'while'", "'do'" ];
+                            "')'", "'['", "']'", "'{'", "'}'", "'..'", null, 
+                            null, null, null, null, "':'", "'='", null, 
+                            null, null, null, null, "'<'", "'>'", "'<='", 
+                            "'>='", "'@'", null, null, null, "'fun'", "'end'", 
+                            "'if'", "'unless'", "'else'", "'while'", "'do'" ];
     static symbolicNames = [ null, "Comment", "WS", "NL", "DOT", "COMMA", 
                              "LPAREN", "RPAREN", "LSQUARE", "RSQUARE", "LCURL", 
-                             "RCURL", "RANGE", "MULT", "MOD", "DIVINE", 
-                             "ADD", "SUB", "COLON", "ASSIGN", "LANGLE", 
-                             "RANGLE", "LE", "GE", "AT_N_WS", "AT_P_WS", 
-                             "AT_S_WS", "AT_B_WS", "FUN", "END", "IF", "UNLESS", 
-                             "ELSE", "WHILE", "DO", "RealLiteral", "FloatLiteral", 
-                             "DoubleLiteral", "IntegerLiteral", "Identifier", 
-                             "QUOTE_OPEN", "UNICODE_CLASS_LL", "UNICODE_CLASS_LM", 
-                             "UNICODE_CLASS_LO", "UNICODE_CLASS_LT", "UNICODE_CLASS_LU", 
-                             "UNICODE_CLASS_ND", "UNICODE_CLASS_NL", "QUOTE_CLOSE", 
-                             "LineStrText", "Inside_Comment", "Inside_WS", 
-                             "Inside_NL", "ErrorCharacter" ];
-    static ruleNames = [ "script", "functionDeclare", "block", "whileDo", 
-                         "statements" ];
+                             "RCURL", "RANGE", "MULT", "MOD", "DIV", "ADD", 
+                             "SUB", "COLON", "ASSIGNMENT", "MULT_ASSIGNMENT", 
+                             "MOD_ASSIGNMENT", "DIVINE_ASSIGNMENT", "ADD_ASSIGNMENT", 
+                             "SUB_ASSIGNMENT", "LANGLE", "RANGLE", "LE", 
+                             "GE", "AT_N_WS", "AT_P_WS", "AT_S_WS", "AT_B_WS", 
+                             "FUN", "END", "IF", "UNLESS", "ELSE", "WHILE", 
+                             "DO", "RealLiteral", "FloatLiteral", "DoubleLiteral", 
+                             "IntegerLiteral", "Identifier", "QUOTE_OPEN", 
+                             "UNICODE_CLASS_LL", "UNICODE_CLASS_LM", "UNICODE_CLASS_LO", 
+                             "UNICODE_CLASS_LT", "UNICODE_CLASS_LU", "UNICODE_CLASS_ND", 
+                             "UNICODE_CLASS_NL", "QUOTE_CLOSE", "LineStrText", 
+                             "Inside_MULT_ASSIGNMENT", "Inside_MOD_ASSIGNMENT", 
+                             "Inside_DIVINE_ASSIGNMENT", "Inside_ADD_ASSIGNMENT", 
+                             "Inside_SUB_ASSIGNMENT", "Inside_Comment", 
+                             "Inside_WS", "Inside_NL", "ErrorCharacter" ];
+    static ruleNames = [ "script", "functionDeclare", "statements", "statement", 
+                         "block", "loopStatement", "whileDo", "doWhile", 
+                         "assignment", "expression", "scoreboardIdentifier", 
+                         "additiveOperator", "multiplicativeOperator" ];
 
     constructor(input) {
         super(input);
@@ -91,6 +146,27 @@ export default class mcbParser extends antlr4.Parser {
         return atn;
     }
 
+    sempred(localctx, ruleIndex, predIndex) {
+    	switch(ruleIndex) {
+    	case 9:
+    	    		return this.expression_sempred(localctx, predIndex);
+        default:
+            throw "No predicate with index:" + ruleIndex;
+       }
+    }
+
+    expression_sempred(localctx, predIndex) {
+    	switch(predIndex) {
+    		case 0:
+    			return this.precpred(this._ctx, 5);
+    		case 1:
+    			return this.precpred(this._ctx, 4);
+    		default:
+    			throw "No predicate with index:" + predIndex;
+    	}
+    };
+
+
 
 
 	script() {
@@ -99,17 +175,17 @@ export default class mcbParser extends antlr4.Parser {
 	    var _la = 0; // Token type
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 13;
+	        this.state = 29;
 	        this._errHandler.sync(this);
 	        _la = this._input.LA(1);
 	        while(_la===mcbParser.NL) {
-	            this.state = 10;
+	            this.state = 26;
 	            this.match(mcbParser.NL);
-	            this.state = 15;
+	            this.state = 31;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	        }
-	        this.state = 16;
+	        this.state = 32;
 	        this.match(mcbParser.EOF);
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
@@ -133,127 +209,28 @@ export default class mcbParser extends antlr4.Parser {
 	    var _la = 0; // Token type
 	    try {
 	        this.enterOuterAlt(localctx, 1);
-	        this.state = 18;
+	        this.state = 34;
 	        this.match(mcbParser.FUN);
-	        this.state = 25;
+	        this.state = 41;
 	        this._errHandler.sync(this);
 	        var la_ = this._interp.adaptivePredict(this._input,2,this._ctx);
 	        if(la_===1) {
-	            this.state = 22;
+	            this.state = 38;
 	            this._errHandler.sync(this);
 	            _la = this._input.LA(1);
 	            while(_la===mcbParser.NL) {
-	                this.state = 19;
+	                this.state = 35;
 	                this.match(mcbParser.NL);
-	                this.state = 24;
+	                this.state = 40;
 	                this._errHandler.sync(this);
 	                _la = this._input.LA(1);
 	            }
 
 	        }
-	        this.state = 27;
+	        this.state = 43;
 	        this.match(mcbParser.Identifier);
-	        this.state = 28;
-	        this.block();
-	    } catch (re) {
-	    	if(re instanceof antlr4.error.RecognitionException) {
-		        localctx.exception = re;
-		        this._errHandler.reportError(this, re);
-		        this._errHandler.recover(this, re);
-		    } else {
-		    	throw re;
-		    }
-	    } finally {
-	        this.exitRule();
-	    }
-	    return localctx;
-	}
-
-
-
-	block() {
-	    let localctx = new BlockContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 4, mcbParser.RULE_block);
-	    var _la = 0; // Token type
-	    try {
-	        this.enterOuterAlt(localctx, 1);
-	        this.state = 30;
-	        this.match(mcbParser.COLON);
-	        this.state = 34;
-	        this._errHandler.sync(this);
-	        var _alt = this._interp.adaptivePredict(this._input,3,this._ctx)
-	        while(_alt!=2 && _alt!=antlr4.atn.ATN.INVALID_ALT_NUMBER) {
-	            if(_alt===1) {
-	                this.state = 31;
-	                this.match(mcbParser.NL); 
-	            }
-	            this.state = 36;
-	            this._errHandler.sync(this);
-	            _alt = this._interp.adaptivePredict(this._input,3,this._ctx);
-	        }
-
-	        this.state = 37;
-	        this.statements();
-	        this.state = 41;
-	        this._errHandler.sync(this);
-	        _la = this._input.LA(1);
-	        while(_la===mcbParser.NL) {
-	            this.state = 38;
-	            this.match(mcbParser.NL);
-	            this.state = 43;
-	            this._errHandler.sync(this);
-	            _la = this._input.LA(1);
-	        }
 	        this.state = 44;
-	        this.match(mcbParser.END);
-	    } catch (re) {
-	    	if(re instanceof antlr4.error.RecognitionException) {
-		        localctx.exception = re;
-		        this._errHandler.reportError(this, re);
-		        this._errHandler.recover(this, re);
-		    } else {
-		    	throw re;
-		    }
-	    } finally {
-	        this.exitRule();
-	    }
-	    return localctx;
-	}
-
-
-
-	whileDo() {
-	    let localctx = new WhileDoContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 6, mcbParser.RULE_whileDo);
-	    var _la = 0; // Token type
-	    try {
-	        this.enterOuterAlt(localctx, 1);
-	        this.state = 46;
-	        this.match(mcbParser.WHILE);
-	        this.state = 50;
-	        this._errHandler.sync(this);
-	        _la = this._input.LA(1);
-	        while(_la===mcbParser.NL) {
-	            this.state = 47;
-	            this.match(mcbParser.NL);
-	            this.state = 52;
-	            this._errHandler.sync(this);
-	            _la = this._input.LA(1);
-	        }
-	        this.state = 53;
-	        this.match(mcbParser.LPAREN);
-	        this.state = 54;
-	        this.match(mcbParser.RPAREN);
-	        this.state = 58;
-	        this._errHandler.sync(this);
-	        _la = this._input.LA(1);
-	        while(_la===mcbParser.NL) {
-	            this.state = 55;
-	            this.match(mcbParser.NL);
-	            this.state = 60;
-	            this._errHandler.sync(this);
-	            _la = this._input.LA(1);
-	        }
+	        this.block();
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
 		        localctx.exception = re;
@@ -272,10 +249,478 @@ export default class mcbParser extends antlr4.Parser {
 
 	statements() {
 	    let localctx = new StatementsContext(this, this._ctx, this.state);
-	    this.enterRule(localctx, 8, mcbParser.RULE_statements);
+	    this.enterRule(localctx, 4, mcbParser.RULE_statements);
+	    var _la = 0; // Token type
 	    try {
 	        this.enterOuterAlt(localctx, 1);
+	        this.state = 54;
+	        this._errHandler.sync(this);
+	        _la = this._input.LA(1);
+	        if(((((_la - 38)) & ~0x1f) == 0 && ((1 << (_la - 38)) & ((1 << (mcbParser.WHILE - 38)) | (1 << (mcbParser.DO - 38)) | (1 << (mcbParser.Identifier - 38)))) !== 0)) {
+	            this.state = 46;
+	            this.statement();
+	            this.state = 51;
+	            this._errHandler.sync(this);
+	            var _alt = this._interp.adaptivePredict(this._input,3,this._ctx)
+	            while(_alt!=2 && _alt!=antlr4.atn.ATN.INVALID_ALT_NUMBER) {
+	                if(_alt===1) {
+	                    this.state = 47;
+	                    this.match(mcbParser.EOF);
+	                    this.state = 48;
+	                    this.statement(); 
+	                }
+	                this.state = 53;
+	                this._errHandler.sync(this);
+	                _alt = this._interp.adaptivePredict(this._input,3,this._ctx);
+	            }
 
+	        }
+
+	        this.state = 57;
+	        this._errHandler.sync(this);
+	        _la = this._input.LA(1);
+	        if(_la===mcbParser.EOF) {
+	            this.state = 56;
+	            this.match(mcbParser.EOF);
+	        }
+
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	statement() {
+	    let localctx = new StatementContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 6, mcbParser.RULE_statement);
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 61;
+	        this._errHandler.sync(this);
+	        switch(this._input.LA(1)) {
+	        case mcbParser.Identifier:
+	            this.state = 59;
+	            this.assignment();
+	            break;
+	        case mcbParser.WHILE:
+	        case mcbParser.DO:
+	            this.state = 60;
+	            this.loopStatement();
+	            break;
+	        default:
+	            throw new antlr4.error.NoViableAltException(this);
+	        }
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	block() {
+	    let localctx = new BlockContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 8, mcbParser.RULE_block);
+	    var _la = 0; // Token type
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 63;
+	        this.match(mcbParser.COLON);
+	        this.state = 67;
+	        this._errHandler.sync(this);
+	        var _alt = this._interp.adaptivePredict(this._input,7,this._ctx)
+	        while(_alt!=2 && _alt!=antlr4.atn.ATN.INVALID_ALT_NUMBER) {
+	            if(_alt===1) {
+	                this.state = 64;
+	                this.match(mcbParser.NL); 
+	            }
+	            this.state = 69;
+	            this._errHandler.sync(this);
+	            _alt = this._interp.adaptivePredict(this._input,7,this._ctx);
+	        }
+
+	        this.state = 70;
+	        this.statements();
+	        this.state = 74;
+	        this._errHandler.sync(this);
+	        _la = this._input.LA(1);
+	        while(_la===mcbParser.NL) {
+	            this.state = 71;
+	            this.match(mcbParser.NL);
+	            this.state = 76;
+	            this._errHandler.sync(this);
+	            _la = this._input.LA(1);
+	        }
+	        this.state = 77;
+	        this.match(mcbParser.END);
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	loopStatement() {
+	    let localctx = new LoopStatementContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 10, mcbParser.RULE_loopStatement);
+	    try {
+	        this.state = 81;
+	        this._errHandler.sync(this);
+	        switch(this._input.LA(1)) {
+	        case mcbParser.WHILE:
+	            this.enterOuterAlt(localctx, 1);
+	            this.state = 79;
+	            this.whileDo();
+	            break;
+	        case mcbParser.DO:
+	            this.enterOuterAlt(localctx, 2);
+	            this.state = 80;
+	            this.doWhile();
+	            break;
+	        default:
+	            throw new antlr4.error.NoViableAltException(this);
+	        }
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	whileDo() {
+	    let localctx = new WhileDoContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 12, mcbParser.RULE_whileDo);
+	    var _la = 0; // Token type
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 83;
+	        this.match(mcbParser.WHILE);
+	        this.state = 87;
+	        this._errHandler.sync(this);
+	        _la = this._input.LA(1);
+	        while(_la===mcbParser.NL) {
+	            this.state = 84;
+	            this.match(mcbParser.NL);
+	            this.state = 89;
+	            this._errHandler.sync(this);
+	            _la = this._input.LA(1);
+	        }
+	        this.state = 90;
+	        this.match(mcbParser.LPAREN);
+	        this.state = 91;
+	        this.match(mcbParser.RPAREN);
+	        this.state = 95;
+	        this._errHandler.sync(this);
+	        _la = this._input.LA(1);
+	        while(_la===mcbParser.NL) {
+	            this.state = 92;
+	            this.match(mcbParser.NL);
+	            this.state = 97;
+	            this._errHandler.sync(this);
+	            _la = this._input.LA(1);
+	        }
+	        this.state = 98;
+	        this.block();
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	doWhile() {
+	    let localctx = new DoWhileContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 14, mcbParser.RULE_doWhile);
+	    var _la = 0; // Token type
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 100;
+	        this.match(mcbParser.DO);
+	        this.state = 104;
+	        this._errHandler.sync(this);
+	        _la = this._input.LA(1);
+	        while(_la===mcbParser.NL) {
+	            this.state = 101;
+	            this.match(mcbParser.NL);
+	            this.state = 106;
+	            this._errHandler.sync(this);
+	            _la = this._input.LA(1);
+	        }
+	        this.state = 107;
+	        this.match(mcbParser.LPAREN);
+	        this.state = 108;
+	        this.match(mcbParser.RPAREN);
+	        this.state = 112;
+	        this._errHandler.sync(this);
+	        _la = this._input.LA(1);
+	        while(_la===mcbParser.NL) {
+	            this.state = 109;
+	            this.match(mcbParser.NL);
+	            this.state = 114;
+	            this._errHandler.sync(this);
+	            _la = this._input.LA(1);
+	        }
+	        this.state = 115;
+	        this.block();
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	assignment() {
+	    let localctx = new AssignmentContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 16, mcbParser.RULE_assignment);
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 117;
+	        this.scoreboardIdentifier();
+	        this.state = 118;
+	        this.match(mcbParser.ASSIGNMENT);
+	        this.state = 119;
+	        this.expression(0);
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+	expression(_p) {
+		if(_p===undefined) {
+		    _p = 0;
+		}
+	    const _parentctx = this._ctx;
+	    const _parentState = this.state;
+	    let localctx = new ExpressionContext(this, this._ctx, _parentState);
+	    let _prevctx = localctx;
+	    const _startState = 18;
+	    this.enterRecursionRule(localctx, 18, mcbParser.RULE_expression, _p);
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 128;
+	        this._errHandler.sync(this);
+	        switch(this._input.LA(1)) {
+	        case mcbParser.Identifier:
+	            this.state = 122;
+	            this.scoreboardIdentifier();
+	            break;
+	        case mcbParser.IntegerLiteral:
+	            this.state = 123;
+	            this.match(mcbParser.IntegerLiteral);
+	            break;
+	        case mcbParser.LPAREN:
+	            this.state = 124;
+	            this.match(mcbParser.LPAREN);
+	            this.state = 125;
+	            this.expression(0);
+	            this.state = 126;
+	            this.match(mcbParser.RPAREN);
+	            break;
+	        default:
+	            throw new antlr4.error.NoViableAltException(this);
+	        }
+	        this._ctx.stop = this._input.LT(-1);
+	        this.state = 140;
+	        this._errHandler.sync(this);
+	        var _alt = this._interp.adaptivePredict(this._input,16,this._ctx)
+	        while(_alt!=2 && _alt!=antlr4.atn.ATN.INVALID_ALT_NUMBER) {
+	            if(_alt===1) {
+	                if(this._parseListeners!==null) {
+	                    this.triggerExitRuleEvent();
+	                }
+	                _prevctx = localctx;
+	                this.state = 138;
+	                this._errHandler.sync(this);
+	                var la_ = this._interp.adaptivePredict(this._input,15,this._ctx);
+	                switch(la_) {
+	                case 1:
+	                    localctx = new ExpressionContext(this, _parentctx, _parentState);
+	                    this.pushNewRecursionContext(localctx, _startState, mcbParser.RULE_expression);
+	                    this.state = 130;
+	                    if (!( this.precpred(this._ctx, 5))) {
+	                        throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 5)");
+	                    }
+	                    this.state = 131;
+	                    this.multiplicativeOperator();
+	                    this.state = 132;
+	                    this.expression(6);
+	                    break;
+
+	                case 2:
+	                    localctx = new ExpressionContext(this, _parentctx, _parentState);
+	                    this.pushNewRecursionContext(localctx, _startState, mcbParser.RULE_expression);
+	                    this.state = 134;
+	                    if (!( this.precpred(this._ctx, 4))) {
+	                        throw new antlr4.error.FailedPredicateException(this, "this.precpred(this._ctx, 4)");
+	                    }
+	                    this.state = 135;
+	                    this.additiveOperator();
+	                    this.state = 136;
+	                    this.expression(5);
+	                    break;
+
+	                } 
+	            }
+	            this.state = 142;
+	            this._errHandler.sync(this);
+	            _alt = this._interp.adaptivePredict(this._input,16,this._ctx);
+	        }
+
+	    } catch( error) {
+	        if(error instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = error;
+		        this._errHandler.reportError(this, error);
+		        this._errHandler.recover(this, error);
+		    } else {
+		    	throw error;
+		    }
+	    } finally {
+	        this.unrollRecursionContexts(_parentctx)
+	    }
+	    return localctx;
+	}
+
+
+
+	scoreboardIdentifier() {
+	    let localctx = new ScoreboardIdentifierContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 20, mcbParser.RULE_scoreboardIdentifier);
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 143;
+	        this.match(mcbParser.Identifier);
+	        this.state = 144;
+	        this.match(mcbParser.LSQUARE);
+	        this.state = 145;
+	        this.match(mcbParser.Identifier);
+	        this.state = 146;
+	        this.match(mcbParser.RSQUARE);
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	additiveOperator() {
+	    let localctx = new AdditiveOperatorContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 22, mcbParser.RULE_additiveOperator);
+	    var _la = 0; // Token type
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 148;
+	        _la = this._input.LA(1);
+	        if(!(_la===mcbParser.ADD || _la===mcbParser.SUB)) {
+	        this._errHandler.recoverInline(this);
+	        }
+	        else {
+	        	this._errHandler.reportMatch(this);
+	            this.consume();
+	        }
+	    } catch (re) {
+	    	if(re instanceof antlr4.error.RecognitionException) {
+		        localctx.exception = re;
+		        this._errHandler.reportError(this, re);
+		        this._errHandler.recover(this, re);
+		    } else {
+		    	throw re;
+		    }
+	    } finally {
+	        this.exitRule();
+	    }
+	    return localctx;
+	}
+
+
+
+	multiplicativeOperator() {
+	    let localctx = new MultiplicativeOperatorContext(this, this._ctx, this.state);
+	    this.enterRule(localctx, 24, mcbParser.RULE_multiplicativeOperator);
+	    var _la = 0; // Token type
+	    try {
+	        this.enterOuterAlt(localctx, 1);
+	        this.state = 150;
+	        _la = this._input.LA(1);
+	        if(!((((_la) & ~0x1f) == 0 && ((1 << _la) & ((1 << mcbParser.MULT) | (1 << mcbParser.MOD) | (1 << mcbParser.DIV))) !== 0))) {
+	        this._errHandler.recoverInline(this);
+	        }
+	        else {
+	        	this._errHandler.reportMatch(this);
+	            this.consume();
+	        }
 	    } catch (re) {
 	    	if(re instanceof antlr4.error.RecognitionException) {
 		        localctx.exception = re;
@@ -308,51 +753,69 @@ mcbParser.RCURL = 11;
 mcbParser.RANGE = 12;
 mcbParser.MULT = 13;
 mcbParser.MOD = 14;
-mcbParser.DIVINE = 15;
+mcbParser.DIV = 15;
 mcbParser.ADD = 16;
 mcbParser.SUB = 17;
 mcbParser.COLON = 18;
-mcbParser.ASSIGN = 19;
-mcbParser.LANGLE = 20;
-mcbParser.RANGLE = 21;
-mcbParser.LE = 22;
-mcbParser.GE = 23;
-mcbParser.AT_N_WS = 24;
-mcbParser.AT_P_WS = 25;
-mcbParser.AT_S_WS = 26;
-mcbParser.AT_B_WS = 27;
-mcbParser.FUN = 28;
-mcbParser.END = 29;
-mcbParser.IF = 30;
-mcbParser.UNLESS = 31;
-mcbParser.ELSE = 32;
-mcbParser.WHILE = 33;
-mcbParser.DO = 34;
-mcbParser.RealLiteral = 35;
-mcbParser.FloatLiteral = 36;
-mcbParser.DoubleLiteral = 37;
-mcbParser.IntegerLiteral = 38;
-mcbParser.Identifier = 39;
-mcbParser.QUOTE_OPEN = 40;
-mcbParser.UNICODE_CLASS_LL = 41;
-mcbParser.UNICODE_CLASS_LM = 42;
-mcbParser.UNICODE_CLASS_LO = 43;
-mcbParser.UNICODE_CLASS_LT = 44;
-mcbParser.UNICODE_CLASS_LU = 45;
-mcbParser.UNICODE_CLASS_ND = 46;
-mcbParser.UNICODE_CLASS_NL = 47;
-mcbParser.QUOTE_CLOSE = 48;
-mcbParser.LineStrText = 49;
-mcbParser.Inside_Comment = 50;
-mcbParser.Inside_WS = 51;
-mcbParser.Inside_NL = 52;
-mcbParser.ErrorCharacter = 53;
+mcbParser.ASSIGNMENT = 19;
+mcbParser.MULT_ASSIGNMENT = 20;
+mcbParser.MOD_ASSIGNMENT = 21;
+mcbParser.DIVINE_ASSIGNMENT = 22;
+mcbParser.ADD_ASSIGNMENT = 23;
+mcbParser.SUB_ASSIGNMENT = 24;
+mcbParser.LANGLE = 25;
+mcbParser.RANGLE = 26;
+mcbParser.LE = 27;
+mcbParser.GE = 28;
+mcbParser.AT_N_WS = 29;
+mcbParser.AT_P_WS = 30;
+mcbParser.AT_S_WS = 31;
+mcbParser.AT_B_WS = 32;
+mcbParser.FUN = 33;
+mcbParser.END = 34;
+mcbParser.IF = 35;
+mcbParser.UNLESS = 36;
+mcbParser.ELSE = 37;
+mcbParser.WHILE = 38;
+mcbParser.DO = 39;
+mcbParser.RealLiteral = 40;
+mcbParser.FloatLiteral = 41;
+mcbParser.DoubleLiteral = 42;
+mcbParser.IntegerLiteral = 43;
+mcbParser.Identifier = 44;
+mcbParser.QUOTE_OPEN = 45;
+mcbParser.UNICODE_CLASS_LL = 46;
+mcbParser.UNICODE_CLASS_LM = 47;
+mcbParser.UNICODE_CLASS_LO = 48;
+mcbParser.UNICODE_CLASS_LT = 49;
+mcbParser.UNICODE_CLASS_LU = 50;
+mcbParser.UNICODE_CLASS_ND = 51;
+mcbParser.UNICODE_CLASS_NL = 52;
+mcbParser.QUOTE_CLOSE = 53;
+mcbParser.LineStrText = 54;
+mcbParser.Inside_MULT_ASSIGNMENT = 55;
+mcbParser.Inside_MOD_ASSIGNMENT = 56;
+mcbParser.Inside_DIVINE_ASSIGNMENT = 57;
+mcbParser.Inside_ADD_ASSIGNMENT = 58;
+mcbParser.Inside_SUB_ASSIGNMENT = 59;
+mcbParser.Inside_Comment = 60;
+mcbParser.Inside_WS = 61;
+mcbParser.Inside_NL = 62;
+mcbParser.ErrorCharacter = 63;
 
 mcbParser.RULE_script = 0;
 mcbParser.RULE_functionDeclare = 1;
-mcbParser.RULE_block = 2;
-mcbParser.RULE_whileDo = 3;
-mcbParser.RULE_statements = 4;
+mcbParser.RULE_statements = 2;
+mcbParser.RULE_statement = 3;
+mcbParser.RULE_block = 4;
+mcbParser.RULE_loopStatement = 5;
+mcbParser.RULE_whileDo = 6;
+mcbParser.RULE_doWhile = 7;
+mcbParser.RULE_assignment = 8;
+mcbParser.RULE_expression = 9;
+mcbParser.RULE_scoreboardIdentifier = 10;
+mcbParser.RULE_additiveOperator = 11;
+mcbParser.RULE_multiplicativeOperator = 12;
 
 class ScriptContext extends antlr4.ParserRuleContext {
 
@@ -472,6 +935,115 @@ class FunctionDeclareContext extends antlr4.ParserRuleContext {
 
 
 
+class StatementsContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = mcbParser.RULE_statements;
+    }
+
+	statement = function(i) {
+	    if(i===undefined) {
+	        i = null;
+	    }
+	    if(i===null) {
+	        return this.getTypedRuleContexts(StatementContext);
+	    } else {
+	        return this.getTypedRuleContext(StatementContext,i);
+	    }
+	};
+
+	EOF = function(i) {
+		if(i===undefined) {
+			i = null;
+		}
+	    if(i===null) {
+	        return this.getTokens(mcbParser.EOF);
+	    } else {
+	        return this.getToken(mcbParser.EOF, i);
+	    }
+	};
+
+
+	enterRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.enterStatements(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.exitStatements(this);
+		}
+	}
+
+	accept(visitor) {
+	    if ( visitor instanceof mcbParserVisitor ) {
+	        return visitor.visitStatements(this);
+	    } else {
+	        return visitor.visitChildren(this);
+	    }
+	}
+
+
+}
+
+
+
+class StatementContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = mcbParser.RULE_statement;
+    }
+
+	assignment() {
+	    return this.getTypedRuleContext(AssignmentContext,0);
+	};
+
+	loopStatement() {
+	    return this.getTypedRuleContext(LoopStatementContext,0);
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.enterStatement(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.exitStatement(this);
+		}
+	}
+
+	accept(visitor) {
+	    if ( visitor instanceof mcbParserVisitor ) {
+	        return visitor.visitStatement(this);
+	    } else {
+	        return visitor.visitChildren(this);
+	    }
+	}
+
+
+}
+
+
+
 class BlockContext extends antlr4.ParserRuleContext {
 
     constructor(parser, parent, invokingState) {
@@ -535,6 +1107,53 @@ class BlockContext extends antlr4.ParserRuleContext {
 
 
 
+class LoopStatementContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = mcbParser.RULE_loopStatement;
+    }
+
+	whileDo() {
+	    return this.getTypedRuleContext(WhileDoContext,0);
+	};
+
+	doWhile() {
+	    return this.getTypedRuleContext(DoWhileContext,0);
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.enterLoopStatement(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.exitLoopStatement(this);
+		}
+	}
+
+	accept(visitor) {
+	    if ( visitor instanceof mcbParserVisitor ) {
+	        return visitor.visitLoopStatement(this);
+	    } else {
+	        return visitor.visitChildren(this);
+	    }
+	}
+
+
+}
+
+
+
 class WhileDoContext extends antlr4.ParserRuleContext {
 
     constructor(parser, parent, invokingState) {
@@ -559,6 +1178,10 @@ class WhileDoContext extends antlr4.ParserRuleContext {
 
 	RPAREN() {
 	    return this.getToken(mcbParser.RPAREN, 0);
+	};
+
+	block() {
+	    return this.getTypedRuleContext(BlockContext,0);
 	};
 
 	NL = function(i) {
@@ -598,7 +1221,7 @@ class WhileDoContext extends antlr4.ParserRuleContext {
 
 
 
-class StatementsContext extends antlr4.ParserRuleContext {
+class DoWhileContext extends antlr4.ParserRuleContext {
 
     constructor(parser, parent, invokingState) {
         if(parent===undefined) {
@@ -609,25 +1232,334 @@ class StatementsContext extends antlr4.ParserRuleContext {
         }
         super(parent, invokingState);
         this.parser = parser;
-        this.ruleIndex = mcbParser.RULE_statements;
+        this.ruleIndex = mcbParser.RULE_doWhile;
     }
+
+	DO() {
+	    return this.getToken(mcbParser.DO, 0);
+	};
+
+	LPAREN() {
+	    return this.getToken(mcbParser.LPAREN, 0);
+	};
+
+	RPAREN() {
+	    return this.getToken(mcbParser.RPAREN, 0);
+	};
+
+	block() {
+	    return this.getTypedRuleContext(BlockContext,0);
+	};
+
+	NL = function(i) {
+		if(i===undefined) {
+			i = null;
+		}
+	    if(i===null) {
+	        return this.getTokens(mcbParser.NL);
+	    } else {
+	        return this.getToken(mcbParser.NL, i);
+	    }
+	};
 
 
 	enterRule(listener) {
 	    if(listener instanceof mcbParserListener ) {
-	        listener.enterStatements(this);
+	        listener.enterDoWhile(this);
 		}
 	}
 
 	exitRule(listener) {
 	    if(listener instanceof mcbParserListener ) {
-	        listener.exitStatements(this);
+	        listener.exitDoWhile(this);
 		}
 	}
 
 	accept(visitor) {
 	    if ( visitor instanceof mcbParserVisitor ) {
-	        return visitor.visitStatements(this);
+	        return visitor.visitDoWhile(this);
+	    } else {
+	        return visitor.visitChildren(this);
+	    }
+	}
+
+
+}
+
+
+
+class AssignmentContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = mcbParser.RULE_assignment;
+    }
+
+	scoreboardIdentifier() {
+	    return this.getTypedRuleContext(ScoreboardIdentifierContext,0);
+	};
+
+	ASSIGNMENT() {
+	    return this.getToken(mcbParser.ASSIGNMENT, 0);
+	};
+
+	expression() {
+	    return this.getTypedRuleContext(ExpressionContext,0);
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.enterAssignment(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.exitAssignment(this);
+		}
+	}
+
+	accept(visitor) {
+	    if ( visitor instanceof mcbParserVisitor ) {
+	        return visitor.visitAssignment(this);
+	    } else {
+	        return visitor.visitChildren(this);
+	    }
+	}
+
+
+}
+
+
+
+class ExpressionContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = mcbParser.RULE_expression;
+    }
+
+	scoreboardIdentifier() {
+	    return this.getTypedRuleContext(ScoreboardIdentifierContext,0);
+	};
+
+	IntegerLiteral() {
+	    return this.getToken(mcbParser.IntegerLiteral, 0);
+	};
+
+	LPAREN() {
+	    return this.getToken(mcbParser.LPAREN, 0);
+	};
+
+	expression = function(i) {
+	    if(i===undefined) {
+	        i = null;
+	    }
+	    if(i===null) {
+	        return this.getTypedRuleContexts(ExpressionContext);
+	    } else {
+	        return this.getTypedRuleContext(ExpressionContext,i);
+	    }
+	};
+
+	RPAREN() {
+	    return this.getToken(mcbParser.RPAREN, 0);
+	};
+
+	multiplicativeOperator() {
+	    return this.getTypedRuleContext(MultiplicativeOperatorContext,0);
+	};
+
+	additiveOperator() {
+	    return this.getTypedRuleContext(AdditiveOperatorContext,0);
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.enterExpression(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.exitExpression(this);
+		}
+	}
+
+	accept(visitor) {
+	    if ( visitor instanceof mcbParserVisitor ) {
+	        return visitor.visitExpression(this);
+	    } else {
+	        return visitor.visitChildren(this);
+	    }
+	}
+
+
+}
+
+
+
+class ScoreboardIdentifierContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = mcbParser.RULE_scoreboardIdentifier;
+    }
+
+	Identifier = function(i) {
+		if(i===undefined) {
+			i = null;
+		}
+	    if(i===null) {
+	        return this.getTokens(mcbParser.Identifier);
+	    } else {
+	        return this.getToken(mcbParser.Identifier, i);
+	    }
+	};
+
+
+	LSQUARE() {
+	    return this.getToken(mcbParser.LSQUARE, 0);
+	};
+
+	RSQUARE() {
+	    return this.getToken(mcbParser.RSQUARE, 0);
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.enterScoreboardIdentifier(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.exitScoreboardIdentifier(this);
+		}
+	}
+
+	accept(visitor) {
+	    if ( visitor instanceof mcbParserVisitor ) {
+	        return visitor.visitScoreboardIdentifier(this);
+	    } else {
+	        return visitor.visitChildren(this);
+	    }
+	}
+
+
+}
+
+
+
+class AdditiveOperatorContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = mcbParser.RULE_additiveOperator;
+    }
+
+	ADD() {
+	    return this.getToken(mcbParser.ADD, 0);
+	};
+
+	SUB() {
+	    return this.getToken(mcbParser.SUB, 0);
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.enterAdditiveOperator(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.exitAdditiveOperator(this);
+		}
+	}
+
+	accept(visitor) {
+	    if ( visitor instanceof mcbParserVisitor ) {
+	        return visitor.visitAdditiveOperator(this);
+	    } else {
+	        return visitor.visitChildren(this);
+	    }
+	}
+
+
+}
+
+
+
+class MultiplicativeOperatorContext extends antlr4.ParserRuleContext {
+
+    constructor(parser, parent, invokingState) {
+        if(parent===undefined) {
+            parent = null;
+        }
+        if(invokingState===undefined || invokingState===null) {
+            invokingState = -1;
+        }
+        super(parent, invokingState);
+        this.parser = parser;
+        this.ruleIndex = mcbParser.RULE_multiplicativeOperator;
+    }
+
+	MULT() {
+	    return this.getToken(mcbParser.MULT, 0);
+	};
+
+	DIV() {
+	    return this.getToken(mcbParser.DIV, 0);
+	};
+
+	MOD() {
+	    return this.getToken(mcbParser.MOD, 0);
+	};
+
+	enterRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.enterMultiplicativeOperator(this);
+		}
+	}
+
+	exitRule(listener) {
+	    if(listener instanceof mcbParserListener ) {
+	        listener.exitMultiplicativeOperator(this);
+		}
+	}
+
+	accept(visitor) {
+	    if ( visitor instanceof mcbParserVisitor ) {
+	        return visitor.visitMultiplicativeOperator(this);
 	    } else {
 	        return visitor.visitChildren(this);
 	    }
@@ -641,6 +1573,14 @@ class StatementsContext extends antlr4.ParserRuleContext {
 
 mcbParser.ScriptContext = ScriptContext; 
 mcbParser.FunctionDeclareContext = FunctionDeclareContext; 
-mcbParser.BlockContext = BlockContext; 
-mcbParser.WhileDoContext = WhileDoContext; 
 mcbParser.StatementsContext = StatementsContext; 
+mcbParser.StatementContext = StatementContext; 
+mcbParser.BlockContext = BlockContext; 
+mcbParser.LoopStatementContext = LoopStatementContext; 
+mcbParser.WhileDoContext = WhileDoContext; 
+mcbParser.DoWhileContext = DoWhileContext; 
+mcbParser.AssignmentContext = AssignmentContext; 
+mcbParser.ExpressionContext = ExpressionContext; 
+mcbParser.ScoreboardIdentifierContext = ScoreboardIdentifierContext; 
+mcbParser.AdditiveOperatorContext = AdditiveOperatorContext; 
+mcbParser.MultiplicativeOperatorContext = MultiplicativeOperatorContext; 

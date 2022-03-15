@@ -23,12 +23,17 @@ RCURL: '}'{ if (!_modeStack.isEmpty()) { popMode(); } };
 RANGE: '..';
 MULT: '*';
 MOD: '%';
-DIVINE: '/';
+DIV: '/';
 ADD: '+';
 SUB: '-';
 COLON: ':';
 
-ASSIGN: '=';
+ASSIGNMENT: '=';
+MULT_ASSIGNMENT: '*';
+MOD_ASSIGNMENT: '%';
+DIVINE_ASSIGNMENT: '/';
+ADD_ASSIGNMENT: '+';
+SUB_ASSIGNMENT: '-';
 LANGLE: '<';
 RANGLE: '>';
 LE: '<=';
@@ -72,7 +77,7 @@ fragment Letter
     ;
     
 Identifier
-    : (Letter | '_' | '#') (Letter | '_' | UnicodeDigit)*;
+    : (Letter | '_' | '#' | '.') (Letter | '_' | '#' | '.' | UnicodeDigit)*;
 
 QUOTE_OPEN: '"' -> pushMode(LineString);
 
@@ -99,11 +104,17 @@ Inside_DOT: DOT -> type(DOT);
 Inside_COMMA: COMMA  -> type(COMMA);
 Inside_MULT: MULT -> type(MULT);
 Inside_MOD: MOD  -> type(MOD);
-Inside_DIV: DIVINE -> type(DIVINE);
+Inside_DIV: DIV -> type(DIV);
 Inside_ADD: ADD  -> type(ADD);
 Inside_SUB: SUB  -> type(SUB);
 Inside_COLON: COLON  -> type(COLON);
-Inside_ASSIGNMENT: ASSIGN  -> type(ASSIGN);
+Inside_ASSIGNMENT: ASSIGNMENT  -> type(ASSIGNMENT);
+Inside_MULT_ASSIGNMENT: '*';
+Inside_MOD_ASSIGNMENT: '%';
+Inside_DIVINE_ASSIGNMENT: '/';
+Inside_ADD_ASSIGNMENT: '+';
+Inside_SUB_ASSIGNMENT: '-';
+
 Inside_RANGE: RANGE  -> type(RANGE);
 Inside_AT_N_WS: AT_N_WS  -> type(AT_N_WS);
 InsideAT_S_WS: AT_S_WS  -> type(AT_S_WS);
