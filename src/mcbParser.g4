@@ -4,7 +4,7 @@ options { tokenVocab = mcbLexer;}
 script: NL* EOF;
 
 functionDeclare
-    : FUN (NL*)? Identifier block
+    : FUN NL*? Identifier block
     ;
 
 statements

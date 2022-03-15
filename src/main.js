@@ -25,6 +25,7 @@ const tree = parser.chunk()
 const name = 'mcb.sb.'
 const temp = 'mcb.temp'
 class Visitor extends mcbVisitor {
+    
 }
 
 //console.log((tree.accept(new Visitor)));
