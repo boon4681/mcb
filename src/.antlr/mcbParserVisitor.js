@@ -6,8 +6,14 @@ import antlr4 from 'antlr4';
 
 export default class mcbParserVisitor extends antlr4.tree.ParseTreeVisitor {
 
-	// Visit a parse tree produced by mcbParser#script.
-	visitScript(ctx) {
+	// Visit a parse tree produced by mcbParser#mcb.
+	visitMcb(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#topPiorityObject.
+	visitTopPiorityObject(ctx) {
 	  return this.visitChildren(ctx);
 	}
 
@@ -122,6 +128,12 @@ export default class mcbParserVisitor extends antlr4.tree.ParseTreeVisitor {
 
 	// Visit a parse tree produced by mcbParser#literalConstant.
 	visitLiteralConstant(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#assignmentiveOperator.
+	visitAssignmentiveOperator(ctx) {
 	  return this.visitChildren(ctx);
 	}
 

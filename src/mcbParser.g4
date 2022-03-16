@@ -1,7 +1,10 @@
 parser grammar mcbParser;
 options { tokenVocab = mcbLexer;}
 
-script: NL* (statement nl)* EOF;
+mcb: NL* topPiorityObject* EOF;
+topPiorityObject
+    : declaration nls?
+    ;
 
 statements
     : (statement (nls statement)*)? nls?
@@ -80,6 +83,15 @@ literalConstant
     : RealLiteral
     | IntegerLiteral
     | stringLiteral
+    ;
+
+assignmentiveOperator
+    : ASSIGNMENT
+    | MULT_ASSIGNMENT
+    | MOD_ASSIGNMENT
+    | DIVINE_ASSIGNMENT
+    | ADD_ASSIGNMENT
+    | SUB_ASSIGNMENT
     ;
 
 additiveOperator

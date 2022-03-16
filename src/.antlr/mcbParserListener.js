@@ -5,12 +5,21 @@ import antlr4 from 'antlr4';
 // This class defines a complete listener for a parse tree produced by mcbParser.
 export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 
-	// Enter a parse tree produced by mcbParser#script.
-	enterScript(ctx) {
+	// Enter a parse tree produced by mcbParser#mcb.
+	enterMcb(ctx) {
 	}
 
-	// Exit a parse tree produced by mcbParser#script.
-	exitScript(ctx) {
+	// Exit a parse tree produced by mcbParser#mcb.
+	exitMcb(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#topPiorityObject.
+	enterTopPiorityObject(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#topPiorityObject.
+	exitTopPiorityObject(ctx) {
 	}
 
 
@@ -182,6 +191,15 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by mcbParser#literalConstant.
 	exitLiteralConstant(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#assignmentiveOperator.
+	enterAssignmentiveOperator(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#assignmentiveOperator.
+	exitAssignmentiveOperator(ctx) {
 	}
 
 

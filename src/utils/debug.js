@@ -1,6 +1,10 @@
 
 function checkVisit(c,p){
-    console.log(`visit${c.constructor.name}`,JSON.stringify(p,'',2))
+    try {
+        console.log(`visit${c.constructor.name}`,JSON.stringify(p,'',2))
+    } catch (error) {
+        console.log(`visit${c.constructor.name}`,p)
+    }
     return p
 }
 

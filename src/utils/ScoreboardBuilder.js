@@ -1,3 +1,5 @@
+let name = 'mcb.sb.'
+let temp = 'mcb.temp'
 
 function scoreObjectiveAdd(objective,criteria,displayName){
     return `scoreboard objectives add ${objective} ${criteria} ${displayName?displayName:''}`
@@ -14,5 +16,7 @@ function scoreOperationSet(target1, maindef1, operation, target2, maindef2){
 export {
     scoreObjectiveAdd,
     scoreOperationSet,
-    scoreSet
+    scoreSet,
+    name,
+    temp
 }
