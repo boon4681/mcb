@@ -77,6 +77,195 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by mcbParser#ifStatement.
+	enterIfStatement(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#ifStatement.
+	exitIfStatement(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#ifExpression.
+	enterIfExpression(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#ifExpression.
+	exitIfExpression(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#disconjuction.
+	enterDisconjuction(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#disconjuction.
+	exitDisconjuction(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#conjuction.
+	enterConjuction(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#conjuction.
+	exitConjuction(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#comparison.
+	enterComparison(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#comparison.
+	exitComparison(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#scoreNscoreExpression.
+	enterScoreNscoreExpression(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#scoreNscoreExpression.
+	exitScoreNscoreExpression(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#scoreNrangeExpression.
+	enterScoreNrangeExpression(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#scoreNrangeExpression.
+	exitScoreNrangeExpression(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#entityNBTExpression.
+	enterEntityNBTExpression(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#entityNBTExpression.
+	exitEntityNBTExpression(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#blockExpression.
+	enterBlockExpression(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#blockExpression.
+	exitBlockExpression(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#comparator.
+	enterComparator(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#comparator.
+	exitComparator(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#blockTag.
+	enterBlockTag(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#blockTag.
+	exitBlockTag(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#locateStatement.
+	enterLocateStatement(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#locateStatement.
+	exitLocateStatement(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#position.
+	enterPosition(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#position.
+	exitPosition(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#posPrefix.
+	enterPosPrefix(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#posPrefix.
+	exitPosPrefix(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#posInner.
+	enterPosInner(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#posInner.
+	exitPosInner(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#posSuffix.
+	enterPosSuffix(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#posSuffix.
+	exitPosSuffix(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#anchor.
+	enterAnchor(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#anchor.
+	exitAnchor(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#ancPrefix.
+	enterAncPrefix(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#ancPrefix.
+	exitAncPrefix(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#ancInner.
+	enterAncInner(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#ancInner.
+	exitAncInner(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#ancSuffix.
+	enterAncSuffix(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#ancSuffix.
+	exitAncSuffix(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#locateLiteral.
+	enterLocateLiteral(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#locateLiteral.
+	exitLocateLiteral(ctx) {
+	}
+
+
 	// Enter a parse tree produced by mcbParser#whileDo.
 	enterWhileDo(ctx) {
 	}

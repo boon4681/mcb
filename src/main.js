@@ -4,22 +4,22 @@ import mcbParser from './.antlr/mcbParser.js';
 import mcbListener from './.antlr/mcbParserListener.js';
 import mcbVisitor from './.antlr/mcbParserVisitor.js';
 import * as SCBuidler from './utils/ScoreboardBuilder.js'
-import * as debug from './utils/debug.js'
+import Debug from './utils/debug.js'
 import * as tempError from './error/genericErrorHandling.js'
 import ParserErrorListener from './error/ParserErrorListener.js';
 
 const input = `
 fun main:
-    // x[@s[scores={x=5}]] = 10
-    // x[y] = -15
-    // x[x] = x[x]-30*50
-    // x[sub] = x[input]*(180 - x[input])
-    // x[sine] = 4*x[sub]/(40500-x[sub])
-    x[x] = 1+2+3
+    x[@s[scores={x=5}]] = 10
+    x[y] = -15
+    x[x] = x[x]-30*50
+    x[sub] = x[input]*(180 - x[input])
     x[sine] = 4*x[sub]/(40500-x[sub])
 end
 
 fun test:
+    if block ~5 ~ ~ #wool and entity @s:
+    end
 end
 `
 
@@ -32,6 +32,8 @@ parser.removeErrorListeners()
 parser.addErrorListener(new ParserErrorListener())
 parser.buildParseTrees = true;
 const tree = parser.mcb()
+const debug = new Debug()
+debug.showingSection = ["if"]
 class Visitor extends mcbVisitor {
     SCIDReg = {}
     currentSC = ""
@@ -218,10 +220,11 @@ class Visitor extends mcbVisitor {
                 statements: this.visitChildren(c).flat(Infinity).filter(a => a != null)
             }
         }, "intersected function name")
+        console.log(this.Functions[name])
     }
 
     visitAssignment(c) {
-        const assignee = debug.checkVisit(c, this.visit(this.child(c, 0)))
+        const assignee = debug.checkVisit(c, this.visit(this.child(c, 0)),'score')
         tempError.critical(assignee.type === "scoreboardIdentify")(() => {
             this.currentSC = assignee.value.objective
             if (!this.SCIDReg[this.currentSC])
@@ -231,20 +234,13 @@ class Visitor extends mcbVisitor {
         }, "scoreboardIdentify not found.")
         const AssignmentOperation = this.visit(this.child(c, 1))
         const statements = this.visit(this.child(c, 2))[0]
-        let value = statements.statements
+        let value = statements.statements || []
         if (statements.type === "scoreboardLiteral") {
             value.push(
                 SCBuidler.scoreSet(
-                    SCBuidler.temp,
-                    this.currentSC,
-                    statements.value
-                ),
-                SCBuidler.scoreOperationSet(
                     assignee.value.target,
                     this.currentSC,
-                    AssignmentOperation,
-                    SCBuidler.temp,
-                    this.currentSC
+                    statements.value
                 )
             )
         }else if (statements.type === "scoreboardIdentify"){
@@ -268,12 +264,11 @@ class Visitor extends mcbVisitor {
                 )
             )
         }
-        console.log(value)
-        return ""
+        return value
     }
 
     visitAdditiveExpression(c) {
-        const p = debug.checkVisit(c, this.visitChildren(c))
+        const p = debug.checkVisit(c, this.visitChildren(c),'score')
         if (p.length >= 3) {
             let data = p.slice()
             for (let i = 0; i < p.length; i += 3) {
@@ -296,7 +291,7 @@ class Visitor extends mcbVisitor {
     }
 
     visitMultiplicativeExpression(c) {
-        const p = debug.checkVisit(c, this.visitChildren(c))
+        const p = debug.checkVisit(c, this.visitChildren(c),'score')
         if (p.length >= 3) {
             let data = p.slice()
             for (let i = 0; i < p.length; i += 3) {
@@ -336,23 +331,23 @@ class Visitor extends mcbVisitor {
     }
 
     visitAssignmentOperator(c) {
-        return debug.checkVisit(c, this.child(c))
+        return debug.checkVisit(c, this.child(c),'score')
     }
 
     visitMultiplicativeOperator(c) {
-        return debug.checkVisit(c, this.child(c))
+        return debug.checkVisit(c, this.child(c),'score')
     }
 
     visitAdditiveOperator(c) {
-        return debug.checkVisit(c, this.child(c))
+        return debug.checkVisit(c, this.child(c),'score')
     }
 
     visitAsExpression(c) {
-        return debug.checkVisit(c, this.visitChildren(c))[0]
+        return debug.checkVisit(c, this.visitChildren(c),'score')[0]
     }
 
     visitParentAssignableExpression(c) {
-        return debug.checkVisit(c, this.visitChildren(this.child(c, 1)))[0]
+        return debug.checkVisit(c, this.visitChildren(this.child(c, 1)),'score')[0]
     }
 }
 //console.log((tree.accept(new Visitor)));

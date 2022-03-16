@@ -11,7 +11,7 @@ statements
     ;
 
 statement
-    : ( declaration | assignment | loopStatement )
+    : ( declaration | assignment | loopStatement | ifStatement )
     ;
 
 declaration
@@ -26,7 +26,113 @@ block
     : COLON NL* statements NL* END
     ;
 
-loopStatement: whileDo | doWhile;
+loopStatement
+    : whileDo 
+    | doWhile
+    ;
+
+ifStatement
+    : IF NL* ifExpression NL* block
+    ;
+
+ifExpression
+    : disconjuction
+    ;
+
+disconjuction
+    : conjuction (DISJ conjuction)*
+    ;
+
+conjuction
+    : comparison (CONJ comparison)*
+    ;
+
+comparison
+    : scoreNscoreExpression
+    | scoreNrangeExpression
+    | entityNBTExpression
+    | blockExpression
+    ;
+
+scoreNscoreExpression
+    : scoreboardIdentifier comparator scoreboardIdentifier
+    ;
+
+scoreNrangeExpression
+    : scoreboardIdentifier K_MATCHES scoreboardLiteral RANGE scoreboardLiteral
+    ;
+
+entityNBTExpression
+    : K_ENTITY ENTITY nbt?
+    ;
+
+blockExpression
+    : K_BLOCK locateStatement blockTag
+    ;
+
+comparator
+    : LANGLE | RANGLE | LE | GE | ASSIGNMENT
+    ;
+
+blockTag
+    : Identifier
+    | Identifier COLON Identifier
+    ;
+
+locateStatement
+    : position
+    | anchor
+    ;
+
+position
+    : posPrefix posInner posSuffix
+    ;
+
+posPrefix
+    : POS_P_WS locateLiteral
+    | POS_P_WS
+    | locateLiteral
+    ;
+
+posInner
+    : POS_B_WS locateLiteral
+    | POS_B_WS
+    | locateLiteral
+    ;
+
+posSuffix
+    : POS_S_WS locateLiteral
+    | POS_S_WS
+    | locateLiteral
+    ;
+
+anchor
+    : ancPrefix ancInner ancSuffix
+    ;
+
+ancPrefix
+    : ANC_P_WS locateLiteral
+    | ANC_P_WS
+    | locateLiteral
+    ;
+
+ancInner
+    : ANC_B_WS locateLiteral
+    | ANC_B_WS
+    | locateLiteral
+    ;
+
+ancSuffix
+    : ANC_S_WS locateLiteral
+    | ANC_S_WS
+    | locateLiteral
+    ;
+
+locateLiteral
+    : FloatNS
+    | SUB FloatNS
+    | scoreboardLiteral
+    ;
 
 whileDo
     : WHILE NL* LPAREN RPAREN NL* block
@@ -76,7 +182,7 @@ scoreboardUnaryPrefix
     ;
 
 scoreboardTarget
-    : ENTITY nbt
+    : ENTITY nbt?
     ;
 
 literalConstant

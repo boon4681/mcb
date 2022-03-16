@@ -54,6 +54,132 @@ export default class mcbParserVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
+	// Visit a parse tree produced by mcbParser#ifStatement.
+	visitIfStatement(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#ifExpression.
+	visitIfExpression(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#disconjuction.
+	visitDisconjuction(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#conjuction.
+	visitConjuction(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#comparison.
+	visitComparison(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#scoreNscoreExpression.
+	visitScoreNscoreExpression(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#scoreNrangeExpression.
+	visitScoreNrangeExpression(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#entityNBTExpression.
+	visitEntityNBTExpression(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#blockExpression.
+	visitBlockExpression(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#comparator.
+	visitComparator(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#blockTag.
+	visitBlockTag(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#locateStatement.
+	visitLocateStatement(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#position.
+	visitPosition(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#posPrefix.
+	visitPosPrefix(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#posInner.
+	visitPosInner(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#posSuffix.
+	visitPosSuffix(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#anchor.
+	visitAnchor(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#ancPrefix.
+	visitAncPrefix(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#ancInner.
+	visitAncInner(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#ancSuffix.
+	visitAncSuffix(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#locateLiteral.
+	visitLocateLiteral(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
 	// Visit a parse tree produced by mcbParser#whileDo.
 	visitWhileDo(ctx) {
 	  return this.visitChildren(ctx);

@@ -1,5 +1,5 @@
 
-import * as log from '../log.js'
+import * as log from '../utils/log.js'
 const critical = (expression) => {
     return function(callback,message){
         if(expression){
