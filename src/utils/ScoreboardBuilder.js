@@ -10,7 +10,7 @@ function scoreSet(target, maindef, value){
 }
 
 function scoreOperationSet(target1, maindef1, operation, target2, maindef2){
-    return `scoreboard players operation ${target1} ${maindef1} ${operation || ''}= ${target2} ${maindef2}`
+    return `scoreboard players operation ${target1} ${maindef1} ${operation} ${target2} ${maindef2}`
 }
 
 export {

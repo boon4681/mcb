@@ -37,7 +37,7 @@ doWhile
     ;
     
 assignment
-    : scoreboardIdentifier ASSIGNMENT expression*
+    : scoreboardIdentifier assignmentOperator expression*
     ;
 
 expression
@@ -85,7 +85,7 @@ literalConstant
     | stringLiteral
     ;
 
-assignmentiveOperator
+assignmentOperator
     : ASSIGNMENT
     | MULT_ASSIGNMENT
     | MOD_ASSIGNMENT

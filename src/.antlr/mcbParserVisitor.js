@@ -132,8 +132,8 @@ export default class mcbParserVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
-	// Visit a parse tree produced by mcbParser#assignmentiveOperator.
-	visitAssignmentiveOperator(ctx) {
+	// Visit a parse tree produced by mcbParser#assignmentOperator.
+	visitAssignmentOperator(ctx) {
 	  return this.visitChildren(ctx);
 	}
 

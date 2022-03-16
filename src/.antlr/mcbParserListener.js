@@ -194,12 +194,12 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by mcbParser#assignmentiveOperator.
-	enterAssignmentiveOperator(ctx) {
+	// Enter a parse tree produced by mcbParser#assignmentOperator.
+	enterAssignmentOperator(ctx) {
 	}
 
-	// Exit a parse tree produced by mcbParser#assignmentiveOperator.
-	exitAssignmentiveOperator(ctx) {
+	// Exit a parse tree produced by mcbParser#assignmentOperator.
+	exitAssignmentOperator(ctx) {
 	}
 
 
