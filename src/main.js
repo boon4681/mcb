@@ -1,469 +1,360 @@
 import antlr4 from 'antlr4';
 import mcbLexer from './.antlr/mcbLexer.js';
 import mcbParser from './.antlr/mcbParser.js';
-import mcbListener from './.antlr/mcbListener.js';
-import mcbVisitor from './.antlr/mcbVisitor.js';
+import mcbListener from './.antlr/mcbParserListener.js';
+import mcbVisitor from './.antlr/mcbParserVisitor.js';
+import * as SCBuidler from './utils/ScoreboardBuilder.js'
+import * as debug from './utils/debug.js'
+import * as tempError from './error/genericErrorHandling.js'
+import ParserErrorListener from './error/ParserErrorListener.js';
 
 const input = `
 fun main:
-    #score x as dummy
-    x[input] = 30
-    x[sub] = x[input]*(180-x[input])
+    // x[@s[scores={x=5}]] = 10
+    // x[y] = -15
+    // x[x] = x[x]-30*50
+    // x[sub] = x[input]*(180 - x[input])
+    // x[sine] = 4*x[sub]/(40500-x[sub])
+    x[x] = 1+2+3
     x[sine] = 4*x[sub]/(40500-x[sub])
 end
-fun test:
 
+fun test:
 end
 `
 
 const chars = new antlr4.InputStream(input);
+chars.name = "HELLO"
 const lexer = new mcbLexer(chars);
 const tokens = new antlr4.CommonTokenStream(lexer);
 const parser = new mcbParser(tokens);
+parser.removeErrorListeners()
+parser.addErrorListener(new ParserErrorListener())
 parser.buildParseTrees = true;
-const tree = parser.chunk()
-const name = 'mcb.sb.'
-const temp = 'mcb.temp'
+const tree = parser.mcb()
 class Visitor extends mcbVisitor {
-    dictScore = {}
-    maindef = ''
-    target = ''
-    funcs = {}
-    text(c, i) {
-        if(c.type) return c.data
-        if(c.children[i])
-        return c.children[i].getText()
-        return undefined
+    SCIDReg = {}
+    currentSC = ""
+
+    Functions = {}
+
+    child(c, i, t) {
+        if (i !== undefined)
+            return t ? c.children[i].getText() : c.children[i]
+        return c.getText()
     }
-    isINT(c){
-        return c.type == 'INT'
-    }
-    getFloat(c){
-        return this.text(c) + (this.isINT(c))?this.float:''
-    }
-    length(c){
-        return c.children.length
-    }
-    visitFunc(c){
-        const funcName = this.text(c,1)
-        if(!this.funcs[funcName]){
-            this.funcs[funcName] = {
-                name:funcName,
-                statement:this.visitChildren(c).flat(Infinity).filter(a=>a!=null)
-            }
-        }else{
-            throw Error('intersected function name')
+
+    SCinit(p, a, b) {
+        let value = []
+        if (!(p[a].type === "Expression" || p[b] === "Expression")) {
+            this.SCIDReg[this.currentSC].regID++
         }
-        console.log(this.funcs[funcName])
-        // console.log(this.visitChildren(c))
-    }
-    visitDef(c) {
-        switch(this.text(c,1)){
-            case 'score':
-                this.dictScore[this.text(c,2)] = {
-                    type:'int',
-                    autoInc:0
-                }
-                return `scoreboard objectives add ${this.text(c,2)} ${this.text(c,4)} ${this.text(c,5)?this.text(c,5):''}`
-            case 'dict':
-                return `data modify ${this.text(c,2)} ${this.text(c,5)} ${this.text(c,3)} set value {}`
-            default:
-                return `say @a mcb transpiler error ${c.getText()}`
-        }
-    }
-    visitNumberInt(c){
-        return {
-            'type':'INT',
-            'int':c.getText()
-        }
-    }
-    visitExprVariable(c){
-        return {
-            'type':'VARIABLE',
-            'maindef':this.text(c,0),
-            'target':this.text(c,2)
-        }
-    }
-    visitMinusNumberInt(c){
-        return {
-            'type':'INT',
-            'int':c.getText()
-        }
-    }
-    visitAnnotation(c){
-        console.log(this.text(c,0),'end')
-        return this.visitChildren(c)
-    }
-    visitEquation(c) {
-        const variable = this.visit(c.children[0])
-        this.maindef = variable.maindef
-        this.target = variable.target
-        let equation = this.visit(c.children[2])
-        // console.log(equation)
-        if(equation.done){
-            if(equation.maindef){
-                equation = equation.data
-            }else{
-                let data = equation.data
-                data.push(this.scoreOperationSet(
-                    this.target,
-                    this.maindef,
-                    undefined,
-                    name+(this.dictScore[this.maindef].autoInc),
-                    this.maindef
-                ))
-                equation = data
-            }
-        }else{
-            if(this.isINT(equation)){
-                equation = this.scoreSet(
-                    this.target,
-                    this.maindef,
-                    equation.int
+        if (p[a].type === "scoreboardLiteral") {
+            value.push(
+                SCBuidler.scoreSet(
+                    SCBuidler.temp,
+                    this.currentSC,
+                    p[a].value
+                ),
+                SCBuidler.scoreOperationSet(
+                    `${SCBuidler.name}${this.SCIDReg[this.currentSC].regID}`,
+                    this.currentSC,
+                    `=`,
+                    SCBuidler.temp,
+                    this.currentSC
                 )
-            }else{
-                equation = this.scoreOperationSet(
-                    this.target,
-                    this.maindef,
-                    undefined,
-                    equation.target,
-                    equation.maindef
+            )
+            if (p[b].type === "scoreboardLiteral") {
+                value.push(
+                    SCBuidler.scoreSet(
+                        SCBuidler.temp,
+                        this.currentSC,
+                        p[b].value
+                    ),
+                    SCBuidler.scoreOperationSet(
+                        `${SCBuidler.name}${this.SCIDReg[this.currentSC].regID}`,
+                        this.currentSC,
+                        `${p[a + 1]}=`,
+                        SCBuidler.temp,
+                        this.currentSC
+                    )
                 )
             }
-        }
-        // console.log("DONEDONEONDE")
-        return equation
-    }
-    scoreSet(target,maindef,value){
-        return `scoreboard players set ${target} ${maindef} ${value}`
-    }
-    scoreOperationSet(target1,maindef1,operation,target2,maindef2){
-        return `scoreboard players operation ${target1} ${maindef1} ${operation||''}= ${target2} ${maindef2}`
-    }
-    visitExpr(c) {
-        if(this.length(c)==3){
-            const x = this.visitChildren(c)
-            // console.log(x)
-            if(!x[0] && !x[2]){
-                return {
-                    done:true,
-                    maindef:x[1].maindef,
-                    data:x[1].data
-                }
+            else if (p[b].type === "scoreboardIdentify") {
+                value.push(
+                    SCBuidler.scoreOperationSet(
+                        `${SCBuidler.name}${this.SCIDReg[this.currentSC].regID}`,
+                        this.currentSC,
+                        `${p[a + 1]}=`,
+                        p[b].value.target,
+                        p[b].value.objective
+                    )
+                )
             }
-            if(!x[0].done && !x[2].done){
-                this.dictScore[this.maindef].autoInc+=1
-                let data = []
-                if(this.isINT(x[0])){
-                    data.push(this.scoreSet(
-                        name+(this.dictScore[this.maindef].autoInc),
-                        this.maindef,
-                        x[0].int
-                    ))
-                }else{
-                    data.push(this.scoreOperationSet(
-                        name+(this.dictScore[this.maindef].autoInc),
-                        this.maindef,
-                        undefined,
-                        x[0].target,
-                        x[0].maindef
-                    ))
-                }
-                if(this.isINT(x[2])){
-                    data.push(this.scoreSet(
-                        temp,
-                        this.maindef,
-                        x[2].int
-                    ))
-                    data.push(this.scoreOperationSet(
-                        name+(this.dictScore[this.maindef].autoInc),
-                        this.maindef,
-                        this.text(c,1),
-                        temp,
-                        this.maindef
-                    ))
-                }else{
-                    data.push(this.scoreOperationSet(
-                        name+(this.dictScore[this.maindef].autoInc),
-                        this.maindef,
-                        this.text(c,1),
-                        x[2].target,
-                        x[2].maindef
-                    ))
-                }
-                return {
-                    done:true,
-                    maindef:false,
-                    data
-                }
+            else if (p[b].type === "Expression") {
+                value = [...p[b].statements, ...value]
+                value.push(
+                    SCBuidler.scoreOperationSet(
+                        `${SCBuidler.name}${this.SCIDReg[this.currentSC].regID}`,
+                        this.currentSC,
+                        `${p[a + 1]}=`,
+                        p[b].value.target,
+                        p[b].value.objective
+                    )
+                )
             }
-            if(x[0].done && !x[2].done){
-                if(x[0].maindef){
-                    let data = [...x[0].data]
-                    if(this.isINT(x[2])){
-                        data.push(this.scoreSet(
-                            temp,
-                            this.maindef,
-                            x[2].int
-                        ))
-                        data.push(this.scoreOperationSet(
-                            this.target,
-                            this.maindef,
-                            this.text(c,1),
-                            temp,
-                            this.maindef
-                        ))
-                    }else{
-                        data.push(this.scoreOperationSet(
-                            this.target,
-                            this.maindef,
-                            this.text(c,1),
-                            x[2].target,
-                            x[2].maindef
-                        ))
-                    }
-                    return {
-                        done:true,
-                        maindef:true,
-                        data
-                    }
-                }
-                if(this.text(c,1).search(/\/|\*\%/)>-1){
-                    this.dictScore[this.maindef].autoInc+=1
-                    let data = [...x[0].data]
-                    data.push(this.scoreOperationSet(
-                        name+(this.dictScore[this.maindef].autoInc),
-                        this.maindef,
-                        undefined,
-                        name+(this.dictScore[this.maindef].autoInc-1),
-                        this.maindef
-                    ))
-                    if(this.isINT(x[2])){
-                        data.push(this.scoreSet(
-                            temp,
-                            this.maindef,
-                            x[2].int
-                        ))
-                        data.push(this.scoreOperationSet(
-                            name+(this.dictScore[this.maindef].autoInc),
-                            this.maindef,
-                            this.text(c,1),
-                            temp,
-                            this.maindef
-                        ))
-                    }else{
-                        data.push(this.scoreOperationSet(
-                            name+(this.dictScore[this.maindef].autoInc),
-                            this.maindef,
-                            this.text(c,1),
-                            x[2].target,
-                            x[2].maindef
-                        ))
-                    }
-                    return {
-                        done:true,
-                        maindef:false,
-                        data
-                    }
-                }
-                let data = [...x[0].data]
-                if(this.isINT(x[2])){
-                    data.push(this.scoreSet(
-                        temp,
-                        this.maindef,
-                        x[2].int
-                    ))
-                    data.push(this.scoreOperationSet(
-                        name+(this.dictScore[this.maindef].autoInc),
-                        this.maindef,
-                        this.text(c,1),
-                        temp,
-                        this.maindef
-                    ))
-                }else{
-                    data.push(this.scoreOperationSet(
-                        name+(this.dictScore[this.maindef].autoInc),
-                        this.maindef,
-                        this.text(c,1),
-                        x[2].target,
-                        x[2].maindef
-                    ))
-                }
-                return {
-                    done:true,
-                    maindef:false,
-                    data
-                }
+            else {
+                tempError.critical(false)(null, "unspected value")
             }
-            if(!x[0].done && x[2].done){
-                if(x[2].maindef){
-                    let data = [...x[2].data]
-                    if(this.isINT(x[0])){
-                        data.push(this.scoreSet(
-                            temp,
-                            this.maindef,
-                            x[0].int
-                        ))
-                        data.push(this.scoreOperationSet(
-                            this.target,
-                            this.maindef,
-                            this.text(c,1),
-                            temp,
-                            this.maindef
-                        ))
-                    }else{
-                        data.push(this.scoreOperationSet(
-                            this.target,
-                            this.maindef,
-                            this.text(c,1),
-                            x[0].target,
-                            x[0].maindef
-                        ))
-                    }
-                    return {
-                        done:true,
-                        maindef:true,
-                        data
-                    }
-                }
-                if(this.text(c,1).search(/\/|\*\%/)>-1){
-                    this.dictScore[this.maindef].autoInc+=1
-                    let data = [...x[2].data]
-                    data.push(this.scoreOperationSet(
-                        name+(this.dictScore[this.maindef].autoInc),
-                        this.maindef,
-                        undefined,
-                        name+(this.dictScore[this.maindef].autoInc-1),
-                        this.maindef
-                    ))
-                    if(this.isINT(x[0])){
-                        data.push(this.scoreSet(
-                            temp,
-                            this.maindef,
-                            x[0].int
-                        ))
-                        data.push(this.scoreOperationSet(
-                            name+(this.dictScore[this.maindef].autoInc),
-                            this.maindef,
-                            this.text(c,1),
-                            temp,
-                            this.maindef
-                        ))
-                    }else{
-                        data.push(this.scoreOperationSet(
-                            name+(this.dictScore[this.maindef].autoInc),
-                            this.maindef,
-                            this.text(c,1),
-                            x[0].target,
-                            x[0].maindef
-                        ))
-                    }
-                    return {
-                        done:true,
-                        maindef:false,
-                        data
-                    }
-                }
-                if(this.text(c,1).search('-')>-1){
-                    this.dictScore[this.maindef].autoInc+=1
-                    let data = [...x[2].data]
-                    if(this.isINT(x[0])){
-                        data.push(this.scoreSet(
-                            name+(this.dictScore[this.maindef].autoInc),
-                            this.maindef,
-                            x[0].int
-                        ))
-                    }else{
-                        data.push(this.scoreOperationSet(
-                            name+(this.dictScore[this.maindef].autoInc),
-                            this.maindef,
-                            undefined,
-                            x[0].target,
-                            x[0].maindef
-                        ))
-                    }
-                    data.push(this.scoreOperationSet(
-                        name+(this.dictScore[this.maindef].autoInc),
-                        this.maindef,
-                        this.text(c,1),
-                        name+(this.dictScore[this.maindef].autoInc-1),
-                        this.maindef
-                    ))
-                    return {
-                        done:true,
-                        maindef:false,
-                        data
-                    }
-                }
-                let data = [...x[2].data]
-                if(this.isINT(x[0])){
-                    data.push(this.scoreSet(
-                        temp,
-                        this.maindef,
-                        x[0].int
-                    ))
-                    data.push(this.scoreOperationSet(
-                        name+(this.dictScore[this.maindef].autoInc),
-                        this.maindef,
-                        this.text(c,1),
-                        temp,
-                        this.maindef
-                    ))
-                }else{
-                    data.push(this.scoreOperationSet(
-                        name+(this.dictScore[this.maindef].autoInc),
-                        this.maindef,
-                        this.text(c,1),
-                        x[0].target,
-                        x[0].maindef
-                    ))
-                }
-                return {
-                    done:true,
-                    maindef:false,
-                    data
-                }
+        } else if (p[a].type === "scoreboardIdentify") {
+            value.push(
+                SCBuidler.scoreOperationSet(
+                    `${SCBuidler.name}${this.SCIDReg[this.currentSC].regID}`,
+                    this.currentSC,
+                    `=`,
+                    p[a].value.target,
+                    p[a].value.objective
+                )
+            )
+            if (p[b].type === "scoreboardLiteral") {
+                value.push(
+                    SCBuidler.scoreSet(
+                        SCBuidler.temp,
+                        this.currentSC,
+                        p[b].value
+                    ),
+                    SCBuidler.scoreOperationSet(
+                        `${SCBuidler.name}${this.SCIDReg[this.currentSC].regID}`,
+                        this.currentSC,
+                        `${p[a + 1]}=`,
+                        SCBuidler.temp,
+                        this.currentSC
+                    )
+                )
             }
-            if(x[0].maindef || x[2].maindef){
-                let data = [...x[0].data,...x[2].data]
-                data.push(this.scoreOperationSet(
-                    this.target,
-                    this.maindef,
-                    undefined,
-                    name+(this.dictScore[this.maindef].autoInc),
-                    this.maindef
-                ))
-                return {
-                    done:true,
-                    maindef:true,
-                    data
-                }
+            else if (p[b].type === "scoreboardIdentify") {
+                value.push(
+                    SCBuidler.scoreOperationSet(
+                        `${SCBuidler.name}${this.SCIDReg[this.currentSC].regID}`,
+                        this.currentSC,
+                        `${p[a + 1]}=`,
+                        p[b].value.target,
+                        p[b].value.objective
+                    )
+                )
             }
-            let data = [...x[0].data,...x[2].data]
-            data.push(this.scoreOperationSet(
-                this.target,
-                this.maindef,
-                undefined,
-                name+(this.dictScore[this.maindef].autoInc-1),
-                this.maindef
-            ))
-            data.push(this.scoreOperationSet(
-                this.target,
-                this.maindef,
-                this.text(c,1),
-                name+(this.dictScore[this.maindef].autoInc),
-                this.maindef
-            ))
-            return {
-                done:true,
-                maindef:true,
-                data
+            else if (p[b].type === "Expression") {
+                value = [...p[b].statements, ...value]
+                value.push(
+                    SCBuidler.scoreOperationSet(
+                        `${SCBuidler.name}${this.SCIDReg[this.currentSC].regID}`,
+                        this.currentSC,
+                        `${p[a + 1]}=`,
+                        p[b].value.target,
+                        p[b].value.objective
+                    )
+                )
+            }
+            else {
+                tempError.critical(false)(null, "unspected value")
             }
         }
-        return this.visitChildren(c)[0]
+        else if (p[a].type === "Expression") {
+            value = [...p[a].statements, ...value]
+            if (p[b].type === "scoreboardLiteral") {
+                value.push(
+                    SCBuidler.scoreSet(
+                        SCBuidler.temp,
+                        this.currentSC,
+                        p[b].value
+                    ),
+                    SCBuidler.scoreOperationSet(
+                        `${SCBuidler.name}${this.SCIDReg[this.currentSC].regID}`,
+                        this.currentSC,
+                        `${p[a + 1]}=`,
+                        SCBuidler.temp,
+                        this.currentSC
+                    )
+                )
+            }
+            else if (p[b].type === "scoreboardIdentify") {
+                value.push(
+                    SCBuidler.scoreOperationSet(
+                        `${SCBuidler.name}${this.SCIDReg[this.currentSC].regID}`,
+                        this.currentSC,
+                        `${p[a + 1]}=`,
+                        p[b].value.target,
+                        p[b].value.objective
+                    )
+                )
+            }
+            else if (p[b].type === "Expression") {
+                value = [...value, ...p[b].statements]
+                value.push(
+                    SCBuidler.scoreOperationSet(
+                        p[a].value.target,
+                        p[a].value.objective,
+                        `${p[a + 1]}=`,
+                        p[b].value.target,
+                        p[b].value.objective
+                    )
+                )
+            }
+            else {
+                tempError.critical(false)(null, "unspected value")
+            }
+        }
+        else {
+            tempError.critical(false)(null, "unspected value")
+        }
+        return value
+    }
+
+    visitFunctionDeclare(c) {
+        const name = this.child(c, 1, 1)
+        tempError.critical(!this.Functions[name])(() => {
+            this.Functions[name] = {
+                name: name,
+                statements: this.visitChildren(c).flat(Infinity).filter(a => a != null)
+            }
+        }, "intersected function name")
+    }
+
+    visitAssignment(c) {
+        const assignee = debug.checkVisit(c, this.visit(this.child(c, 0)))
+        tempError.critical(assignee.type === "scoreboardIdentify")(() => {
+            this.currentSC = assignee.value.objective
+            if (!this.SCIDReg[this.currentSC])
+                this.SCIDReg[this.currentSC] = {
+                    regID: 0
+                }
+        }, "scoreboardIdentify not found.")
+        const AssignmentOperation = this.visit(this.child(c, 1))
+        const statements = this.visit(this.child(c, 2))[0]
+        let value = statements.statements
+        if (statements.type === "scoreboardLiteral") {
+            value.push(
+                SCBuidler.scoreSet(
+                    SCBuidler.temp,
+                    this.currentSC,
+                    statements.value
+                ),
+                SCBuidler.scoreOperationSet(
+                    assignee.value.target,
+                    this.currentSC,
+                    AssignmentOperation,
+                    SCBuidler.temp,
+                    this.currentSC
+                )
+            )
+        }else if (statements.type === "scoreboardIdentify"){
+            value.push(
+                SCBuidler.scoreOperationSet(
+                    assignee.value.target,
+                    this.currentSC,
+                    AssignmentOperation,
+                    statements.value.target,
+                    this.currentSC
+                )
+            )
+        }else if (statements.type === "Expression"){
+            value.push(
+                SCBuidler.scoreOperationSet(
+                    assignee.value.target,
+                    this.currentSC,
+                    AssignmentOperation,
+                    statements.value.target,
+                    this.currentSC
+                )
+            )
+        }
+        console.log(value)
+        return ""
+    }
+
+    visitAdditiveExpression(c) {
+        const p = debug.checkVisit(c, this.visitChildren(c))
+        if (p.length >= 3) {
+            let data = p.slice()
+            for (let i = 0; i < p.length; i += 3) {
+                const statements = this.SCinit(data, 0, 2)
+                data = data.slice(3, data.length)
+                data.unshift(
+                    {
+                        'type': 'Expression',
+                        'value': {
+                            "objective": this.currentSC,
+                            "target": `${SCBuidler.name}${this.SCIDReg[this.currentSC].regID}`
+                        },
+                        'statements': statements
+                    }
+                )
+            }
+            return data[0]
+        }
+        return p[0]
+    }
+
+    visitMultiplicativeExpression(c) {
+        const p = debug.checkVisit(c, this.visitChildren(c))
+        if (p.length >= 3) {
+            let data = p.slice()
+            for (let i = 0; i < p.length; i += 3) {
+                const statements = this.SCinit(data, 0, 2)
+                data = data.slice(3, data.length)
+                data.unshift(
+                    {
+                        'type': 'Expression',
+                        'value': {
+                            "objective": this.currentSC,
+                            "target": `${SCBuidler.name}${this.SCIDReg[this.currentSC].regID}`
+                        },
+                        'statements': statements
+                    }
+                )
+            }
+            return data[0]
+        }
+        return p[0]
+    }
+
+    visitScoreboardIdentifier(c) {
+        return {
+            'type': 'scoreboardIdentify',
+            'value': {
+                'objective': this.child(c, 0, 1),
+                'target': this.child(c, 2, 1)
+            }
+        }
+    }
+
+    visitScoreboardLiteral(c) {
+        return {
+            'type': 'scoreboardLiteral',
+            'value': this.child(c, 0, 1)
+        }
+    }
+
+    visitAssignmentOperator(c) {
+        return debug.checkVisit(c, this.child(c))
+    }
+
+    visitMultiplicativeOperator(c) {
+        return debug.checkVisit(c, this.child(c))
+    }
+
+    visitAdditiveOperator(c) {
+        return debug.checkVisit(c, this.child(c))
+    }
+
+    visitAsExpression(c) {
+        return debug.checkVisit(c, this.visitChildren(c))[0]
+    }
+
+    visitParentAssignableExpression(c) {
+        return debug.checkVisit(c, this.visitChildren(this.child(c, 1)))[0]
     }
 }
-
 //console.log((tree.accept(new Visitor)));
 // console.log(JSON.stringify((tree.accept(new Visitor)).flat(Infinity).join('\n')))
-console.log((tree.accept(new Visitor)).flat(Infinity).filter(a=>a!=null).join('\n'))
+console.log("END", (tree.accept(new Visitor)).flat(Infinity).filter(a => a != null).join('\n'))

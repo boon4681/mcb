@@ -7,6 +7,8 @@
   "type": "module",
   "repository": "https://github.com/boon4681/mcb.git",
   "dependencies": {
-    "antlr4": "^4.9.3"
-  }
+    "antlr4": "^4.9.3",
+    "chalk": "^5.0.1"
+  },
+  "devDependencies": {}
 }
