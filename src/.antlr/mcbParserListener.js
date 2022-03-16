@@ -140,6 +140,15 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by mcbParser#range.
+	enterRange(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#range.
+	exitRange(ctx) {
+	}
+
+
 	// Enter a parse tree produced by mcbParser#entityNBTExpression.
 	enterEntityNBTExpression(ctx) {
 	}

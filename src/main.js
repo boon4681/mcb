@@ -18,7 +18,7 @@ fun main:
 end
 
 fun test:
-    if block ~5 ~ ~ #wool and entity @s:
+    if block ~5 ~ ~ #wool and entity @s or x[x] matches 1..:
     end
 end
 `

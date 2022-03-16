@@ -59,7 +59,13 @@ scoreNscoreExpression
     ;
 
 scoreNrangeExpression
-    : scoreboardIdentifier K_MATCHES scoreboardLiteral RANGE scoreboardLiteral
+    : scoreboardIdentifier K_MATCHES range
+    ;
+
+range
+    : scoreboardLiteral? RANGE scoreboardLiteral?
+    | scoreboardLiteral RANGE scoreboardLiteral?
+    | scoreboardLiteral? RANGE scoreboardLiteral
     ;
 
 entityNBTExpression
