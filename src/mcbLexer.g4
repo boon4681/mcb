@@ -82,7 +82,8 @@ K_PREDICATE: 'predicate';
 ELSE: 'else';
 
 WHILE: 'while';
-
+REPEAT: 'repeat';
+UNTIL: 'until';
 // LITERALS
 
 fragment DIGIT: '0'..'9';
@@ -138,7 +139,8 @@ I_MC_NOT_EQ: MC_NOT_EQ -> type(MC_NOT_EQ);
 
 I_CONJ: CONJ-> type(CONJ);
 I_DISJ: DISJ-> type(DISJ);
-
+I_REPEAT: REPEAT-> type(REPEAT);
+I_UNTIL: UNTIL-> type(UNTIL);
 I_POS: POS-> type(POS);
 I_POS_P_WS: POS_P_WS-> type(POS_P_WS);
 I_POS_S_WS: POS_S_WS-> type(POS_S_WS);

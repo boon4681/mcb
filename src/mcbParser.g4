@@ -31,11 +31,20 @@ ifStatement
     ;
 
 loopStatement
-    : whileDo 
+    : whileDo
+    | repeatUntil
     ;
 
 whileDo
     : WHILE NL* disconjuction NL* block
+    ;
+
+repeatUntil
+    : REPEAT NL* repeatUntilBlock disconjuction
+    ;
+
+repeatUntilBlock
+    : COLON NL* statements NL* UNTIL
     ;
 
 disconjuction

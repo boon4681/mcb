@@ -95,6 +95,24 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by mcbParser#repeatUntil.
+	enterRepeatUntil(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#repeatUntil.
+	exitRepeatUntil(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#repeatUntilBlock.
+	enterRepeatUntilBlock(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#repeatUntilBlock.
+	exitRepeatUntilBlock(ctx) {
+	}
+
+
 	// Enter a parse tree produced by mcbParser#disconjuction.
 	enterDisconjuction(ctx) {
 	}

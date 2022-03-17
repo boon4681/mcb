@@ -10,13 +10,13 @@ import ParserErrorListener from './error/ParserErrorListener.js';
 import boonid from './utils/boonid.js';
 
 const input = `
-fun main:
-    x[@s[scores={x=5}]] = 10
-    x[y] = -15
-    x[x] = x[x]-30*50
-    x[sub] = x[input]*(180 - x[input])
-    x[sine] = 4*x[sub]/(40500-x[sub])
-end
+// fun main:
+//     x[@s[scores={x=5}]] = 10
+//     x[y] = -15
+//     x[x] = x[x]-30*50
+//     x[sub] = x[input]*(180 - x[input])
+//     x[sine] = 4*x[sub]/(40500-x[sub])
+// end
 
 fun test:
     if block ~ ~4 ~ #log and !block ~ ~ ~4 #log:
@@ -25,14 +25,26 @@ fun test:
             x[x] = 5
         end
     end
-    // if block ~5 ~ ~ #wool and !entity @s or x[x] matches 1.. and x[x] >= y[x]:
-    // end
+    if block ~5 ~ ~ #wool and !entity @s or x[x] matches 1.. and x[x] >= y[x]:
+    end
 end
 
-fun test_while:
-    while x[i] matches ..5:
-        x[i]+=1
-    end
+// fun test_if:
+//     if x[i] matches ..5 or x[y]>= x[x]:
+//         x[x] = 5
+//     end
+// end
+
+// fun test_while:
+//     while x[i] matches ..5 and x[y]>= x[x]:
+//         x[i]+=1
+//     end
+// end
+
+fun test_repeat:
+    repeat:
+        x[i] -= 1
+    until x[i] matches ..3 or x[y]>= x[x]
 end
 `
 
@@ -46,7 +58,7 @@ parser.addErrorListener(new ParserErrorListener())
 parser.buildParseTrees = true;
 const tree = parser.mcb()
 const debug = new Debug()
-debug.showingSection = ["if"]
+debug.showingSection = ["loop", 'if']
 // mcb.<function name>.if_id
 const auto_gen_name = 'mcb'
 class Visitor extends mcbVisitor {
@@ -58,6 +70,7 @@ class Visitor extends mcbVisitor {
     Functions = {}
     IFs = {}
     WhileDos = {}
+    RepeatUntils = {}
 
     child(c, i, t) {
         if (i !== undefined)
@@ -252,10 +265,10 @@ class Visitor extends mcbVisitor {
                     regID: 0
                 }
         }, "scoreboardIdentify not found.")
-        const AssignmentOperation = this.visit(this.child(c, 1))
+        const AssignmentOperator = this.visit(this.child(c, 1))
         const statements = this.visit(this.child(c, 2))[0]
         let value = statements.statements || []
-        if (statements.type === "scoreboardLiteral") {
+        if (statements.type === "scoreboardLiteral" && AssignmentOperator === '=') {
             value.push(
                 SCBuidler.scoreSet(
                     assignee.value.target,
@@ -263,12 +276,29 @@ class Visitor extends mcbVisitor {
                     statements.value
                 )
             )
-        } else if (statements.type === "scoreboardIdentify") {
+        }
+        else if (statements.type === "scoreboardLiteral") {
+            value.push(
+                SCBuidler.scoreSet(
+                    SCBuidler.temp,
+                    this.currentSC,
+                    statements.value
+                ),
+                SCBuidler.scoreOperationSet(
+                    assignee.value.target,
+                    this.currentSC,
+                    AssignmentOperator,
+                    SCBuidler.temp,
+                    this.currentSC
+                )
+            )
+        }
+        else if (statements.type === "scoreboardIdentify") {
             value.push(
                 SCBuidler.scoreOperationSet(
                     assignee.value.target,
                     this.currentSC,
-                    AssignmentOperation,
+                    AssignmentOperator,
                     statements.value.target,
                     this.currentSC
                 )
@@ -278,11 +308,13 @@ class Visitor extends mcbVisitor {
                 SCBuidler.scoreOperationSet(
                     assignee.value.target,
                     this.currentSC,
-                    AssignmentOperation,
+                    AssignmentOperator,
                     statements.value.target,
                     this.currentSC
                 )
             )
+        } else {
+            tempError.critical('Unavailable assignment operator', c, this.child(c, 0, 1).length)
         }
         return value
     }
@@ -370,42 +402,95 @@ class Visitor extends mcbVisitor {
         return debug.checkVisit(c, this.visitChildren(this.child(c, 1)), 'score')[0]
     }
 
-    visitWhileDo(c){
-        let p = debug.checkVisit(c, this.visitChildren(c), 'if')
-        if(!this.WhileDos[this.currentFN]){
+    visitRepeatUntil(c) {
+        let p = debug.checkVisit(c, this.visitChildren(c), 'loop')
+        if (!this.WhileDos[this.currentFN]) {
             this.WhileDos[this.currentFN] = {
-                regID:0
+                regID: 0
             }
-        }else{
+        } else {
             this.WhileDos[this.currentFN].regID++
         }
-        const name = `${auto_gen_name}.${this.currentFN}.if.${this.WhileDos[this.currentFN].regID}`
-        p[1].value += ` function ${name}`
-        p[2].push(p[1].value)
-        this.WhileDos[this.currentFN][name] = {
-            name,
-            statements: p[2].flat(Infinity).filter(a => a)
+        if (p[2].type === 'conjuction') {
+            const name = `${auto_gen_name}.${this.currentFN}.if.${this.WhileDos[this.currentFN].regID}`
+            p[2].value += ` function ${name}`
+            this.WhileDos[this.currentFN][name] = {
+                name,
+                statements: p[1].flat(Infinity).filter(a => a)
+            }
+            return p[2].value
+        } else if (p[2].type === 'disconjuction') {
+            const name = `${auto_gen_name}.${this.currentFN}.if.${this.WhileDos[this.currentFN].regID}`
+            this.WhileDos[this.currentFN][name] = {
+                name,
+                statements: p[1].flat(Infinity).filter(a => a)
+            }
+            p[2].statements.push(`execute if score ${p[2].value.target} ${p[2].value.objective} matches 1 function ${name}`)
+            return p[2].statements
+        } else {
+            tempError.critical(`ScoreboardException unexpected juction types \n${JSON.stringify(p[2])}`,c)
         }
-        console.log(this.WhileDos[this.currentFN][name])
-        return p[1].value
+    }
+
+    visitWhileDo(c) {
+        let p = debug.checkVisit(c, this.visitChildren(c), 'loop')
+        if (!this.WhileDos[this.currentFN]) {
+            this.WhileDos[this.currentFN] = {
+                regID: 0
+            }
+        } else {
+            this.WhileDos[this.currentFN].regID++
+        }
+        if (p[1].type === 'conjuction') {
+            const name = `${auto_gen_name}.${this.currentFN}.if.${this.WhileDos[this.currentFN].regID}`
+            p[1].value += ` function ${name}`
+            this.WhileDos[this.currentFN][name] = {
+                name,
+                statements: p[2].flat(Infinity).filter(a => a)
+            }
+            return p[1].value
+        } else if (p[1].type === 'disconjuction') {
+            const name = `${auto_gen_name}.${this.currentFN}.if.${this.WhileDos[this.currentFN].regID}`
+            this.WhileDos[this.currentFN][name] = {
+                name,
+                statements: p[2].flat(Infinity).filter(a => a)
+            }
+            p[1].statements.push(`execute if score ${p[1].value.target} ${p[1].value.objective} matches 1 function ${name}`)
+            return p[1].statements
+        } else {
+            tempError.critical(`ScoreboardException unexpected juction types \n${JSON.stringify(p[1])}`,c)
+        }
     }
 
     visitIfStatement(c) {
         let p = debug.checkVisit(c, this.visitChildren(c), 'if')
-        if(!this.IFs[this.currentFN]){
+        if (!this.IFs[this.currentFN]) {
             this.IFs[this.currentFN] = {
-                regID:0
+                regID: 0
             }
-        }else{
+        } else {
             this.IFs[this.currentFN].regID++
         }
-        const name = `${auto_gen_name}.${this.currentFN}.if.${this.IFs[this.currentFN].regID}`
-        p[1].value += ` function ${name}`
-        this.IFs[this.currentFN][name] = {
-            name,
-            statements: p[2].flat(Infinity).filter(a => a)
+        if (p[1].type === 'conjuction') {
+            const name = `${auto_gen_name}.${this.currentFN}.if.${this.IFs[this.currentFN].regID}`
+            p[1].value += ` function ${name}`
+            this.IFs[this.currentFN][name] = {
+                name,
+                statements: p[2].flat(Infinity).filter(a => a)
+            }
+            return p[1].value
+        } else if (p[1].type === 'disconjuction') {
+            const name = `${auto_gen_name}.${this.currentFN}.if.${this.IFs[this.currentFN].regID}`
+            this.IFs[this.currentFN][name] = {
+                name,
+                statements: p[2].flat(Infinity).filter(a => a)
+            }
+            p[1].statements.push(`execute if score ${p[1].value.target} ${p[1].value.objective} matches 1 function ${name}`)
+            console.log(this.IFs[this.currentFN][name])
+            return p[1].statements
+        } else {
+            tempError.critical(`ScoreboardException unexpected juction types \n${JSON.stringify(p[1])}`,c)
         }
-        return p[1].value
     }
 
     visitDisconjuction(c) {
@@ -416,10 +501,13 @@ class Visitor extends mcbVisitor {
         else {
             this.DISJIDReg[this.currentFN].regID++
         }
-        let p = debug.checkVisit(c, this.visitChildren(c), 'if')
+        let p = debug.checkVisit(c, this.visitChildren(c), 'if').filter(a => a)
         if (p.length == 1) {
             p[0].value = `execute ${p[0].value} run`
-            return p[0]
+            return {
+                'type': 'conjuction',
+                'value': p[0].value
+            }
         }
         return {
             'type': 'disconjuction',
@@ -427,7 +515,7 @@ class Visitor extends mcbVisitor {
                 'objective': SCBuidler.disj_name,
                 'target': SCBuidler.disj_target_name + this.DISJIDReg[this.currentFN].regID
             },
-            'statement': p.filter(a => a).map(a => {
+            'statements': p.filter(a => a).map(a => {
                 return `execute ${a.value} run scoreboard players ${SCBuidler.disj_target_name}${this.DISJIDReg[this.currentFN].regID} ${SCBuidler.disj_name} 1`
             })
         }
@@ -487,7 +575,7 @@ class Visitor extends mcbVisitor {
         const p = debug.checkVisit(c, this.visitChildren(c), 'if')
         return {
             'type': 'comparison',
-            'value': `${p[0].value.target} ${p[0].value.objective} ${p[1]} ${p[2].value.target} ${p[2].value.objective}`
+            'value': `score ${p[0].value.target} ${p[0].value.objective} ${p[1]} ${p[2].value.target} ${p[2].value.objective}`
         }
     }
 
@@ -495,7 +583,7 @@ class Visitor extends mcbVisitor {
         const p = debug.checkVisit(c, this.visitChildren(c), 'if')
         return {
             'type': 'comparison',
-            'value': `${p[0].value.target} ${p[0].value.objective} matches ${p[2]}`
+            'value': `score ${p[0].value.target} ${p[0].value.objective} matches ${p[2]}`
         }
     }
 

@@ -4,7 +4,7 @@ class debug {
     showingSection = "all"
 
     checkVisit(c,p,e){
-        if(this.showingSection === "all" || this.showingSection.includes(e)){
+        if(this.showingSection === "all" || this.showingSection.includes(e) || e === 'all'){
             try {
                 console.log(`visit${c.constructor.name}`,JSON.stringify(p,'',2))
             } catch (error) {
