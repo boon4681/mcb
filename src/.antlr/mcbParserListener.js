@@ -14,12 +14,12 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by mcbParser#topPiorityObject.
-	enterTopPiorityObject(ctx) {
+	// Enter a parse tree produced by mcbParser#topPriorityObject.
+	enterTopPriorityObject(ctx) {
 	}
 
-	// Exit a parse tree produced by mcbParser#topPiorityObject.
-	exitTopPiorityObject(ctx) {
+	// Exit a parse tree produced by mcbParser#topPriorityObject.
+	exitTopPriorityObject(ctx) {
 	}
 
 
@@ -68,15 +68,6 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by mcbParser#loopStatement.
-	enterLoopStatement(ctx) {
-	}
-
-	// Exit a parse tree produced by mcbParser#loopStatement.
-	exitLoopStatement(ctx) {
-	}
-
-
 	// Enter a parse tree produced by mcbParser#ifStatement.
 	enterIfStatement(ctx) {
 	}
@@ -86,12 +77,30 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by mcbParser#ifExpression.
-	enterIfExpression(ctx) {
+	// Enter a parse tree produced by mcbParser#loopStatement.
+	enterLoopStatement(ctx) {
 	}
 
-	// Exit a parse tree produced by mcbParser#ifExpression.
-	exitIfExpression(ctx) {
+	// Exit a parse tree produced by mcbParser#loopStatement.
+	exitLoopStatement(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#whileDo.
+	enterWhileDo(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#whileDo.
+	exitWhileDo(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#doWhile.
+	enterDoWhile(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#doWhile.
+	exitDoWhile(ctx) {
 	}
 
 
@@ -119,6 +128,15 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by mcbParser#comparison.
 	exitComparison(ctx) {
+	}
+
+
+	// Enter a parse tree produced by mcbParser#asComparison.
+	enterAsComparison(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#asComparison.
+	exitAsComparison(ctx) {
 	}
 
 
@@ -212,15 +230,6 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by mcbParser#posInner.
-	enterPosInner(ctx) {
-	}
-
-	// Exit a parse tree produced by mcbParser#posInner.
-	exitPosInner(ctx) {
-	}
-
-
 	// Enter a parse tree produced by mcbParser#posSuffix.
 	enterPosSuffix(ctx) {
 	}
@@ -248,15 +257,6 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by mcbParser#ancInner.
-	enterAncInner(ctx) {
-	}
-
-	// Exit a parse tree produced by mcbParser#ancInner.
-	exitAncInner(ctx) {
-	}
-
-
 	// Enter a parse tree produced by mcbParser#ancSuffix.
 	enterAncSuffix(ctx) {
 	}
@@ -272,24 +272,6 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 
 	// Exit a parse tree produced by mcbParser#locateLiteral.
 	exitLocateLiteral(ctx) {
-	}
-
-
-	// Enter a parse tree produced by mcbParser#whileDo.
-	enterWhileDo(ctx) {
-	}
-
-	// Exit a parse tree produced by mcbParser#whileDo.
-	exitWhileDo(ctx) {
-	}
-
-
-	// Enter a parse tree produced by mcbParser#doWhile.
-	enterDoWhile(ctx) {
-	}
-
-	// Exit a parse tree produced by mcbParser#doWhile.
-	exitDoWhile(ctx) {
 	}
 
 

@@ -32,6 +32,8 @@ ADD: '+';
 SUB: '-';
 COLON: ':';
 // COLON: ':'-> pushMode(DEFAULT_MODE);
+NOT_WS: '!' Hidden;
+NOT_NO_WS: '!';
 
 CONJ: 'and';
 DISJ: 'or';
@@ -46,6 +48,7 @@ LANGLE: '<';
 RANGLE: '>';
 LE: '<=';
 GE: '>=';
+MC_NOT_EQ: '=!';
 
 AT_N_WS: '@';
 AT_P_WS: Hidden '@';
@@ -58,12 +61,10 @@ ENTITY_SUFFIX: [asrep];
 POS: '~';
 POS_P_WS: Hidden '~';
 POS_S_WS: '~' Hidden;
-POS_B_WS: Hidden '~' Hidden;
 
 ANC: '^';
 ANC_P_WS: Hidden '^';
 ANC_S_WS: '^' Hidden;
-ANC_B_WS: Hidden '^' Hidden;
 
 // KEYWORDS
 FUN: 'fun';
@@ -132,18 +133,20 @@ I_ADD: ADD -> type(ADD);
 I_SUB: SUB -> type(SUB);
 I_COLON: COLON -> type(COLON);
 
+I_NOT_WS: NOT_WS -> type(NOT_WS);
+I_NOT_NO_WS: NOT_NO_WS -> type(NOT_NO_WS);
+I_MC_NOT_EQ: MC_NOT_EQ -> type(MC_NOT_EQ);
+
 I_CONJ: CONJ-> type(CONJ);
 I_DISJ: DISJ-> type(DISJ);
 
 I_POS: POS-> type(POS);
 I_POS_P_WS: POS_P_WS-> type(POS_P_WS);
 I_POS_S_WS: POS_S_WS-> type(POS_S_WS);
-I_POS_B_WS: POS_B_WS-> type(POS_B_WS);
 
 I_ANC: ANC-> type(ANC);
 I_ANC_P_WS: ANC_P_WS-> type(ANC_P_WS);
 I_ANC_S_WS: ANC_S_WS-> type(ANC_S_WS);
-I_ANC_B_WS: ANC_B_WS-> type(ANC_B_WS);
 
 I_ASSIGNMENT: ASSIGNMENT -> type(ASSIGNMENT);
 I_MULT_ASSIGNMENT: MULT_ASSIGNMENT -> type(MULT_ASSIGNMENT);

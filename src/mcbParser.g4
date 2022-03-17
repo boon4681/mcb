@@ -1,8 +1,8 @@
 parser grammar mcbParser;
 options { tokenVocab = mcbLexer;}
 
-mcb: NL* topPiorityObject* EOF;
-topPiorityObject
+mcb: NL* topPriorityObject* EOF;
+topPriorityObject
     : declaration nl?
     ;
 
@@ -26,28 +26,36 @@ block
     : COLON NL* statements NL* END
     ;
 
+ifStatement
+    : IF NL* disconjuction NL* block
+    ;
+
 loopStatement
     : whileDo 
     | doWhile
     ;
 
-ifStatement
-    : IF NL* ifExpression NL* block
+whileDo
+    : WHILE NL* disconjuction NL* block
     ;
 
-ifExpression
-    : disconjuction
+doWhile
+    : DO NL* disconjuction NL* block
     ;
 
 disconjuction
-    : conjuction (DISJ conjuction)*
+    : conjuction NL* (DISJ NL* conjuction)*
     ;
 
 conjuction
-    : comparison (CONJ comparison)*
+    : comparison NL* (CONJ NL* comparison)*
     ;
 
 comparison
+    : (NOT_NO_WS)? asComparison
+    ;
+
+asComparison
     : scoreNscoreExpression
     | scoreNrangeExpression
     | entityNBTExpression
@@ -63,10 +71,9 @@ scoreNrangeExpression
     ;
 
 range
-    : scoreboardLiteral? RANGE scoreboardLiteral?
-    | scoreboardLiteral RANGE scoreboardLiteral?
-    | scoreboardLiteral? RANGE scoreboardLiteral
-    | scoreboardLiteral
+    : scoreboardLiteral
+    | scoreboardLiteral RANGE_S_WS scoreboardLiteral?
+    | scoreboardLiteral? RANGE_P_WS scoreboardLiteral
     ;
 
 entityNBTExpression
@@ -92,18 +99,12 @@ locateStatement
     ;
 
 position
-    : posPrefix posInner posSuffix
+    : posPrefix posPrefix posPrefix
     ;
 
 posPrefix
     : POS_P_WS locateLiteral
     | POS_P_WS
-    | locateLiteral
-    ;
-
-posInner
-    : POS_B_WS locateLiteral
-    | POS_B_WS
     | locateLiteral
     ;
 
@@ -114,18 +115,12 @@ posSuffix
     ;
 
 anchor
-    : ancPrefix ancInner ancSuffix
+    : ancPrefix ancSuffix
     ;
 
 ancPrefix
     : ANC_P_WS locateLiteral
     | ANC_P_WS
-    | locateLiteral
-    ;
-
-ancInner
-    : ANC_B_WS locateLiteral
-    | ANC_B_WS
     | locateLiteral
     ;
 
@@ -139,14 +134,6 @@ locateLiteral
     : FloatNS
     | SUB FloatNS
     | scoreboardLiteral
-    ;
-
-whileDo
-    : WHILE NL* LPAREN RPAREN NL* block
-    ;
-
-doWhile
-    : DO NL* LPAREN RPAREN NL* block 
     ;
     
 assignment
@@ -223,7 +210,7 @@ nbt
     ;
 
 nbtEquality
-    : Identifier ASSIGNMENT asNBT
+    : Identifier ASSIGNMENT (NOT_NO_WS)? asNBT
     ;
 
 asNBT

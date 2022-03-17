@@ -1,4 +1,6 @@
 let name = 'mcb.sb.'
+let disj_name = 'mcb.disj.glob'
+let disj_target_name = 'mcb.disj.'
 let temp = 'mcb.temp'
 
 function scoreObjectiveAdd(objective,criteria,displayName){
@@ -17,6 +19,8 @@ export {
     scoreObjectiveAdd,
     scoreOperationSet,
     scoreSet,
+    disj_name,
+    disj_target_name,
     name,
     temp
 }

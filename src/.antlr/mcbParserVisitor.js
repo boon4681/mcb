@@ -12,8 +12,8 @@ export default class mcbParserVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
-	// Visit a parse tree produced by mcbParser#topPiorityObject.
-	visitTopPiorityObject(ctx) {
+	// Visit a parse tree produced by mcbParser#topPriorityObject.
+	visitTopPriorityObject(ctx) {
 	  return this.visitChildren(ctx);
 	}
 
@@ -48,20 +48,26 @@ export default class mcbParserVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
-	// Visit a parse tree produced by mcbParser#loopStatement.
-	visitLoopStatement(ctx) {
-	  return this.visitChildren(ctx);
-	}
-
-
 	// Visit a parse tree produced by mcbParser#ifStatement.
 	visitIfStatement(ctx) {
 	  return this.visitChildren(ctx);
 	}
 
 
-	// Visit a parse tree produced by mcbParser#ifExpression.
-	visitIfExpression(ctx) {
+	// Visit a parse tree produced by mcbParser#loopStatement.
+	visitLoopStatement(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#whileDo.
+	visitWhileDo(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#doWhile.
+	visitDoWhile(ctx) {
 	  return this.visitChildren(ctx);
 	}
 
@@ -80,6 +86,12 @@ export default class mcbParserVisitor extends antlr4.tree.ParseTreeVisitor {
 
 	// Visit a parse tree produced by mcbParser#comparison.
 	visitComparison(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
+	// Visit a parse tree produced by mcbParser#asComparison.
+	visitAsComparison(ctx) {
 	  return this.visitChildren(ctx);
 	}
 
@@ -144,12 +156,6 @@ export default class mcbParserVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
-	// Visit a parse tree produced by mcbParser#posInner.
-	visitPosInner(ctx) {
-	  return this.visitChildren(ctx);
-	}
-
-
 	// Visit a parse tree produced by mcbParser#posSuffix.
 	visitPosSuffix(ctx) {
 	  return this.visitChildren(ctx);
@@ -168,12 +174,6 @@ export default class mcbParserVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
-	// Visit a parse tree produced by mcbParser#ancInner.
-	visitAncInner(ctx) {
-	  return this.visitChildren(ctx);
-	}
-
-
 	// Visit a parse tree produced by mcbParser#ancSuffix.
 	visitAncSuffix(ctx) {
 	  return this.visitChildren(ctx);
@@ -182,18 +182,6 @@ export default class mcbParserVisitor extends antlr4.tree.ParseTreeVisitor {
 
 	// Visit a parse tree produced by mcbParser#locateLiteral.
 	visitLocateLiteral(ctx) {
-	  return this.visitChildren(ctx);
-	}
-
-
-	// Visit a parse tree produced by mcbParser#whileDo.
-	visitWhileDo(ctx) {
-	  return this.visitChildren(ctx);
-	}
-
-
-	// Visit a parse tree produced by mcbParser#doWhile.
-	visitDoWhile(ctx) {
 	  return this.visitChildren(ctx);
 	}
 

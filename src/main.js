@@ -7,6 +7,7 @@ import * as SCBuidler from './utils/ScoreboardBuilder.js'
 import Debug from './utils/debug.js'
 import * as tempError from './error/genericErrorHandling.js'
 import ParserErrorListener from './error/ParserErrorListener.js';
+import boonid from './utils/boonid.js';
 
 const input = `
 fun main:
@@ -18,8 +19,14 @@ fun main:
 end
 
 fun test:
-    if block ~5 ~ ~ #wool and entity @s or x[x] matches 1..:
+    if block ~ ~4 ~ #log and !block ~ ~ ~4 #log:
+        x[x] = 5
+        if block ~ ~4 ~ #log and !block ~ ~ ~4 #log:
+            x[x] = 5
+        end
     end
+    // if block ~5 ~ ~ #wool and !entity @s or x[x] matches 1.. and x[x] >= y[x]:
+    // end
 end
 `
 
@@ -34,11 +41,16 @@ parser.buildParseTrees = true;
 const tree = parser.mcb()
 const debug = new Debug()
 debug.showingSection = ["if"]
+// mcb.<function name>.if_id
+const auto_gen_name = 'mcb'
 class Visitor extends mcbVisitor {
     SCIDReg = {}
+    DISJIDReg = {}
     currentSC = ""
+    currentFN = ""
 
     Functions = {}
+    IFs = {}
 
     child(c, i, t) {
         if (i !== undefined)
@@ -46,7 +58,7 @@ class Visitor extends mcbVisitor {
         return c.getText()
     }
 
-    SCinit(p, a, b) {
+    SCinit(p, a, b, c) {
         let value = []
         if (!(p[a].type === "Expression" || p[b] === "Expression")) {
             this.SCIDReg[this.currentSC].regID++
@@ -106,7 +118,7 @@ class Visitor extends mcbVisitor {
                 )
             }
             else {
-                tempError.critical(false)(null, "unspected value")
+                tempError.critical("unspected value", c)
             }
         } else if (p[a].type === "scoreboardIdentify") {
             value.push(
@@ -158,7 +170,7 @@ class Visitor extends mcbVisitor {
                 )
             }
             else {
-                tempError.critical(false)(null, "unspected value")
+                tempError.critical("unspected value", c)
             }
         }
         else if (p[a].type === "Expression") {
@@ -203,29 +215,30 @@ class Visitor extends mcbVisitor {
                 )
             }
             else {
-                tempError.critical(false)(null, "unspected value")
+                tempError.critical("unspected value", c)
             }
         }
         else {
-            tempError.critical(false)(null, "unspected value")
+            tempError.critical("unspected value", c)
         }
         return value
     }
 
     visitFunctionDeclare(c) {
         const name = this.child(c, 1, 1)
-        tempError.critical(!this.Functions[name])(() => {
+        this.currentFN = name
+        tempError.critical_check(!this.Functions[name], c)(() => {
             this.Functions[name] = {
                 name: name,
                 statements: this.visitChildren(c).flat(Infinity).filter(a => a != null)
             }
-        }, "intersected function name")
+        }, "Function overloading is not allow in mcb")
         console.log(this.Functions[name])
     }
 
     visitAssignment(c) {
-        const assignee = debug.checkVisit(c, this.visit(this.child(c, 0)),'score')
-        tempError.critical(assignee.type === "scoreboardIdentify")(() => {
+        const assignee = debug.checkVisit(c, this.visit(this.child(c, 0)), 'score')
+        tempError.critical_check(assignee.type === "scoreboardIdentify", c)(() => {
             this.currentSC = assignee.value.objective
             if (!this.SCIDReg[this.currentSC])
                 this.SCIDReg[this.currentSC] = {
@@ -243,7 +256,7 @@ class Visitor extends mcbVisitor {
                     statements.value
                 )
             )
-        }else if (statements.type === "scoreboardIdentify"){
+        } else if (statements.type === "scoreboardIdentify") {
             value.push(
                 SCBuidler.scoreOperationSet(
                     assignee.value.target,
@@ -253,7 +266,7 @@ class Visitor extends mcbVisitor {
                     this.currentSC
                 )
             )
-        }else if (statements.type === "Expression"){
+        } else if (statements.type === "Expression") {
             value.push(
                 SCBuidler.scoreOperationSet(
                     assignee.value.target,
@@ -268,11 +281,11 @@ class Visitor extends mcbVisitor {
     }
 
     visitAdditiveExpression(c) {
-        const p = debug.checkVisit(c, this.visitChildren(c),'score')
+        const p = debug.checkVisit(c, this.visitChildren(c), 'score')
         if (p.length >= 3) {
             let data = p.slice()
             for (let i = 0; i < p.length; i += 3) {
-                const statements = this.SCinit(data, 0, 2)
+                const statements = this.SCinit(data, 0, 2, c)
                 data = data.slice(3, data.length)
                 data.unshift(
                     {
@@ -291,11 +304,11 @@ class Visitor extends mcbVisitor {
     }
 
     visitMultiplicativeExpression(c) {
-        const p = debug.checkVisit(c, this.visitChildren(c),'score')
+        const p = debug.checkVisit(c, this.visitChildren(c), 'score')
         if (p.length >= 3) {
             let data = p.slice()
             for (let i = 0; i < p.length; i += 3) {
-                const statements = this.SCinit(data, 0, 2)
+                const statements = this.SCinit(data, 0, 2, c)
                 data = data.slice(3, data.length)
                 data.unshift(
                     {
@@ -331,36 +344,140 @@ class Visitor extends mcbVisitor {
     }
 
     visitAssignmentOperator(c) {
-        return debug.checkVisit(c, this.child(c),'score')
+        return debug.checkVisit(c, this.child(c), 'score')
     }
 
     visitMultiplicativeOperator(c) {
-        return debug.checkVisit(c, this.child(c),'score')
+        return debug.checkVisit(c, this.child(c), 'score')
     }
 
     visitAdditiveOperator(c) {
-        return debug.checkVisit(c, this.child(c),'score')
+        return debug.checkVisit(c, this.child(c), 'score')
     }
 
     visitAsExpression(c) {
-        return debug.checkVisit(c, this.visitChildren(c),'score')[0]
+        return debug.checkVisit(c, this.visitChildren(c), 'score')[0]
     }
 
     visitParentAssignableExpression(c) {
-        return debug.checkVisit(c, this.visitChildren(this.child(c, 1)),'score')[0]
+        return debug.checkVisit(c, this.visitChildren(this.child(c, 1)), 'score')[0]
     }
 
-    visitScoreNrangeExpression(c){
-        const p = debug.checkVisit(c,this.visitChildren(c),'if')
-        console.log(`${p[0].value.target} ${p[0].value.objective} matches ${p[2]}`)
+    visitIfStatement(c) {
+        let p = debug.checkVisit(c, this.visitChildren(c), 'if')
+        if(!this.IFs[this.currentFN]){
+            this.IFs[this.currentFN] = {
+                regID:0
+            }
+        }else{
+            this.IFs[this.currentFN].regID++
+        }
+        const name = `${auto_gen_name}.${this.currentFN}.if.${this.IFs[this.currentFN].regID}`
+        p[1].value += ` function ${name}`
+        this.IFs[this.currentFN][name] = {
+            name,
+            statements: p[2].flat(Infinity).filter(a => a)
+        }
+        return p[1].value
     }
 
-    visitComparator(c){
-        return debug.checkVisit(c,this.child(c))
+    visitDisconjuction(c) {
+        if (!this.DISJIDReg[this.currentFN])
+            this.DISJIDReg[this.currentFN] = {
+                regID: 0
+            }
+        else {
+            this.DISJIDReg[this.currentFN].regID++
+        }
+        let p = debug.checkVisit(c, this.visitChildren(c), 'if')
+        if (p.length == 1) {
+            p[0].value = `execute ${p[0].value} run`
+            return p[0]
+        }
+        return {
+            'type': 'disconjuction',
+            'value': {
+                'objective': SCBuidler.disj_name,
+                'target': SCBuidler.disj_target_name + this.DISJIDReg[this.currentFN].regID
+            },
+            'statement': p.filter(a => a).map(a => {
+                return `execute ${a.value} run scoreboard players ${SCBuidler.disj_target_name}${this.DISJIDReg[this.currentFN].regID} ${SCBuidler.disj_name} 1`
+            })
+        }
     }
 
-    visitRange(c){
-        return debug.checkVisit(c,this.child(c),'if')
+    visitConjuction(c) {
+        const p = debug.checkVisit(c, this.visitChildren(c), 'if')
+        return {
+            'type': 'conjuction',
+            'value': p.map(a => (a) ? (a.type === "comparison") ? a.value : tempError.critical("unexpected value", c) : null).filter(a => a).join(" ")
+        }
+    }
+
+    visitComparison(c) {
+        const p = debug.checkVisit(c, this.visitChildren(c), 'if')
+        if (p.length == 2) {
+            return {
+                'type': 'comparison',
+                'value': `unless ${p[1].value}`
+            }
+        }
+        return {
+            'type': 'comparison',
+            'value': `if ${p[0].value}`
+        }
+    }
+
+    visitAsComparison(c) {
+        return debug.checkVisit(c, this.visitChildren(c), 'if')[0]
+    }
+
+    visitBlockExpression(c) {
+        let p = debug.checkVisit(c, this.visitChildren(c), 'if')
+        p[0] = "block"
+        return {
+            'type': 'comparison',
+            'value': p.join("")
+        }
+    }
+
+    visitLocateStatement(c) {
+        return this.child(c) + " "
+    }
+
+    visitBlockTag(c) {
+        return this.child(c)
+    }
+
+    visitEntityNBTExpression(c) {
+        return {
+            'type': 'comparison',
+            'value': debug.checkVisit(c, this.child(c), 'if')
+        }
+    }
+
+    visitScoreNscoreExpression(c) {
+        const p = debug.checkVisit(c, this.visitChildren(c), 'if')
+        return {
+            'type': 'comparison',
+            'value': `${p[0].value.target} ${p[0].value.objective} ${p[1]} ${p[2].value.target} ${p[2].value.objective}`
+        }
+    }
+
+    visitScoreNrangeExpression(c) {
+        const p = debug.checkVisit(c, this.visitChildren(c), 'if')
+        return {
+            'type': 'comparison',
+            'value': `${p[0].value.target} ${p[0].value.objective} matches ${p[2]}`
+        }
+    }
+
+    visitComparator(c) {
+        return debug.checkVisit(c, this.child(c))
+    }
+
+    visitRange(c) {
+        return debug.checkVisit(c, this.child(c), 'if').replace(' ', '')
     }
 }
 //console.log((tree.accept(new Visitor)));
