@@ -32,15 +32,10 @@ ifStatement
 
 loopStatement
     : whileDo 
-    | doWhile
     ;
 
 whileDo
     : WHILE NL* disconjuction NL* block
-    ;
-
-doWhile
-    : DO NL* disconjuction NL* block
     ;
 
 disconjuction

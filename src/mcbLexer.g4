@@ -82,7 +82,6 @@ K_PREDICATE: 'predicate';
 ELSE: 'else';
 
 WHILE: 'while';
-DO: 'do';
 
 // LITERALS
 
@@ -190,7 +189,6 @@ I_K_PREDICATE: K_PREDICATE -> type(K_PREDICATE);
 // I_END: END -> popMode, type(END);
 I_END: END -> type(END);
 
-I_DO: DO -> type(DO);
 I_WHILE: WHILE -> type(WHILE);
 
 I_RealLiteral: RealLiteral -> type(RealLiteral);

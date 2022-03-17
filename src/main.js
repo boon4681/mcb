@@ -28,6 +28,12 @@ fun test:
     // if block ~5 ~ ~ #wool and !entity @s or x[x] matches 1.. and x[x] >= y[x]:
     // end
 end
+
+fun test_while:
+    while x[i] matches ..5:
+        x[i]+=1
+    end
+end
 `
 
 const chars = new antlr4.InputStream(input);
@@ -51,6 +57,7 @@ class Visitor extends mcbVisitor {
 
     Functions = {}
     IFs = {}
+    WhileDos = {}
 
     child(c, i, t) {
         if (i !== undefined)
@@ -361,6 +368,26 @@ class Visitor extends mcbVisitor {
 
     visitParentAssignableExpression(c) {
         return debug.checkVisit(c, this.visitChildren(this.child(c, 1)), 'score')[0]
+    }
+
+    visitWhileDo(c){
+        let p = debug.checkVisit(c, this.visitChildren(c), 'if')
+        if(!this.WhileDos[this.currentFN]){
+            this.WhileDos[this.currentFN] = {
+                regID:0
+            }
+        }else{
+            this.WhileDos[this.currentFN].regID++
+        }
+        const name = `${auto_gen_name}.${this.currentFN}.if.${this.WhileDos[this.currentFN].regID}`
+        p[1].value += ` function ${name}`
+        p[2].push(p[1].value)
+        this.WhileDos[this.currentFN][name] = {
+            name,
+            statements: p[2].flat(Infinity).filter(a => a)
+        }
+        console.log(this.WhileDos[this.currentFN][name])
+        return p[1].value
     }
 
     visitIfStatement(c) {

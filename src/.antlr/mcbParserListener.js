@@ -95,15 +95,6 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
-	// Enter a parse tree produced by mcbParser#doWhile.
-	enterDoWhile(ctx) {
-	}
-
-	// Exit a parse tree produced by mcbParser#doWhile.
-	exitDoWhile(ctx) {
-	}
-
-
 	// Enter a parse tree produced by mcbParser#disconjuction.
 	enterDisconjuction(ctx) {
 	}
