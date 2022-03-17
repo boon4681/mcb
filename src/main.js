@@ -349,6 +349,19 @@ class Visitor extends mcbVisitor {
     visitParentAssignableExpression(c) {
         return debug.checkVisit(c, this.visitChildren(this.child(c, 1)),'score')[0]
     }
+
+    visitScoreNrangeExpression(c){
+        const p = debug.checkVisit(c,this.visitChildren(c),'if')
+        console.log(`${p[0].value.target} ${p[0].value.objective} matches ${p[2]}`)
+    }
+
+    visitComparator(c){
+        return debug.checkVisit(c,this.child(c))
+    }
+
+    visitRange(c){
+        return debug.checkVisit(c,this.child(c),'if')
+    }
 }
 //console.log((tree.accept(new Visitor)));
 // console.log(JSON.stringify((tree.accept(new Visitor)).flat(Infinity).join('\n')))

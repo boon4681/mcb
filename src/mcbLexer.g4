@@ -15,17 +15,23 @@ DOT: '.';
 COMMA: ',';
 LPAREN: '(' -> pushMode(Inside);
 RPAREN: ')';
-LSQUARE: '[' -> pushMode(Inside);
+LSQUARE: '[' -> pushMode(DEFAULT_MODE);
 RSQUARE: ']';
 LCURL: '{' -> pushMode(DEFAULT_MODE);
 RCURL: '}';
+
 RANGE: '..';
+RANGE_P_WS: Hidden '..';
+RANGE_S_WS: '..' Hidden;
+RANGE_B_WS: Hidden '..' Hidden;
+
 MULT: '*';
 MOD: '%';
 DIV: '/';
 ADD: '+';
 SUB: '-';
 COLON: ':';
+// COLON: ':'-> pushMode(DEFAULT_MODE);
 
 CONJ: 'and';
 DISJ: 'or';
@@ -46,7 +52,8 @@ AT_P_WS: Hidden '@';
 AT_S_WS: '@' Hidden;
 AT_B_WS: Hidden '@' Hidden;
 
-ENTITY: (AT_N_WS|AT_P_WS) [asrep];
+// ENTITY: (AT_N_WS|AT_P_WS)[asrep];
+ENTITY_SUFFIX: [asrep];
 
 POS: '~';
 POS_P_WS: Hidden '~';
@@ -78,8 +85,8 @@ DO: 'do';
 
 // LITERALS
 
-fragment DIGIT: '0' ..'9';
-fragment DigitNoZero: '1' ..'9';
+fragment DIGIT: '0'..'9';
+fragment DigitNoZero: '1'..'9';
 fragment DIGITS: DIGIT DIGIT*;
 fragment Double: DIGITS? '.' DIGITS;
 
@@ -98,7 +105,7 @@ fragment Letter:
 	| UNICODE_CLASS_LM
 	| UNICODE_CLASS_LO;
 
-Identifier: (Letter | '_' | '#' | '.') (Letter| '_'| '#'| '.'| UnicodeDigit)*;
+Identifier: (Letter | '_' | '#' | '.' ) (Letter| '_'| '#'| '.'| '@' | UnicodeDigit)*;
 
 QUOTE_OPEN: '"' -> pushMode(LineString);
 
@@ -147,11 +154,16 @@ I_ADD_ASSIGNMENT: ADD_ASSIGNMENT -> type(ADD_ASSIGNMENT);
 I_SUB_ASSIGNMENT: SUB_ASSIGNMENT -> type(SUB_ASSIGNMENT);
 
 I_RANGE: RANGE -> type(RANGE);
+I_RANGE_P_WS: RANGE_P_WS -> type(RANGE_P_WS);
+I_RANGE_S_WS: RANGE_S_WS -> type(RANGE_S_WS);
+I_RANGE_B_WS: RANGE_B_WS -> type(RANGE_B_WS);
+
 I_AT_N_WS: AT_N_WS -> type(AT_N_WS);
 IAT_S_WS: AT_S_WS -> type(AT_S_WS);
 I_AT_P_WS: AT_P_WS -> type(AT_P_WS);
 I_AT_B_WS: AT_B_WS -> type(AT_B_WS);
-I_ENTITY: ENTITY -> type(ENTITY);
+// I_ENTITY: ENTITY -> type(ENTITY);
+I_ENTITY_SUFFIX: ENTITY_SUFFIX -> type(ENTITY_SUFFIX);
 I_LANGLE: LANGLE -> type(LANGLE);
 I_RANGLE: RANGLE -> type(RANGLE);
 I_LE: LE -> type(LE);
@@ -172,6 +184,7 @@ I_K_BLOCK: K_BLOCK -> type(K_BLOCK);
 I_K_STORAGE: K_STORAGE -> type(K_STORAGE);
 I_K_PREDICATE: K_PREDICATE -> type(K_PREDICATE);
 
+// I_END: END -> popMode, type(END);
 I_END: END -> type(END);
 
 I_DO: DO -> type(DO);

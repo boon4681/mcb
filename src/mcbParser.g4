@@ -3,7 +3,7 @@ options { tokenVocab = mcbLexer;}
 
 mcb: NL* topPiorityObject* EOF;
 topPiorityObject
-    : declaration nls?
+    : declaration nl?
     ;
 
 statements
@@ -66,10 +66,11 @@ range
     : scoreboardLiteral? RANGE scoreboardLiteral?
     | scoreboardLiteral RANGE scoreboardLiteral?
     | scoreboardLiteral? RANGE scoreboardLiteral
+    | scoreboardLiteral
     ;
 
 entityNBTExpression
-    : K_ENTITY ENTITY nbt?
+    : K_ENTITY entity nbt?
     ;
 
 blockExpression
@@ -188,7 +189,7 @@ scoreboardUnaryPrefix
     ;
 
 scoreboardTarget
-    : ENTITY nbt?
+    : entity nbt?
     ;
 
 literalConstant
@@ -240,6 +241,8 @@ nbtArray
 stringLiteral
     : QUOTE_OPEN LineStrText* QUOTE_CLOSE
     ;
+
+entity: (AT_N_WS|AT_P_WS)ENTITY_SUFFIX;
 
 nl
     : NL NL*
