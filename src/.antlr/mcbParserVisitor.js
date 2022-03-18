@@ -30,6 +30,12 @@ export default class mcbParserVisitor extends antlr4.tree.ParseTreeVisitor {
 	}
 
 
+	// Visit a parse tree produced by mcbParser#commands.
+	visitCommands(ctx) {
+	  return this.visitChildren(ctx);
+	}
+
+
 	// Visit a parse tree produced by mcbParser#declaration.
 	visitDeclaration(ctx) {
 	  return this.visitChildren(ctx);

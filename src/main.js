@@ -22,7 +22,9 @@ fun test:
     if block ~ ~4 ~ #log and !block ~ ~ ~4 #log:
         x[x] = 5
         if block ~ ~4 ~ #log and !block ~ ~ ~4 #log:
-            x[x] = 5
+            tp @e[tag=heleguin_part,tag=move.update] @s
+            tp @e[tag=heleguin_part,tag=move.update] ~ ~-0.25 ~
+            tag @e[tag=heleguin_part,tag=move.update] remove move.update
         end
     end
     if block ~5 ~ ~ #wool and !entity @s or x[x] matches 1.. and x[x] >= y[x]:
@@ -35,12 +37,11 @@ end
 //     end
 // end
 
-// fun test_while:
-//     while x[i] matches ..5 and x[y]>= x[x]:
-//         x[i]+=1
-//     end
-// end
-
+fun test_while:
+    while x[i] matches ..5 and x[y]>= x[x]:
+        x[i]+=1
+    end
+end
 fun test_repeat:
     repeat:
         x[i] -= 1
@@ -58,7 +59,7 @@ parser.addErrorListener(new ParserErrorListener())
 parser.buildParseTrees = true;
 const tree = parser.mcb()
 const debug = new Debug()
-debug.showingSection = ["loop", 'if']
+debug.showingSection = ["loop"]
 // mcb.<function name>.if_id
 const auto_gen_name = 'mcb'
 class Visitor extends mcbVisitor {
@@ -253,7 +254,7 @@ class Visitor extends mcbVisitor {
                 statements: this.visitChildren(c).flat(Infinity).filter(a => a != null)
             }
         }, "Function overloading is not allow in mcb")
-        console.log(this.Functions[name])
+        console.log(this.Functions[name],this.IFs[name])
     }
 
     visitAssignment(c) {
@@ -400,6 +401,10 @@ class Visitor extends mcbVisitor {
 
     visitParentAssignableExpression(c) {
         return debug.checkVisit(c, this.visitChildren(this.child(c, 1)), 'score')[0]
+    }
+
+    visitCommands(c){
+        return c.getText()
     }
 
     visitRepeatUntil(c) {

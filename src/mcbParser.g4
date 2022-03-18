@@ -11,7 +11,11 @@ statements
     ;
 
 statement
-    : ( declaration | assignment | loopStatement | ifStatement )
+    : ( declaration | assignment | loopStatement | ifStatement | commands)
+    ;
+
+commands
+    : COMMANDS CommandStr
     ;
 
 declaration

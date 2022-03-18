@@ -41,6 +41,15 @@ export default class mcbParserListener extends antlr4.tree.ParseTreeListener {
 	}
 
 
+	// Enter a parse tree produced by mcbParser#commands.
+	enterCommands(ctx) {
+	}
+
+	// Exit a parse tree produced by mcbParser#commands.
+	exitCommands(ctx) {
+	}
+
+
 	// Enter a parse tree produced by mcbParser#declaration.
 	enterDeclaration(ctx) {
 	}
