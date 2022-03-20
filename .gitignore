@@ -3,5 +3,8 @@ node_modules
 dist
 dist-ssr
 *.local
+legacy
 yarn.lock
 yarn-error.log
+.eslintrc.json
+bin

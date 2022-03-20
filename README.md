@@ -3,6 +3,8 @@
 
 MCB is a programming language that compiles to mcfunctions. 
 
+## ⚠️ trainsfering to typescript
+
 |     | status                                                  |
 | --- | ------------------------------------------------------- |
 | ✅   | Done, just done what are you looking for?               |
