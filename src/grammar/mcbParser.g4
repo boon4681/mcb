@@ -19,10 +19,10 @@ commands
     ;
 
 declaration
-    : functionDeclare
+    : functionDeclaration
     ;
 
-functionDeclare
+functionDeclaration
     : FUN Identifier block
     ;
 
