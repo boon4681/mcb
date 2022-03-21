@@ -5,6 +5,7 @@ import { genericErrorHandling } from './errors/genericErrorHandling'
 import ParserErrorListener from './errors/ParserErrorListener'
 import SCBuilder from './mcb/SCBuilder'
 const input = `
+# x:score dummy
 fun main:
     boon[@s] = 10
     x[@s[scores={x=5}]] = 10

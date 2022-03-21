@@ -4,6 +4,7 @@ options { tokenVocab = mcbLexer;}
 mcb: NL* topPriorityObject* EOF;
 topPriorityObject
     : declaration nl?
+    | scoreboardDeclaration nl?
     ;
 
 statements
@@ -21,6 +22,15 @@ commands
 declaration
     : functionDeclaration
     ;
+
+variableDeclaration
+    : scoreboardDeclaration
+    ;
+
+scoreboardDeclaration
+    : HASH Identifier COLON K_SCORE Identifier Identifier?
+    ;
+
 
 functionDeclaration
     : FUN Identifier block

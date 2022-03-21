@@ -1,5 +1,5 @@
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor'
-import { AdditiveExpressionContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, EntityNBTExpressionContext, ExpressionContext, FunctionDeclarationContext, IfStatementContext, LocateStatementContext, LoopStatementContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, TopPriorityObjectContext, WhileDoContext } from '../grammar'
+import { AdditiveExpressionContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, EntityNBTExpressionContext, ExpressionContext, FunctionDeclarationContext, IfStatementContext, LocateStatementContext, LoopStatementContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardDeclarationContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, TopPriorityObjectContext, WhileDoContext } from '../grammar'
 import { genericErrorHandling } from '../errors/genericErrorHandling'
 import { RuleNode } from 'antlr4ts/tree/RuleNode';
 import { ParserRuleContext } from 'antlr4ts';
@@ -93,6 +93,19 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         return p
     }
 
+    visitMcb(ctx: McbContext) {
+        const p = this.visitChildren(ctx);
+        const Functions = p.filter((a: any) => a.type === 'function')
+        const RunOnload = p.filter((a: any) => a.type !== 'function').map((a: any) => a.value)
+        Functions.push(
+            returnBuilder(
+                'load',
+                RunOnload
+            )
+        )
+        return Functions
+    }
+
     visitFunctionDeclaration(ctx: FunctionDeclarationContext) {
         const name = ctx.getChild(1).text
         if (!this.FUNCRegistry.has(name)) {
@@ -106,6 +119,26 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
                 value
             }]
         )
+    }
+
+    visitScoreboardDeclaration(ctx: ScoreboardDeclarationContext) {
+        const name = ctx.getChild(1).text
+        const type = ctx.getChild(3).text
+        if (type === "score") {
+            const criteria = ctx.getChild(4).text
+            if (ctx.childCount == 6) {
+                const displayName = ctx.getChild(5).text
+                return returnBuilder(
+                    'ScoreboardDeclaration',
+                    `scoreboard objective add ${name} ${criteria} ${displayName}`
+                )
+            }
+            return returnBuilder(
+                'ScoreboardDeclaration',
+                `scoreboard objective add ${name} ${criteria}`
+            )
+        }
+        this.error.critical(ctx, "Variable type not found.")
     }
 
     visitAssignment(ctx: AssignmentContext) {
@@ -240,7 +273,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         return ctx.text
     }
 
-    visitRepeatUntil(ctx: RepeatUntilContext){
+    visitRepeatUntil(ctx: RepeatUntilContext) {
         const p = this.visitChildren(ctx)
         console.log(p)
         const index = p[p.length - 1]
@@ -264,11 +297,11 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             this.Loops[this.CurrentFN][name] = p
             return `function ${name}`
         } else {
-            this.error.critical(ctx,`ScoreboardException unexpected conjuction types`)
+            this.error.critical(ctx, `ScoreboardException unexpected conjuction types`)
         }
     }
 
-    visitWhileDo(ctx: WhileDoContext){
+    visitWhileDo(ctx: WhileDoContext) {
         const p = this.visitChildren(ctx)
         if (!this.LoopIDRegistry[this.CurrentFN]) {
             this.LoopIDRegistry[this.CurrentFN] = {
@@ -290,7 +323,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             this.Loops[this.CurrentFN][name] = p
             return cached.statements
         } else {
-            this.error.critical(ctx,`ScoreboardException unexpected conjuction types`)
+            this.error.critical(ctx, `ScoreboardException unexpected conjuction types`)
         }
     }
 
@@ -316,7 +349,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             this.IFs[this.CurrentFN][name] = p
             return cached.statements
         } else {
-            this.error.critical(ctx,`ScoreboardException unexpected conjuction types`)
+            this.error.critical(ctx, `ScoreboardException unexpected conjuction types`)
         }
     }
 

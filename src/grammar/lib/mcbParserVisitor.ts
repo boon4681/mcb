@@ -9,6 +9,8 @@ import { StatementsContext } from "./mcbParser";
 import { StatementContext } from "./mcbParser";
 import { CommandsContext } from "./mcbParser";
 import { DeclarationContext } from "./mcbParser";
+import { VariableDeclarationContext } from "./mcbParser";
+import { ScoreboardDeclarationContext } from "./mcbParser";
 import { FunctionDeclarationContext } from "./mcbParser";
 import { BlockContext } from "./mcbParser";
 import { IfStatementContext } from "./mcbParser";
@@ -109,6 +111,20 @@ export interface mcbParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitDeclaration?: (ctx: DeclarationContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.variableDeclaration`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitVariableDeclaration?: (ctx: VariableDeclarationContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.scoreboardDeclaration`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitScoreboardDeclaration?: (ctx: ScoreboardDeclarationContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `mcbParser.functionDeclaration`.

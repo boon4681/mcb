@@ -9,6 +9,8 @@ import { StatementsContext } from "./mcbParser";
 import { StatementContext } from "./mcbParser";
 import { CommandsContext } from "./mcbParser";
 import { DeclarationContext } from "./mcbParser";
+import { VariableDeclarationContext } from "./mcbParser";
+import { ScoreboardDeclarationContext } from "./mcbParser";
 import { FunctionDeclarationContext } from "./mcbParser";
 import { BlockContext } from "./mcbParser";
 import { IfStatementContext } from "./mcbParser";
@@ -130,6 +132,28 @@ export interface mcbParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitDeclaration?: (ctx: DeclarationContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.variableDeclaration`.
+	 * @param ctx the parse tree
+	 */
+	enterVariableDeclaration?: (ctx: VariableDeclarationContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.variableDeclaration`.
+	 * @param ctx the parse tree
+	 */
+	exitVariableDeclaration?: (ctx: VariableDeclarationContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.scoreboardDeclaration`.
+	 * @param ctx the parse tree
+	 */
+	enterScoreboardDeclaration?: (ctx: ScoreboardDeclarationContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.scoreboardDeclaration`.
+	 * @param ctx the parse tree
+	 */
+	exitScoreboardDeclaration?: (ctx: ScoreboardDeclarationContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `mcbParser.functionDeclaration`.

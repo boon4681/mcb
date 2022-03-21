@@ -18,15 +18,18 @@ MCB is a programming language that compiles to mcfunctions.
 * ✅ adding all minecraft commands.
 
 ### Todo lists
-* ✅ adding if statement
+#### ✅ adding if statement
 ```lua
 if block ~ ~ ~ #log and x[i] matches 1..5:
  <some code>
 end
 ```
-* ✴️ adding "call" keyword to call mcb that was auto generate (to organize code)
-* ✅ adding "while" and "repeat until"
-
+#### ✅ adding variable declaration
+```lua
+# x:score <criteria> <name>
+```
+#### ✴️ adding "call" keyword to call mcb that was auto generate (to make code organized)
+#### ✅ adding "while" and "repeat until"
 ```lua
 while <expression>:
  <some code>
@@ -37,22 +40,22 @@ repeat:
 until <expression>
 ```
 
-* ✴️ adding "for" keyword to auto loop by range -> example
+#### ✴️ adding "for" keyword to auto loop by range -> example
 ```lua
 for x[i] in 1..10:
 end
 ```
-* ✴️ adding "clock" keyword to schedule function -> example
+#### ✴️ adding "clock" keyword to schedule function -> example
 ```lua
 clock 10t :
 end
 ```
-* ✴️ adding modifiers like (load / tick ) to trigger function -> example
+#### ✴️ adding modifiers like (load / tick ) to trigger function -> example
 ```lua
 load fun main:  | tick fun main:
 end             | end
 ```
-* ❌ adding poly-fills like (sin / cos / tan / sqrt)
-* ❌ additional obfustication
+#### ❌ adding poly-fills like (sin / cos / tan / sqrt)
+#### ❌ additional obfustication
    - obfusticated functions
    - obfusticated variables
