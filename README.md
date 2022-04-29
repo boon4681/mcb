@@ -21,9 +21,9 @@ MCB is a programming language that compiles to mcfunctions.
 ```lua
 ✅ adding if statement
 
-if block ~ ~ ~ #log and x[i] matches 1..5:
- <some code>
-end
+   if block ~ ~ ~ #log and x[i] matches 1..5:
+   <some code>
+   end
 
 ------------------------------------
 ✅ adding score variable declaration
