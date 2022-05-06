@@ -103,6 +103,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
                 RunOnload
             )
         )
+        // console.log(this.IFs,this.Loops)
         return Functions
     }
 
@@ -374,7 +375,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
                 'target': this.SCBuilder.disj(ID)
             },
             p.map((a: any) => {
-                return `execute ${a.value} run scoreboard players ${this.SCBuilder.disj(ID)} ${this.SCBuilder.disj_name()} 1`
+                return `execute ${a.value} run scoreboard players set ${this.SCBuilder.disj(ID)} ${this.SCBuilder.disj_name()} 1`
             })
         )
     }
