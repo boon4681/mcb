@@ -1,10 +1,11 @@
-// Generated from ./src/grammar/mcbParser.g4 by ANTLR 4.9.0-SNAPSHOT
+// Generated from E:\_Project\nodejs\mcb\src\grammar\mcbParser.g4 by ANTLR 4.9.0-SNAPSHOT
 
 
 import { ParseTreeListener } from "antlr4ts/tree/ParseTreeListener";
 
 import { McbContext } from "./mcbParser";
 import { TopPriorityObjectContext } from "./mcbParser";
+import { LoadContext } from "./mcbParser";
 import { StatementsContext } from "./mcbParser";
 import { StatementContext } from "./mcbParser";
 import { CommandsContext } from "./mcbParser";
@@ -12,9 +13,12 @@ import { DeclarationContext } from "./mcbParser";
 import { VariableDeclarationContext } from "./mcbParser";
 import { ScoreboardDeclarationContext } from "./mcbParser";
 import { FunctionDeclarationContext } from "./mcbParser";
+import { FunctionParametersContext } from "./mcbParser";
+import { ParameterContext } from "./mcbParser";
 import { BlockContext } from "./mcbParser";
 import { IfStatementContext } from "./mcbParser";
 import { LoopStatementContext } from "./mcbParser";
+import { ForStatementContext } from "./mcbParser";
 import { WhileDoContext } from "./mcbParser";
 import { RepeatUntilContext } from "./mcbParser";
 import { RepeatUntilBlockContext } from "./mcbParser";
@@ -88,6 +92,17 @@ export interface mcbParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitTopPriorityObject?: (ctx: TopPriorityObjectContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.load`.
+	 * @param ctx the parse tree
+	 */
+	enterLoad?: (ctx: LoadContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.load`.
+	 * @param ctx the parse tree
+	 */
+	exitLoad?: (ctx: LoadContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `mcbParser.statements`.
@@ -167,6 +182,28 @@ export interface mcbParserListener extends ParseTreeListener {
 	exitFunctionDeclaration?: (ctx: FunctionDeclarationContext) => void;
 
 	/**
+	 * Enter a parse tree produced by `mcbParser.functionParameters`.
+	 * @param ctx the parse tree
+	 */
+	enterFunctionParameters?: (ctx: FunctionParametersContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.functionParameters`.
+	 * @param ctx the parse tree
+	 */
+	exitFunctionParameters?: (ctx: FunctionParametersContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.parameter`.
+	 * @param ctx the parse tree
+	 */
+	enterParameter?: (ctx: ParameterContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.parameter`.
+	 * @param ctx the parse tree
+	 */
+	exitParameter?: (ctx: ParameterContext) => void;
+
+	/**
 	 * Enter a parse tree produced by `mcbParser.block`.
 	 * @param ctx the parse tree
 	 */
@@ -198,6 +235,17 @@ export interface mcbParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitLoopStatement?: (ctx: LoopStatementContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.forStatement`.
+	 * @param ctx the parse tree
+	 */
+	enterForStatement?: (ctx: ForStatementContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.forStatement`.
+	 * @param ctx the parse tree
+	 */
+	exitForStatement?: (ctx: ForStatementContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `mcbParser.whileDo`.

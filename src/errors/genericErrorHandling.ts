@@ -1,7 +1,6 @@
 import { ANTLRInputStream, ParserRuleContext } from "antlr4ts";
 import chalk from 'chalk'
 
-
 export class genericErrorHandling {
     private source: ANTLRInputStream
 
@@ -20,7 +19,7 @@ export class genericErrorHandling {
         console.log(
             chalk.bgRed.rgb(255,255,255)(" ERROR "),
             chalk.red("CriticalError"),
-            `${(this.source.name || "")}:${chalk.yellow(line)}:${chalk.yellow(column)}\n` + 
+            `${chalk.cyan(this.source.name || "")}:${chalk.yellow(line)}:${chalk.yellow(column + 2)}\n` + 
             chalk.red(source.substring(lineIndex,NL1nd)) + "\n" +
             space + chalk.red(`└── ${message.replace(/<EOF>,|<EOF>/g, "")}`)
         )

@@ -1,5 +1,5 @@
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor'
-import { AdditiveExpressionContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, EntityNBTExpressionContext, ExpressionContext, FunctionDeclarationContext, IfStatementContext, LocateStatementContext, LoopStatementContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardDeclarationContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, TopPriorityObjectContext, WhileDoContext } from '../grammar'
+import { AdditiveExpressionContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, EntityNBTExpressionContext, ExpressionContext, ForStatementContext, FunctionDeclarationContext, IfStatementContext, LoadContext, LocateStatementContext, LoopStatementContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardDeclarationContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, TopPriorityObjectContext, WhileDoContext } from '../grammar'
 import { genericErrorHandling } from '../errors/genericErrorHandling'
 import { RuleNode } from 'antlr4ts/tree/RuleNode';
 import { ParserRuleContext } from 'antlr4ts';
@@ -28,9 +28,9 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
     DISJIDRegistry: Record<string, { id: number }> = {}
     IFIDRegistry: Record<string, { id: number }> = {}
     LoopIDRegistry: Record<string, { id: number }> = {}
-    private FUNCRegistry: Set<string> = new Set()
-    private IFs: Record<string, Record<string, string[]>> = {}
-    private Loops: Record<string, Record<string, string[]>> = {}
+    FUNCRegistry: Set<string> = new Set()
+    IFs: Record<string, Record<string, string[]>> = {}
+    Loops: Record<string, Record<string, string[]>> = {}
     private error: genericErrorHandling
     private SCBuilder: SCBuilder
     private CurrentSC = ""
@@ -95,16 +95,15 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
 
     visitMcb(ctx: McbContext) {
         const p = this.visitChildren(ctx);
-        const Functions = p.filter((a: any) => a.type === 'function')
+        const Functions = p.filter((a: any) => a.type === 'function').map((a: any) => a.value)
         const RunOnload = p.filter((a: any) => a.type !== 'function').map((a: any) => a.value)
-        Functions.push(
-            returnBuilder(
-                'load',
-                RunOnload
-            )
-        )
-        // console.log(this.IFs,this.Loops)
-        return Functions
+        return {
+            FUNCRegistry: Array.from(this.FUNCRegistry),
+            Loops: this.Loops,
+            IFs: this.IFs,
+            Functions,
+            Load: RunOnload
+        }
     }
 
     visitFunctionDeclaration(ctx: FunctionDeclarationContext) {
@@ -115,10 +114,17 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         } else this.error.critical(ctx, "Function overloading is not allow in mcb")
         const value = super.visitChildren(ctx)
         return returnBuilder('function',
-            [{
+            {
                 name,
                 value
-            }]
+            }
+        )
+    }
+
+    visitLoad(ctx: LoadContext) {
+        const p = this.visitChildren(ctx)
+        return returnBuilder(
+            'load', p.value ? p.value : p[0]
         )
     }
 
@@ -127,6 +133,11 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         const type = ctx.getChild(3).text
         if (type === "score") {
             const criteria = ctx.getChild(4).text
+            if (!this.SCIDRegistry[name]) {
+                this.SCIDRegistry[name] = {
+                    id: 0
+                }
+            }
             if (ctx.childCount == 6) {
                 const displayName = ctx.getChild(5).text
                 return returnBuilder(
@@ -146,11 +157,6 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         const assignee = this.visit(ctx.getChild(0))
         if (assignee.type === "ScoreboardIdentifier") {
             this.CurrentSC = assignee.value.objective
-            if (!this.SCIDRegistry[this.CurrentSC]) {
-                this.SCIDRegistry[this.CurrentSC] = {
-                    id: 0
-                }
-            }
         } else this.error.critical(ctx, "Scoreboard Identifier not Found.")
         const AssignmentOperator = this.visit(ctx.getChild(1))
         const p = this.visit(ctx.getChild(2))
@@ -238,6 +244,9 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
     }
 
     visitScoreboardIdentifier(ctx: ScoreboardIdentifierContext) {
+        if (!this.SCIDRegistry[ctx.getChild(0).text]) {
+            this.error.critical(ctx, `Scoreboard '${ctx.getChild(0).text}' Objective is not Declare`)
+        }
         return returnBuilder(
             'ScoreboardIdentifier',
             {
@@ -276,7 +285,6 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
 
     visitRepeatUntil(ctx: RepeatUntilContext) {
         const p = this.visitChildren(ctx)
-        console.log(p)
         const index = p[p.length - 1]
         if (!this.LoopIDRegistry[this.CurrentFN]) {
             this.LoopIDRegistry[this.CurrentFN] = {
@@ -284,7 +292,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             }
             this.Loops[this.CurrentFN] = {}
         } else this.LoopIDRegistry[this.CurrentFN].id++
-        const name = `${this.AutoName}.${this.CurrentFN}.if.${this.LoopIDRegistry[this.CurrentFN].id}`
+        const name = `${this.AutoName}.${this.CurrentFN}.loop.${this.LoopIDRegistry[this.CurrentFN].id}`
         if (index.type === 'conjuction') {
             const callFN = index.value + ` function ${name}`
             p.pop()
@@ -310,7 +318,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             }
             this.Loops[this.CurrentFN] = {}
         } else this.LoopIDRegistry[this.CurrentFN].id++
-        const name = `${this.AutoName}.${this.CurrentFN}.if.${this.LoopIDRegistry[this.CurrentFN].id}`
+        const name = `${this.AutoName}.${this.CurrentFN}.loop.${this.LoopIDRegistry[this.CurrentFN].id}`
         if (p[0].type === 'conjuction') {
             const callFN = p[0].value + ` function ${name}`
             p.shift()
@@ -326,6 +334,25 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         } else {
             this.error.critical(ctx, `ScoreboardException unexpected conjuction types`)
         }
+    }
+
+    visitForStatement(ctx: ForStatementContext) {
+        const p = this.visitChildren(ctx)
+        if (!this.LoopIDRegistry[this.CurrentFN]) {
+            this.LoopIDRegistry[this.CurrentFN] = {
+                id: 0
+            }
+            this.Loops[this.CurrentFN] = {}
+        } else this.LoopIDRegistry[this.CurrentFN].id++
+        const name = `${this.AutoName}.${this.CurrentFN}.loop.${this.LoopIDRegistry[this.CurrentFN].id}`
+        const scOp = p[2].value.startsWith('-') ? 'remove' : 'add'
+        const scSet = `scoreboard players set ${p[0].value.target} ${p[0].value.objective} ${p[2].value}`
+        const scVC = `scoreboard players ${scOp} ${p[0].value.target} ${p[0].value.objective} ${p[2].value.replace('-', '')}`
+        const exec = `execute if score ${p[0].value.target} ${p[0].value.objective} matches ${p[1].value.text} run function ${name}`
+        const _p = p.slice(3)
+        _p.push(scVC, exec)
+        this.Loops[this.CurrentFN][name] = _p
+        return exec
     }
 
     visitIfStatement(ctx: IfStatementContext) {
@@ -442,7 +469,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         const p = this.visitChildren(ctx)
         return returnBuilder(
             'comparison',
-            `score ${p[0].value.target} ${p[0].value.objective} matches ${p[1]}`
+            `score ${p[0].value.target} ${p[0].value.objective} matches ${p[1].value.text}`
         )
     }
 
@@ -451,7 +478,14 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
     }
 
     visitRange(ctx: RangeContext) {
-        return ctx.text.replace(" ", '')
+        const range = ctx.text.split("..").map(a => Number(a) || 0)
+        return returnBuilder('range', {
+            range: {
+                min: range[0],
+                max: range[1]
+            },
+            text: ctx.text
+        })
     }
 
 }

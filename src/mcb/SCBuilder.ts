@@ -150,6 +150,6 @@ export default class SCBuilder {
     }
 
     SCOperationSet(target1: string, objective1: string, operator: string, target2: string, objective2: string) {
-        return `scoreboard player operation ${target1} ${objective1} ${operator} ${target2} ${objective2}`
+        return `scoreboard players operation ${target1} ${objective1} ${operator} ${target2} ${objective2}`
     }
 }

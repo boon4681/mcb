@@ -1,10 +1,11 @@
-// Generated from ./src/grammar/mcbParser.g4 by ANTLR 4.9.0-SNAPSHOT
+// Generated from E:\_Project\nodejs\mcb\src\grammar\mcbParser.g4 by ANTLR 4.9.0-SNAPSHOT
 
 
 import { ParseTreeVisitor } from "antlr4ts/tree/ParseTreeVisitor";
 
 import { McbContext } from "./mcbParser";
 import { TopPriorityObjectContext } from "./mcbParser";
+import { LoadContext } from "./mcbParser";
 import { StatementsContext } from "./mcbParser";
 import { StatementContext } from "./mcbParser";
 import { CommandsContext } from "./mcbParser";
@@ -12,9 +13,12 @@ import { DeclarationContext } from "./mcbParser";
 import { VariableDeclarationContext } from "./mcbParser";
 import { ScoreboardDeclarationContext } from "./mcbParser";
 import { FunctionDeclarationContext } from "./mcbParser";
+import { FunctionParametersContext } from "./mcbParser";
+import { ParameterContext } from "./mcbParser";
 import { BlockContext } from "./mcbParser";
 import { IfStatementContext } from "./mcbParser";
 import { LoopStatementContext } from "./mcbParser";
+import { ForStatementContext } from "./mcbParser";
 import { WhileDoContext } from "./mcbParser";
 import { RepeatUntilContext } from "./mcbParser";
 import { RepeatUntilBlockContext } from "./mcbParser";
@@ -85,6 +89,13 @@ export interface mcbParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitTopPriorityObject?: (ctx: TopPriorityObjectContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by `mcbParser.load`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLoad?: (ctx: LoadContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by `mcbParser.statements`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -134,6 +145,20 @@ export interface mcbParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitFunctionDeclaration?: (ctx: FunctionDeclarationContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by `mcbParser.functionParameters`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitFunctionParameters?: (ctx: FunctionParametersContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.parameter`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitParameter?: (ctx: ParameterContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by `mcbParser.block`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -153,6 +178,13 @@ export interface mcbParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitLoopStatement?: (ctx: LoopStatementContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.forStatement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitForStatement?: (ctx: ForStatementContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `mcbParser.whileDo`.

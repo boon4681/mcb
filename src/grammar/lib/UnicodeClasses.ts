@@ -1,4 +1,4 @@
-// Generated from ./src/grammar/UnicodeClasses.g4 by ANTLR 4.9.0-SNAPSHOT
+// Generated from E:\_Project\nodejs\mcb\src\grammar\UnicodeClasses.g4 by ANTLR 4.9.0-SNAPSHOT
 
 
 import { ATN } from "antlr4ts/atn/ATN";

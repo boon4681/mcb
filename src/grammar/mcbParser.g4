@@ -4,15 +4,17 @@ options { tokenVocab = mcbLexer;}
 mcb: NL* topPriorityObject* EOF;
 topPriorityObject
     : declaration nl?
-    | scoreboardDeclaration nl?
+    | load nl?
     ;
+
+load: statement;
 
 statements
     : (statement (nls statement)*)? nls?
     ;
 
 statement
-    : ( declaration | assignment | loopStatement | ifStatement | commands)
+    : ( declaration | assignment | loopStatement | ifStatement | commands | scoreboardDeclaration)
     ;
 
 commands
@@ -28,12 +30,20 @@ variableDeclaration
     ;
 
 scoreboardDeclaration
-    : HASH Identifier COLON K_SCORE Identifier Identifier?
+    : LET Identifier COLON K_SCORE Identifier Identifier?
     ;
 
 
 functionDeclaration
-    : FUN Identifier block
+    : FUN Identifier functionParameters block
+    ;
+
+functionParameters
+    : LPAREN (parameter (COMMA parameter)* COMMA?)? RPAREN
+    ;
+
+parameter
+    : Identifier COLON TYPE
     ;
 
 block
@@ -47,6 +57,11 @@ ifStatement
 loopStatement
     : whileDo
     | repeatUntil
+    | forStatement
+    ;
+
+forStatement
+    : FOR NL* scoreboardIdentifier IN range COMMA scoreboardLiteral NL* block
     ;
 
 whileDo
@@ -89,9 +104,7 @@ scoreNrangeExpression
     ;
 
 range
-    : scoreboardLiteral
-    | scoreboardLiteral RANGE_S_WS scoreboardLiteral?
-    | scoreboardLiteral? RANGE_P_WS scoreboardLiteral
+    : RANGE
     ;
 
 entityNBTExpression

@@ -4,62 +4,76 @@ import Visitor from './mcb/Visitor'
 import { genericErrorHandling } from './errors/genericErrorHandling'
 import ParserErrorListener from './errors/ParserErrorListener'
 import SCBuilder from './mcb/SCBuilder'
-const input = `
-# x:score dummy
-fun main:
-    boon[@s] = 10
-    x[@s[scores={x=5}]] = 10
-    x[y] += -15
-    x[x] = x[x]-30*50
-    x[sub] = x[input]*(180 - x[input])
-    x[sine] = (4*x[sub]/(40500-x[sub]))*1
-end
+import { writeFileSync,readFileSync, mkdirSync, existsSync } from 'node:fs'
+import path from 'node:path';
+import glob from 'glob'
 
-fun test:
-    if block ~ ~4 ~ #log and !block ~ ~ ~4 #log:
-        x[x] = 5
-        if block ~ ~4 ~ #log and !block ~ ~ ~4 #log:
-            tp @e[tag=heleguin_part,tag=move.update] @s
-            tp @e[tag=heleguin_part,tag=move.update] ~ ~-0.25 ~
-            tag @e[tag=heleguin_part,tag=move.update] remove move.update
-        end
-    end
-    if block ~5 ~ ~ #wool and !entity @s or x[x] matches 1.. and x[x] >= y[x]:
-    end
-end
+const FnWalker = (input:any,func: Function) => {
+    for (var i in input) {
+        if (!!input[i] && typeof(input[i])=="object") {
+            if(input[i].value.type){
+                FnWalker(input[i],func);
+            }else{
+                func(input[i])
+            }
+        }
+    }
+}
 
-// fun test_if:
-//     if x[i] matches ..5 or x[y]>= x[x]:
-//         x[x] = 5
-//     end
-// end
+let SCIDRegistry: Record<string, { id: number }> = {}
 
-fun test_while:
-    while x[i] matches ..5 and x[y]>= x[x]:
-        x[i]+=1
-    end
-end
+const compiler = (filepath:string) =>{
+    const parPath = path.parse(filepath)
+    const input = readFileSync(filepath,'utf-8')
+    const inputStream = new ANTLRInputStream(input);
+    inputStream.name = filepath
+    const error = new genericErrorHandling(inputStream);
+    const parserErrorListener = new ParserErrorListener(inputStream)
+    const lexer = new mcbLexer(inputStream);
+    const tokenStream = new CommonTokenStream(lexer);
+    const parser = new mcbParser(tokenStream);
+    parser.removeErrorListeners()
+    parser.addErrorListener(parserErrorListener)
+    const tree = parser.mcb();
+    const scBuilder = new SCBuilder("","","",error);
+    const visitor = new Visitor(scBuilder,error)
+    visitor.SCIDRegistry = SCIDRegistry
+    const str = tree.accept(visitor)
+    SCIDRegistry = visitor.SCIDRegistry
+    const outputDir = path.join(parPath.dir,parPath.name)
+    const outputLoops = path.join(outputDir,'loops')
+    const outputIFs = path.join(outputDir,'ifs')
+    
+    FnWalker(str.Functions,(e:any)=>{
+        if(!existsSync(outputDir)){
+            mkdirSync(outputDir,{recursive:true})
+        }
+        writeFileSync(path.join(outputDir,`${e.name}.mcfunction`),e.value.join('\n'))
+    })
+    
+    if(!existsSync(outputLoops)){
+        mkdirSync(outputLoops,{recursive:true})
+    }
+    for (const e in str.Loops){
+        for(const m in str.Loops[e]){
+            writeFileSync(path.join(outputLoops,`${m}.mcfunction`),str.Loops[e][m].join('\n'))
+        }
+    }
+    
+    if(!existsSync(outputIFs)){
+        mkdirSync(outputIFs,{recursive:true})
+    }
+    
+    for (const e in str.IFs){
+        for(const m in str.IFs[e]){
+            writeFileSync(path.join(outputIFs,`${m}.mcfunction`),str.IFs[e][m].join('\n'))
+        }
+    }
+    writeFileSync(path.join(parPath.dir,`${parPath.name}.json`),JSON.stringify(str,null,5))
+}
 
-fun test_repeat:
-    x[x] = 5
-    repeat:
-        x[i] -= 1
-    until x[i] matches ..3 or x[y]>= x[x]
-end
-
-`
-
-const inputStream = new ANTLRInputStream(input);
-const error = new genericErrorHandling(inputStream);
-const parserErrorListener = new ParserErrorListener(inputStream)
-const lexer = new mcbLexer(inputStream);
-const tokenStream = new CommonTokenStream(lexer);
-const parser = new mcbParser(tokenStream);
-parser.removeErrorListeners()
-parser.addErrorListener(parserErrorListener)
-const tree = parser.mcb();
-const scBuilder = new SCBuilder("","","",error);
-const visitor = new Visitor(scBuilder,error)
-console.log(JSON.stringify(
-    tree.accept(visitor),null,5
-))
+glob('./test/*.mcb', (er, files) => {
+    if (!er) {
+        for (const file of files) compiler(file)
+    }
+})

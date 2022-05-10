@@ -8,3 +8,4 @@ yarn.lock
 yarn-error.log
 .eslintrc.json
 bin
+test
