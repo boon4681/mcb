@@ -7,6 +7,7 @@ import SCBuilder from './mcb/SCBuilder'
 import { writeFileSync,readFileSync, mkdirSync, existsSync } from 'node:fs'
 import path from 'node:path';
 import glob from 'glob'
+import { load } from './mcb/mcbpack'
 
 const FnWalker = (input:any,func: Function) => {
     for (var i in input) {
@@ -21,6 +22,8 @@ const FnWalker = (input:any,func: Function) => {
 }
 
 let SCIDRegistry: Record<string, { id: number }> = {}
+
+load('./test/mcbpack.json')
 
 const compiler = (filepath:string) =>{
     const parPath = path.parse(filepath)
@@ -44,29 +47,34 @@ const compiler = (filepath:string) =>{
     const outputLoops = path.join(outputDir,'loops')
     const outputIFs = path.join(outputDir,'ifs')
     
-    FnWalker(str.Functions,(e:any)=>{
+    if(Object.keys(str.Functions).length > 0){
         if(!existsSync(outputDir)){
             mkdirSync(outputDir,{recursive:true})
         }
-        writeFileSync(path.join(outputDir,`${e.name}.mcfunction`),e.value.join('\n'))
-    })
-    
-    if(!existsSync(outputLoops)){
-        mkdirSync(outputLoops,{recursive:true})
+        FnWalker(str.Functions,(e:any)=>{
+            writeFileSync(path.join(outputDir,`${e.name}.mcfunction`),e.value.join('\n'))
+        })
     }
-    for (const e in str.Loops){
-        for(const m in str.Loops[e]){
-            writeFileSync(path.join(outputLoops,`${m}.mcfunction`),str.Loops[e][m].join('\n'))
+    
+    if(Object.keys(str.Loops).length > 0){
+        if(!existsSync(outputLoops)){
+            mkdirSync(outputLoops,{recursive:true})
+        }
+        for (const e in str.Loops){
+            for(const m in str.Loops[e]){
+                writeFileSync(path.join(outputLoops,`${m}.mcfunction`),str.Loops[e][m].join('\n'))
+            }
         }
     }
     
-    if(!existsSync(outputIFs)){
-        mkdirSync(outputIFs,{recursive:true})
-    }
-    
-    for (const e in str.IFs){
-        for(const m in str.IFs[e]){
-            writeFileSync(path.join(outputIFs,`${m}.mcfunction`),str.IFs[e][m].join('\n'))
+    if(Object.keys(str.IFs).length > 0){
+        if(!existsSync(outputIFs)){
+            mkdirSync(outputIFs,{recursive:true})
+        }
+        for (const e in str.IFs){
+            for(const m in str.IFs[e]){
+                writeFileSync(path.join(outputIFs,`${m}.mcfunction`),str.IFs[e][m].join('\n'))
+            }
         }
     }
     writeFileSync(path.join(parPath.dir,`${parPath.name}.json`),JSON.stringify(str,null,5))
