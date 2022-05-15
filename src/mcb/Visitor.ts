@@ -1,7 +1,6 @@
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor'
 import { AdditiveExpressionContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, EntityNBTExpressionContext, ExpressionContext, ForStatementContext, FunctionDeclarationContext, IfStatementContext, LoadContext, LocateStatementContext, LoopStatementContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardDeclarationContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, TopPriorityObjectContext, WhileDoContext } from '../grammar'
 import { genericErrorHandling } from '../errors/genericErrorHandling'
-import { RuleNode } from 'antlr4ts/tree/RuleNode';
 import { ParserRuleContext } from 'antlr4ts';
 import SCBuilder from './SCBuilder';
 
@@ -108,11 +107,13 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
 
     visitFunctionDeclaration(ctx: FunctionDeclarationContext) {
         const name = ctx.getChild(1).text
+        if(this.CurrentFN) this.error.critical(ctx, "Function stacking is not allow in mcb")
         if (!this.FUNCRegistry.has(name)) {
             this.FUNCRegistry.add(name)
             this.CurrentFN = name
         } else this.error.critical(ctx, "Function overloading is not allow in mcb")
         const value = super.visitChildren(ctx)
+        this.CurrentFN = ''
         return returnBuilder('function',
             {
                 name,

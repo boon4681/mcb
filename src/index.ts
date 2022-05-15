@@ -7,7 +7,7 @@ import SCBuilder from './mcb/SCBuilder'
 import { writeFileSync,readFileSync, mkdirSync, existsSync } from 'node:fs'
 import path from 'node:path';
 import glob from 'glob'
-import { load } from './mcb/mcbpack'
+import { loadMCBpack } from './mcb/mcbpack'
 
 const FnWalker = (input:any,func: Function) => {
     for (var i in input) {
@@ -23,7 +23,16 @@ const FnWalker = (input:any,func: Function) => {
 
 let SCIDRegistry: Record<string, { id: number }> = {}
 
-load('./test/mcbpack.json')
+
+const runOption = 'build'
+
+loadMCBpack('./test/mcbpack.json').then(config=>{
+    const option = config.compiler[runOption]
+    if(!option){
+
+    }
+})
+
 
 const compiler = (filepath:string) =>{
     const parPath = path.parse(filepath)
@@ -80,7 +89,7 @@ const compiler = (filepath:string) =>{
     writeFileSync(path.join(parPath.dir,`${parPath.name}.json`),JSON.stringify(str,null,5))
 }
 
-glob('./test/*.mcb', (er, files) => {
+glob('./test/**/*.mcb', (er, files) => {
     if (!er) {
         for (const file of files) compiler(file)
     }

@@ -14,7 +14,7 @@ statements
     ;
 
 statement
-    : ( declaration | assignment | loopStatement | ifStatement | commands | scoreboardDeclaration)
+    : ( assignment | loopStatement | ifStatement | commands | scoreboardDeclaration)
     ;
 
 commands
