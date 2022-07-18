@@ -16,8 +16,11 @@ import { FunctionDeclarationContext } from "./mcbParser";
 import { FunctionParametersContext } from "./mcbParser";
 import { ParameterContext } from "./mcbParser";
 import { BlockContext } from "./mcbParser";
+import { FunctionModifiersContext } from "./mcbParser";
+import { FunctionModifierContext } from "./mcbParser";
 import { IfStatementContext } from "./mcbParser";
 import { LoopStatementContext } from "./mcbParser";
+import { LoopWithContext } from "./mcbParser";
 import { ForStatementContext } from "./mcbParser";
 import { WhileDoContext } from "./mcbParser";
 import { RepeatUntilContext } from "./mcbParser";
@@ -166,6 +169,20 @@ export interface mcbParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitBlock?: (ctx: BlockContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by `mcbParser.functionModifiers`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitFunctionModifiers?: (ctx: FunctionModifiersContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.functionModifier`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitFunctionModifier?: (ctx: FunctionModifierContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by `mcbParser.ifStatement`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -178,6 +195,13 @@ export interface mcbParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitLoopStatement?: (ctx: LoopStatementContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.loopWith`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitLoopWith?: (ctx: LoopWithContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `mcbParser.forStatement`.

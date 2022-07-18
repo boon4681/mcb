@@ -76,6 +76,9 @@ FUN: 'fun';
 END: 'end';
 IF: 'if';
 LET: 'let';
+TICK: 'tick';
+LOAD: 'load';
+WITH: 'with';
 
 K_MATCHES: 'matches';
 K_DATA: 'data';
@@ -214,8 +217,11 @@ LineStrText: ~('"')+;
 
 mode Commands;
 
-COMMANDS_END: NL -> popMode;
-CommandStr: ~([\n\r])+ -> popMode;
+CommandStr: ~([\n\r])+ 
+{
+	const text = this.text.endsWith(":")
+	if(text) this._input.seek(this.charIndex-1)
+} -> popMode;
 
 mode Inside;
 
@@ -287,11 +293,15 @@ I_QUOTE_OPEN:
 	QUOTE_OPEN -> pushMode(LineString), type(QUOTE_OPEN);
 
 I_FUN: FUN -> type(FUN);
-
 I_IF: IF -> type(IF);
 I_ELSE: ELSE -> type(ELSE);
 I_LET: LET -> type(LET);
 I_TYPE: TYPE -> type(TYPE);
+I_TICK: TICK -> type(TICK);
+I_LOAD: LOAD -> type(LOAD);
+I_WITH: WITH -> type(WITH);
+
+
 I_K_MATCHES: K_MATCHES -> type(K_MATCHES);
 I_K_DATA: K_DATA -> type(K_DATA);
 I_K_ENTITY: K_ENTITY -> type(K_ENTITY);

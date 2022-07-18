@@ -1,5 +1,5 @@
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor'
-import { AdditiveExpressionContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, EntityNBTExpressionContext, ExpressionContext, ForStatementContext, FunctionDeclarationContext, IfStatementContext, LoadContext, LocateStatementContext, LoopStatementContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardDeclarationContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, TopPriorityObjectContext, WhileDoContext } from '../grammar'
+import { AdditiveExpressionContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, EntityNBTExpressionContext, ExpressionContext, ForStatementContext, FunctionDeclarationContext, FunctionModifierContext, FunctionModifiersContext, IfStatementContext, LoadContext, LocateStatementContext, LoopStatementContext, LoopWithContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardDeclarationContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, TopPriorityObjectContext, WhileDoContext } from '../grammar'
 import { genericErrorHandling } from '../errors/genericErrorHandling'
 import { ParserRuleContext } from 'antlr4ts';
 import SCBuilder from './SCBuilder';
@@ -20,7 +20,6 @@ function returnBuilder(type: string, value: any, statements?: string[]): returnV
     }
 }
 
-
 class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParserVisitor<returnValue> {
 
     SCIDRegistry: Record<string, { id: number }> = {}
@@ -28,17 +27,21 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
     IFIDRegistry: Record<string, { id: number }> = {}
     LoopIDRegistry: Record<string, { id: number }> = {}
     FUNCRegistry: Set<string> = new Set()
-    IFs: Record<string, Record<string, string[]>> = {}
-    Loops: Record<string, Record<string, string[]>> = {}
+    IFs: { [key: string]: { [key: string]: { path: string, value: string[] } } } = {}
+    Loops: { [key: string]: { [key: string]: { path: string, value: string[] } } } = {}
     private error: genericErrorHandling
     private SCBuilder: SCBuilder
     private CurrentSC = ""
     private CurrentFN = ""
     private AutoName = "mcb"
+    private namespace: string
+    private folder: string
 
-    constructor(SCBuilder: SCBuilder, error: genericErrorHandling) {
+    constructor(namespace: string, folder: string, SCBuilder: SCBuilder, error: genericErrorHandling) {
         super()
+        this.namespace = namespace
         this.SCBuilder = SCBuilder
+        this.folder = folder
         this.error = error;
     }
 
@@ -94,26 +97,46 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
 
     visitMcb(ctx: McbContext) {
         const p = this.visitChildren(ctx);
-        const Functions = p.filter((a: any) => a.type === 'function').map((a: any) => a.value)
-        const RunOnload = p.filter((a: any) => a.type !== 'function').map((a: any) => a.value)
+        const Functions = p.filter((a: any) => a.type === 'function' || a.type.startsWith('modded')).map((a: any) => a.value)
+        const ModdedLoadFunction = p.filter((a: any) => a.type === 'moddedload_function').map((a: any) => `function ${this.namespace}:${this.folder}/${a.value.name}`)
+        const ModdedTickFunction = p.filter((a: any) => a.type === 'moddedtick_function').map((a: any) => `function ${this.namespace}:${this.folder}/${a.value.name}`)
+        const RunOnload = p.filter((a: any) => a.type === 'load').map((a: any) => a.value)
+        const RunOnTick = ModdedTickFunction
+        RunOnload.push(...ModdedLoadFunction)
         return {
             FUNCRegistry: Array.from(this.FUNCRegistry),
             Loops: this.Loops,
             IFs: this.IFs,
             Functions,
-            Load: RunOnload
+            Load: RunOnload,
+            Tick: RunOnTick
         }
     }
 
     visitFunctionDeclaration(ctx: FunctionDeclarationContext) {
-        const name = ctx.getChild(1).text
-        if(this.CurrentFN) this.error.critical(ctx, "Function stacking is not allow in mcb")
+        let nameIndex = 1
+        if (ctx.childCount == 5) nameIndex = 2
+        const name = ctx.getChild(nameIndex).text
+        if (this.CurrentFN) this.error.critical(ctx, "Function stacking is not allow in mcb")
         if (!this.FUNCRegistry.has(name)) {
             this.FUNCRegistry.add(name)
             this.CurrentFN = name
         } else this.error.critical(ctx, "Function overloading is not allow in mcb")
         const value = super.visitChildren(ctx)
         this.CurrentFN = ''
+        if (value[0].type === 'modifier') {
+            if (value[0].value === 'load') {
+                return returnBuilder('moddedload_function', {
+                    name,
+                    value: value.slice(1)
+                })
+            } else if (value[0].value === 'tick') {
+                return returnBuilder('moddedtick_function', {
+                    name,
+                    value: value.slice(1)
+                })
+            }
+        }
         return returnBuilder('function',
             {
                 name,
@@ -121,6 +144,18 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             }
         )
     }
+
+    visitFunctionModifiers(ctx: FunctionModifiersContext) {
+        const p: any[] = this.visitChildren(ctx)
+        return returnBuilder(
+            'modifier',
+            p
+        )
+    };
+
+    visitFunctionModifier(ctx: FunctionModifierContext) {
+        return ctx.text
+    };
 
     visitLoad(ctx: LoadContext) {
         const p = this.visitChildren(ctx)
@@ -143,12 +178,12 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
                 const displayName = ctx.getChild(5).text
                 return returnBuilder(
                     'ScoreboardDeclaration',
-                    `scoreboard objective add ${name} ${criteria} ${displayName}`
+                    `scoreboard objectives add ${name} ${criteria} ${displayName}`
                 )
             }
             return returnBuilder(
                 'ScoreboardDeclaration',
-                `scoreboard objective add ${name} ${criteria}`
+                `scoreboard objectives add ${name} ${criteria}`
             )
         }
         this.error.critical(ctx, "Variable type not found.")
@@ -285,7 +320,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
     }
 
     visitRepeatUntil(ctx: RepeatUntilContext) {
-        const p = this.visitChildren(ctx)
+        const p: any[] = this.visitChildren(ctx)
         const index = p[p.length - 1]
         if (!this.LoopIDRegistry[this.CurrentFN]) {
             this.LoopIDRegistry[this.CurrentFN] = {
@@ -293,44 +328,68 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             }
             this.Loops[this.CurrentFN] = {}
         } else this.LoopIDRegistry[this.CurrentFN].id++
-        const name = `${this.AutoName}.${this.CurrentFN}.loop.${this.LoopIDRegistry[this.CurrentFN].id}`
+
+        // Named and Path
+        const name = `${this.AutoName}.${this.folder}.${this.CurrentFN}.loop.${this.LoopIDRegistry[this.CurrentFN].id}`
+        const path = `${this.namespace}:${this.folder}/loops/${name}`
+
         if (index.type === 'conjuction') {
-            const callFN = index.value + ` function ${name}`
+            const callFN = index.value + ` function ${path}`
             p.pop()
-            this.Loops[this.CurrentFN][name] = p
+            p.push(callFN)
+            this.Loops[this.CurrentFN][name] = {
+                path,
+                value: p
+            }
             return callFN
         } else if (index.type === 'disconjuction') {
-            const callFN = `execute if score ${index.value.target} ${index.value.objective} matches 1 run function ${name}`
+            const callFN = `execute if score ${index.value.target} ${index.value.objective} matches 1 run function ${path}`
             p.pop()
             index.statements.push(callFN)
             p.concat(index.statements)
-            this.Loops[this.CurrentFN][name] = p
-            return `function ${name}`
+            this.Loops[this.CurrentFN][name] = {
+                path,
+                value: p
+            }
+            return `function ${path}`
         } else {
             this.error.critical(ctx, `ScoreboardException unexpected conjuction types`)
         }
     }
 
     visitWhileDo(ctx: WhileDoContext) {
-        const p = this.visitChildren(ctx)
+        const p: any[] = this.visitChildren(ctx)
         if (!this.LoopIDRegistry[this.CurrentFN]) {
             this.LoopIDRegistry[this.CurrentFN] = {
                 id: 0
             }
             this.Loops[this.CurrentFN] = {}
         } else this.LoopIDRegistry[this.CurrentFN].id++
-        const name = `${this.AutoName}.${this.CurrentFN}.loop.${this.LoopIDRegistry[this.CurrentFN].id}`
+        // Named and Path
+        const name = `${this.AutoName}.${this.folder}.${this.CurrentFN}.loop.${this.LoopIDRegistry[this.CurrentFN].id}`
+        const path = `${this.namespace}:${this.folder}/loops/${name}`
+        console.log(this.CurrentFN)
+        console.log(name)
+
         if (p[0].type === 'conjuction') {
-            const callFN = p[0].value + ` function ${name}`
+            const callFN = p[0].value + ` function ${path}`
             p.shift()
-            this.Loops[this.CurrentFN][name] = p
+            p.push(callFN)
+            this.Loops[this.CurrentFN][name] = {
+                path,
+                value: p
+            }
+            // console.log(p)
             return callFN
         } else if (p[0].type === 'disconjuction') {
-            const callFN = `execute if score ${p[0].value.target} ${p[0].value.objective} matches 1 run function ${name}`
+            const callFN = `execute if score ${p[0].value.target} ${p[0].value.objective} matches 1 run function ${path}`
             const cached = p.slice()[0]
             p.shift()
             cached.statements.push(callFN)
-            this.Loops[this.CurrentFN][name] = p
+            this.Loops[this.CurrentFN][name] = {
+                path,
+                value: p
+            }
             return cached.statements
         } else {
             this.error.critical(ctx, `ScoreboardException unexpected conjuction types`)
@@ -338,23 +397,35 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
     }
 
     visitForStatement(ctx: ForStatementContext) {
-        const p = this.visitChildren(ctx)
+        const p: any[] = this.visitChildren(ctx)
         if (!this.LoopIDRegistry[this.CurrentFN]) {
             this.LoopIDRegistry[this.CurrentFN] = {
                 id: 0
             }
             this.Loops[this.CurrentFN] = {}
         } else this.LoopIDRegistry[this.CurrentFN].id++
-        const name = `${this.AutoName}.${this.CurrentFN}.loop.${this.LoopIDRegistry[this.CurrentFN].id}`
+        // console.log(p)
+        // Named and Path
+        const name = `${this.AutoName}.${this.folder}.${this.CurrentFN}.loop.${this.LoopIDRegistry[this.CurrentFN].id}`
+        const path = `${this.namespace}:${this.folder}/loops/${name}`
         const scOp = p[2].value.startsWith('-') ? 'remove' : 'add'
         const scSet = `scoreboard players set ${p[0].value.target} ${p[0].value.objective} ${p[2].value}`
         const scVC = `scoreboard players ${scOp} ${p[0].value.target} ${p[0].value.objective} ${p[2].value.replace('-', '')}`
-        const exec = `execute if score ${p[0].value.target} ${p[0].value.objective} matches ${p[1].value.text} run function ${name}`
+        const loopwith = p[3].type === 'loopwith'
+        const exec = `execute if score ${p[0].value.target} ${p[0].value.objective} matches ${p[1].value.text}${loopwith ? p[3].value : ''} run function ${path}`
         const _p = p.slice(3)
+        if (loopwith) _p.shift()
         _p.push(scVC, exec)
-        this.Loops[this.CurrentFN][name] = _p
-        return exec
+        this.Loops[this.CurrentFN][name] = {
+            path,
+            value: _p
+        }
+        return [scSet, exec]
     }
+
+    visitLoopWith(ctx: LoopWithContext) {
+        return returnBuilder('loopwith', ctx.text.replace(/^execute/, ''))
+    };
 
     visitIfStatement(ctx: IfStatementContext) {
         const p = this.visitChildren(ctx)
@@ -364,18 +435,28 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             }
             this.IFs[this.CurrentFN] = {}
         } else this.IFIDRegistry[this.CurrentFN].id++
-        const name = `${this.AutoName}.${this.CurrentFN}.if.${this.IFIDRegistry[this.CurrentFN].id}`
+        // Named and Path
+        const name = `${this.AutoName}.${this.folder}.${this.CurrentFN}.ifs.${this.IFIDRegistry[this.CurrentFN].id}`
+        const path = `${this.namespace}:${this.folder}/ifs/${name}`
         if (p[0].type === 'conjuction') {
-            const callFN = p[0].value + ` function ${name}`
-            p.shift()
-            this.IFs[this.CurrentFN][name] = p
-            return callFN
-        } else if (p[0].type === 'disconjuction') {
-            const callFN = `execute if score ${p[0].value.target} ${p[0].value.objective} matches 1 run function ${name}`
+            const callFN = p[0].value + ` function ${path}`
             const cached = p.slice()[0]
             p.shift()
             cached.statements.push(callFN)
-            this.IFs[this.CurrentFN][name] = p
+            this.IFs[this.CurrentFN][name] = {
+                path,
+                value: p
+            }
+            return cached.statements
+        } else if (p[0].type === 'disconjuction') {
+            const callFN = `execute if score ${p[0].value.target} ${p[0].value.objective} matches 1 run function ${path}`
+            const cached = p.slice()[0]
+            p.shift()
+            cached.statements.push(callFN)
+            this.IFs[this.CurrentFN][name] = {
+                path,
+                value: p
+            }
             return cached.statements
         } else {
             this.error.critical(ctx, `ScoreboardException unexpected conjuction types`)
@@ -393,7 +474,8 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         if (ctx.childCount == 1) {
             return returnBuilder(
                 'conjuction',
-                `execute ${p.value} run`
+                `execute ${p.value} run`,
+                p.statements
             )
         }
         return returnBuilder(
@@ -412,7 +494,8 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         const p = [this.visitChildren(ctx)].flat(1)
         return returnBuilder(
             'conjuction',
-            p.map((a: any) => (a) ? (a.type === 'comparison') ? a.value : this.error.critical(ctx, "Unexpected value in conjuction") : null).filter((a: any) => a).join(" ")
+            p.map((a: any) => (a) ? (a.type === 'comparison') ? a.value : this.error.critical(ctx, "Unexpected value in conjuction") : null).filter((a: any) => a).join(" "),
+            p.filter((a: any) => a.statements).map((a: any) => a.statements).flat(1)
         )
     }
 
@@ -421,12 +504,14 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         if (ctx.childCount == 2) {
             return returnBuilder(
                 'comparison',
-                `unless ${p[0].value}`
+                `unless ${p[0].value}`,
+                p[0].statements
             )
         }
         return returnBuilder(
             'comparison',
-            `if ${p.value}`
+            `if ${p.value}`,
+            p.statements
         )
     }
 
@@ -462,7 +547,8 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         const p = this.visitChildren(ctx)
         return returnBuilder(
             'comparison',
-            `score ${p[0].value.target} ${p[0].value.objective} ${p[1]} ${p[2].value.target} ${p[2].value.objective}`
+            `score ${p[0].value.target} ${p[0].value.objective} ${p[1]} ${p[2].value.target} ${p[2].value.objective}`,
+            p[0].statements?.concat(p[2].statements)
         )
     }
 
@@ -470,7 +556,8 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         const p = this.visitChildren(ctx)
         return returnBuilder(
             'comparison',
-            `score ${p[0].value.target} ${p[0].value.objective} matches ${p[1].value.text}`
+            `score ${p[0].value.target} ${p[0].value.objective} matches ${p[1].value.text}`,
+            p[0].statements
         )
     }
 

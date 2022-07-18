@@ -16,8 +16,11 @@ import { FunctionDeclarationContext } from "./mcbParser";
 import { FunctionParametersContext } from "./mcbParser";
 import { ParameterContext } from "./mcbParser";
 import { BlockContext } from "./mcbParser";
+import { FunctionModifiersContext } from "./mcbParser";
+import { FunctionModifierContext } from "./mcbParser";
 import { IfStatementContext } from "./mcbParser";
 import { LoopStatementContext } from "./mcbParser";
+import { LoopWithContext } from "./mcbParser";
 import { ForStatementContext } from "./mcbParser";
 import { WhileDoContext } from "./mcbParser";
 import { RepeatUntilContext } from "./mcbParser";
@@ -215,6 +218,28 @@ export interface mcbParserListener extends ParseTreeListener {
 	exitBlock?: (ctx: BlockContext) => void;
 
 	/**
+	 * Enter a parse tree produced by `mcbParser.functionModifiers`.
+	 * @param ctx the parse tree
+	 */
+	enterFunctionModifiers?: (ctx: FunctionModifiersContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.functionModifiers`.
+	 * @param ctx the parse tree
+	 */
+	exitFunctionModifiers?: (ctx: FunctionModifiersContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.functionModifier`.
+	 * @param ctx the parse tree
+	 */
+	enterFunctionModifier?: (ctx: FunctionModifierContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.functionModifier`.
+	 * @param ctx the parse tree
+	 */
+	exitFunctionModifier?: (ctx: FunctionModifierContext) => void;
+
+	/**
 	 * Enter a parse tree produced by `mcbParser.ifStatement`.
 	 * @param ctx the parse tree
 	 */
@@ -235,6 +260,17 @@ export interface mcbParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitLoopStatement?: (ctx: LoopStatementContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.loopWith`.
+	 * @param ctx the parse tree
+	 */
+	enterLoopWith?: (ctx: LoopWithContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.loopWith`.
+	 * @param ctx the parse tree
+	 */
+	exitLoopWith?: (ctx: LoopWithContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `mcbParser.forStatement`.

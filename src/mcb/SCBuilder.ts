@@ -142,7 +142,7 @@ export default class SCBuilder {
     }
 
     SCObjectiveAdd(objective: string, criteria: string, displayName: string) {
-        return `scoreboard objective add ${objective} ${criteria} ${displayName ? displayName : ""}`
+        return `scoreboard objectives add ${objective} ${criteria} ${displayName ? displayName : ""}`
     }
 
     SCSet(target: string, objective: string, value: string | number) {

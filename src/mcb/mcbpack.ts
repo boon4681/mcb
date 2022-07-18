@@ -12,12 +12,21 @@ interface compiler_struct {
 export interface mcbpack_struct {
     name: string,
     version: string,
+    description: string,
     compiler: { [key: string]: compiler_struct; }
 }
 
 
 const mcbpack_schema = yup.object().shape({
-    name: yup.string().required(),
+    name: yup.string().test({
+        name: 'lowercase',
+        test: (value, { createError }) => {
+            return !!value && value.toLowerCase() === value ? true : createError({
+                message: `Field name:"${value}" is not lowercase.\n  You can change it to "${value?.toLocaleLowerCase()}" to prevent this error`
+            })
+        }
+    }).required(),
+    description: yup.string(),
     version: yup.string().required(),
     compiler: yup.array().transform((_, a) => Object.values(a)).of(yup.object({
         root: yup.lazy(val => (Array.isArray(val) ? yup.array().of(yup.string()).required() : yup.string().required())),
@@ -38,6 +47,7 @@ export const loadMCBpack = async (path: string): Promise<mcbpack_struct> => {
             }
         })
         if (Object.keys(errors_record).length == 0) {
+            config.description = config.description ? config.description : ''
             return config
         } else {
             for (const err in errors_record) {
@@ -45,13 +55,14 @@ export const loadMCBpack = async (path: string): Promise<mcbpack_struct> => {
                 const error_msg = is_compiler ? errors_record[err].replace(is_compiler[1], `.${Object.keys(config.compiler)[Number(is_compiler[2])]}`) : errors_record[err]
                 errors.critical({
                     path,
+                    preSpace: 2,
                     message: error_msg
                 })
             }
         }
     } catch (error: any) {
         const get = error.message.match(/JSON at position ([0-9]+) while/i)
-        const position = get ? Number(get[1]) : error.position -1
+        const position = get ? Number(get[1]) : error.position - 1
         const lines = json_str.slice(0, position).split('\n')
         const line = lines.length > 0 ? lines.length - 1 : 0
         const column = lines[line - 1].length

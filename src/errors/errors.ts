@@ -12,11 +12,11 @@ export const critical = (options: {
     preSpace?: number
 }) => {
     const { name, message, path, source, position, preSpace } = options
-    const space = new Array(preSpace).fill(" ").join("")
+    const space = new Array(preSpace || 0).fill(" ").join("")
     console.log(
         chalk.bgRed.rgb(255, 255, 255)(" ERROR "),
         chalk.red(`${name || "CriticalError"}`),
-        `${chalk.cyan(path)}:${position ? `${chalk.yellow(position.line)}:${chalk.yellow(position.column)}` : ''}\n${source ? `${chalk.red(source)}\n` : ''}` +
+        `${chalk.cyan(path || '')}:${position ? `${chalk.yellow(position.line)}:${chalk.yellow(position.column)}` : ''}\n${source ? `${chalk.red(source)}\n` : ''}` +
         space + (message ? chalk.red('└──', message) : '')
     )
     return () => {

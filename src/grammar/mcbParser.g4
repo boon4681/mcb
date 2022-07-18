@@ -35,7 +35,7 @@ scoreboardDeclaration
 
 
 functionDeclaration
-    : FUN Identifier functionParameters block
+    : functionModifiers? FUN Identifier functionParameters block
     ;
 
 functionParameters
@@ -50,6 +50,15 @@ block
     : COLON NL* statements NL* END
     ;
 
+functionModifiers
+    : functionModifier+
+    ;
+
+functionModifier
+    : TICK
+    | LOAD
+    ;
+
 ifStatement
     : IF NL* disconjuction NL* block
     ;
@@ -60,8 +69,10 @@ loopStatement
     | forStatement
     ;
 
+loopWith: commands;
+
 forStatement
-    : FOR NL* scoreboardIdentifier IN range COMMA scoreboardLiteral NL* block
+    : FOR NL* scoreboardIdentifier IN range COMMA scoreboardLiteral (COMMA loopWith)? NL* block
     ;
 
 whileDo
@@ -96,11 +107,11 @@ asComparison
     ;
 
 scoreNscoreExpression
-    : scoreboardIdentifier comparator scoreboardIdentifier
+    : expression comparator expression
     ;
 
 scoreNrangeExpression
-    : scoreboardIdentifier K_MATCHES range
+    : expression K_MATCHES range
     ;
 
 range
