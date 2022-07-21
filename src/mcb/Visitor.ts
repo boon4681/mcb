@@ -1,5 +1,5 @@
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor'
-import { AdditiveExpressionContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, EntityNBTExpressionContext, ExpressionContext, ForStatementContext, FunctionDeclarationContext, FunctionModifierContext, FunctionModifiersContext, IfStatementContext, LoadContext, LocateStatementContext, LoopStatementContext, LoopWithContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardDeclarationContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, TopPriorityObjectContext, WhileDoContext } from '../grammar'
+import { AdditiveExpressionContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, EntityNBTExpressionContext, ExpressionContext, ForStatementContext, FunctionCallingContext, FunctionDeclarationContext, FunctionModifierContext, FunctionModifiersContext, IfStatementContext, InputparameterContext, LiteralConstantContext, LoadContext, LocateStatementContext, LoopStatementContext, LoopWithContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardDeclarationContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, StringLiteralContext, TopPriorityObjectContext, WhileDoContext } from '../grammar'
 import { genericErrorHandling } from '../errors/genericErrorHandling'
 import { ParserRuleContext } from 'antlr4ts';
 import SCBuilder from './SCBuilder';
@@ -36,6 +36,29 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
     private AutoName = "mcb"
     private namespace: string
     private folder: string
+    private buildInFunction: {[key:string]:(...a:any)=>any} = {'print':(ctx:any)=>{
+        const p:any[] = this.visitChildren(ctx)
+        //[{"text":"HI"},{"score":{"objective":"x","name":"n"}}]
+        let stack:string[] = []
+        for (const i of p) {
+            switch(i.type){
+                case 'string':
+                case 'literalNumber':
+                    stack.push(
+                        `{"text":"${i.value.replace(/\r/g,'').replace(/\n/g,'\\n')}"}`
+                    )
+                    break
+                case 'ScoreboardIdentifier':
+                    stack.push(
+                        `{"score":{"objective":"${i.value.objective}","name":"${i.value.target}"}}`
+                    )
+                    break
+            }
+        }
+        if(stack.length == 0) stack.push(`{"text":""}`)
+        const result = stack.join(`,{"text":" "},`)
+        return `tellraw @a [${result}]`
+    }}
 
     constructor(namespace: string, folder: string, SCBuilder: SCBuilder, error: genericErrorHandling) {
         super()
@@ -117,6 +140,8 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         let nameIndex = 1
         if (ctx.childCount == 5) nameIndex = 2
         const name = ctx.getChild(nameIndex).text
+        if (name in this.buildInFunction) this.error.critical(ctx,"Function overloading is not allow in mcb")
+        if (name.replace(/[a-z0-9\/._-]+/g,'')) this.error.critical(ctx, "Function can be named with only this [a-z0-9/._-] characters set")
         if (this.CurrentFN) this.error.critical(ctx, "Function stacking is not allow in mcb")
         if (!this.FUNCRegistry.has(name)) {
             this.FUNCRegistry.add(name)
@@ -143,6 +168,24 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
                 value
             }
         )
+    }
+
+    visitFunctionCalling(ctx: FunctionCallingContext){
+        const name = ctx.getChild(0).text
+        if (name in this.buildInFunction){
+            const fn = this.buildInFunction[name]
+            return fn(ctx.getChild(1))
+        }
+        if (!this.FUNCRegistry.has(name)) {
+            this.error.critical(ctx, "Function is not declared")
+        }
+        const path = `${this.namespace}:${this.folder}/${name}`
+        return `function ${path}`
+    }
+
+    visitInputparameter(ctx:InputparameterContext){
+        const p = this.visitChildren(ctx)
+        return p
     }
 
     visitFunctionModifiers(ctx: FunctionModifiersContext) {
@@ -411,7 +454,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         const scOp = p[2].value.startsWith('-') ? 'remove' : 'add'
         const scSet = `scoreboard players set ${p[0].value.target} ${p[0].value.objective} ${p[2].value}`
         const scVC = `scoreboard players ${scOp} ${p[0].value.target} ${p[0].value.objective} ${p[2].value.replace('-', '')}`
-        const loopwith = p[3].type === 'loopwith'
+        const loopwith = p[3] && p[3].type === 'loopwith'
         const exec = `execute if score ${p[0].value.target} ${p[0].value.objective} matches ${p[1].value.text}${loopwith ? p[3].value : ''} run function ${path}`
         const _p = p.slice(3)
         if (loopwith) _p.shift()
@@ -540,6 +583,25 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         return returnBuilder(
             'comparison',
             ctx.text
+        )
+    }
+
+    visitLiteralConstant(ctx: LiteralConstantContext){
+        const p:any[] = [this.visitChildren(ctx)].flat(1)
+        if(p[0]){
+            return p
+        }else{
+            return returnBuilder(
+                'literalNumber',
+                ctx.text
+            )
+        }
+    }
+
+    visitStringLiteral(ctx: StringLiteralContext){
+        return returnBuilder(
+            'string',
+            ctx.childCount == 3 ? ctx.getChild(1).text : ''
         )
     }
 

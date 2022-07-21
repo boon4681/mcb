@@ -14,7 +14,7 @@ statements
     ;
 
 statement
-    : ( assignment | loopStatement | ifStatement | commands | scoreboardDeclaration)
+    : ( assignment | loopStatement | ifStatement | commands | scoreboardDeclaration | functionCalling)
     ;
 
 commands
@@ -33,13 +33,24 @@ scoreboardDeclaration
     : LET Identifier COLON K_SCORE Identifier Identifier?
     ;
 
+functionCalling
+    : Identifier functionInputParameters
+    ;
 
 functionDeclaration
     : functionModifiers? FUN Identifier functionParameters block
     ;
 
+functionInputParameters
+    : LPAREN (inputparameter (COMMA inputparameter)* COMMA?)? RPAREN
+    ;
+
 functionParameters
     : LPAREN (parameter (COMMA parameter)* COMMA?)? RPAREN
+    ;
+
+inputparameter
+    : literalConstant | scoreboardIdentifier
     ;
 
 parameter
@@ -47,7 +58,7 @@ parameter
     ;
 
 block
-    : COLON NL* statements NL* END
+    : LCURL NL* statements NL* RCURL
     ;
 
 functionModifiers
@@ -72,7 +83,7 @@ loopStatement
 loopWith: commands;
 
 forStatement
-    : FOR NL* scoreboardIdentifier IN range COMMA scoreboardLiteral (COMMA loopWith)? NL* block
+    : FOR NL* scoreboardIdentifier IN range SEMICOLON scoreboardLiteral (SEMICOLON loopWith)? NL* block
     ;
 
 whileDo

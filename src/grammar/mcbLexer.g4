@@ -35,6 +35,7 @@ DIV: '/';
 ADD: '+';
 SUB: '-';
 COLON: ':';
+SEMICOLON: ';';
 // COLON: ':'-> pushMode(DEFAULT_MODE);
 NOT_WS: '!' Hidden;
 NOT_NO_WS: '!';
@@ -240,6 +241,8 @@ I_DIV: DIV -> type(DIV);
 I_ADD: ADD -> type(ADD);
 I_SUB: SUB -> type(SUB);
 I_COLON: COLON -> type(COLON);
+I_SEMICOLON: SEMICOLON -> type(SEMICOLON);
+
 I_HASH: HASH -> type(HASH);
 I_NOT_WS: NOT_WS -> type(NOT_WS);
 I_NOT_NO_WS: NOT_NO_WS -> type(NOT_NO_WS);

@@ -12,8 +12,11 @@ import { CommandsContext } from "./mcbParser";
 import { DeclarationContext } from "./mcbParser";
 import { VariableDeclarationContext } from "./mcbParser";
 import { ScoreboardDeclarationContext } from "./mcbParser";
+import { FunctionCallingContext } from "./mcbParser";
 import { FunctionDeclarationContext } from "./mcbParser";
+import { FunctionInputParametersContext } from "./mcbParser";
 import { FunctionParametersContext } from "./mcbParser";
+import { InputparameterContext } from "./mcbParser";
 import { ParameterContext } from "./mcbParser";
 import { BlockContext } from "./mcbParser";
 import { FunctionModifiersContext } from "./mcbParser";
@@ -141,6 +144,13 @@ export interface mcbParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitScoreboardDeclaration?: (ctx: ScoreboardDeclarationContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by `mcbParser.functionCalling`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitFunctionCalling?: (ctx: FunctionCallingContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by `mcbParser.functionDeclaration`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -148,11 +158,25 @@ export interface mcbParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitFunctionDeclaration?: (ctx: FunctionDeclarationContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by `mcbParser.functionInputParameters`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitFunctionInputParameters?: (ctx: FunctionInputParametersContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by `mcbParser.functionParameters`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	visitFunctionParameters?: (ctx: FunctionParametersContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.inputparameter`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitInputparameter?: (ctx: InputparameterContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `mcbParser.parameter`.

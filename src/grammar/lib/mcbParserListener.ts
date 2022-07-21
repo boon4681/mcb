@@ -12,8 +12,11 @@ import { CommandsContext } from "./mcbParser";
 import { DeclarationContext } from "./mcbParser";
 import { VariableDeclarationContext } from "./mcbParser";
 import { ScoreboardDeclarationContext } from "./mcbParser";
+import { FunctionCallingContext } from "./mcbParser";
 import { FunctionDeclarationContext } from "./mcbParser";
+import { FunctionInputParametersContext } from "./mcbParser";
 import { FunctionParametersContext } from "./mcbParser";
+import { InputparameterContext } from "./mcbParser";
 import { ParameterContext } from "./mcbParser";
 import { BlockContext } from "./mcbParser";
 import { FunctionModifiersContext } from "./mcbParser";
@@ -174,6 +177,17 @@ export interface mcbParserListener extends ParseTreeListener {
 	exitScoreboardDeclaration?: (ctx: ScoreboardDeclarationContext) => void;
 
 	/**
+	 * Enter a parse tree produced by `mcbParser.functionCalling`.
+	 * @param ctx the parse tree
+	 */
+	enterFunctionCalling?: (ctx: FunctionCallingContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.functionCalling`.
+	 * @param ctx the parse tree
+	 */
+	exitFunctionCalling?: (ctx: FunctionCallingContext) => void;
+
+	/**
 	 * Enter a parse tree produced by `mcbParser.functionDeclaration`.
 	 * @param ctx the parse tree
 	 */
@@ -185,6 +199,17 @@ export interface mcbParserListener extends ParseTreeListener {
 	exitFunctionDeclaration?: (ctx: FunctionDeclarationContext) => void;
 
 	/**
+	 * Enter a parse tree produced by `mcbParser.functionInputParameters`.
+	 * @param ctx the parse tree
+	 */
+	enterFunctionInputParameters?: (ctx: FunctionInputParametersContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.functionInputParameters`.
+	 * @param ctx the parse tree
+	 */
+	exitFunctionInputParameters?: (ctx: FunctionInputParametersContext) => void;
+
+	/**
 	 * Enter a parse tree produced by `mcbParser.functionParameters`.
 	 * @param ctx the parse tree
 	 */
@@ -194,6 +219,17 @@ export interface mcbParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitFunctionParameters?: (ctx: FunctionParametersContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.inputparameter`.
+	 * @param ctx the parse tree
+	 */
+	enterInputparameter?: (ctx: InputparameterContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.inputparameter`.
+	 * @param ctx the parse tree
+	 */
+	exitInputparameter?: (ctx: InputparameterContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `mcbParser.parameter`.
