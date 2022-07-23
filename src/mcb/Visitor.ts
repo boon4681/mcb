@@ -46,7 +46,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
                     case 'string':
                     case 'literalNumber':
                         for (const n of i.value) {
-                            switch(n.type){
+                            switch (n.type) {
                                 case 'stringcontent':
                                     sub_stack.push(
                                         `{"text":"${n.value.replace(/\r/g, '').replace(/\n/g, '\\n')}"}`
@@ -134,9 +134,15 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
 
     visitMcb(ctx: McbContext) {
         const p = this.visitChildren(ctx);
-        const Functions = p.filter((a: any) => a.type === 'function' || a.type.startsWith('modded')).map((a: any) => a.value)
+        const Functions = p.filter((a: any) => a.type === 'function' || a.type.startsWith('modded')).map((a: any) => ({name:a.value.name,value:a.statements}))
         const ModdedLoadFunction = p.filter((a: any) => a.type === 'moddedload_function').map((a: any) => `function ${this.namespace}:${this.folder}/${a.value.name}`)
         const ModdedTickFunction = p.filter((a: any) => a.type === 'moddedtick_function').map((a: any) => `function ${this.namespace}:${this.folder}/${a.value.name}`)
+        p.filter((a: any) => a.type === 'moddedstacked_function').forEach((a: any) => {
+            for (const i of a.value.stack) {
+                if (i === 'load') ModdedLoadFunction.push(`function ${this.namespace}:${this.folder}/${a.value.name}`)
+                if (i === 'tick') ModdedTickFunction.push(`function ${this.namespace}:${this.folder}/${a.value.name}`)
+            }
+        });
         const RunOnload = p.filter((a: any) => a.type === 'load').map((a: any) => a.value)
         const RunOnTick = ModdedTickFunction
         RunOnload.push(...ModdedLoadFunction)
@@ -164,24 +170,12 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         const value = super.visitChildren(ctx)
         this.CurrentFN = ''
         if (value[0].type === 'modifier') {
-            if (value[0].value === 'load') {
-                return returnBuilder('moddedload_function', {
-                    name,
-                    value: value.slice(1)
-                })
-            } else if (value[0].value === 'tick') {
-                return returnBuilder('moddedtick_function', {
-                    name,
-                    value: value.slice(1)
-                })
-            }
-        }
-        return returnBuilder('function',
-            {
+            return returnBuilder('moddedstacked_function', {
                 name,
-                value
-            }
-        )
+                stack: [value[0].value].flat(1)
+            },value.slice(1))
+        }
+        return returnBuilder('function', {name},value)
     }
 
     visitFunctionCalling(ctx: FunctionCallingContext) {

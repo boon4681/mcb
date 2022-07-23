@@ -48,7 +48,7 @@ const compiler = (namespace: string, filepath: string, output: string, root: str
 
     const tree = parser.mcb();
     const scBuilder = new SCBuilder("", "", "", error);
-    const visitor = new Visitor(namespace, parPath.name, scBuilder, error)
+    const visitor = new Visitor(namespace, path.join(_root,parPath.name).split(path.sep).filter(a=>a!='').join('/'), scBuilder, error)
     visitor.SCIDRegistry = SCIDRegistry
     const str = tree.accept(visitor)
     SCIDRegistry = visitor.SCIDRegistry

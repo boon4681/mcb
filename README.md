@@ -1,78 +1,149 @@
-# MCB Language
-> A language for minecraft mcfunction
+# MCB-Language
 
-MCB is a programming language that compiles to mcfunctions. 
+MCB is a lightweight scripting language that compiles in to mcfunction. It support functional programming. It giving power to make your coding process faster.
 
-## ⚠️ Be constructing ... move to typescript
+## Why build MCB?
 
-|     | status                                                  |
-| --- | ------------------------------------------------------- |
-| ✅   | Done, just done what are you looking for?               |
-| ✳️   | WIP / work in process / whatever you called.            |
-| ✴️   | Pending (can change anytime cuz i'm not working on it yet.) |
-| ❌   | Unassigned not now but i'll do                          |
+Cuz mcfunction is suck. so i build this but there is no cure.
 
-### Not included to Todo lists cuz it need to complete to make this project fulfill
-* ✴️ files generator.
-* ❌ mcfunction syntax checking.
-* ✅ adding all minecraft commands.
+## Language Goals
 
-### Todo lists
-```lua
-✅ adding if statement
+- To make world better with massively processable variables.
+- Code that possible to read.
 
-   if block ~ ~ ~ #log and x[i] matches 1..5:
-   <some code>
+## Project status
+
+MCB is now experiment project that created on my own passion. Nothing more about it.
+
+## Get Started
+
+Clone this respository and start playing with it. Because this language is now experimental so there is no cli to used.
+
+## Basic syntax
+
+### Variables
+
+MCB is a statically typed language. This means that variables do have types in declaration.
+
+### Numbers
+
+MCB support only Integer.
+> Restrict area no floating variables allowed.
+
+```ts
+// Format
+let <objective>:score <criteria> <displayname>
+
+// Usage
+let foo:score dummy
+let bar:score air Boon
+```
+
+Set value in variable
+
+```ts
+// Format
+<scoreboard_objective>[<target>] = value
+// Usage
+foo[x] = 10
+bar[@e[type=minecraft:chicken,limit=1]] = 5
+```
+
+### Functions
+
+> Input parameters is not support in this version.
+> return output too. 😎
+
+A Function with no Input
+
+```kotlin
+fun hello(){
+   say hello
+}
+
+// this is how you can call function.
+hello()
+```
+
+#### Function Modifiers
+
+- `load` means that the function is run after the datapack has loaded, triggered by `minecraft:tags\functions\load.json`
+
+   ```kotlin
+   // you will got a message in your minecraft chat after the datapack was loaded
+   load fun hi_at_start():
+      say hi
    end
+   ```
 
-------------------------------------
-✅ adding score variable declaration
+- `tick` means that the function is run every tick by `minecraft:tags\functions\tick.json` trigger.
 
-   # x:score <criteria> <name>
+    ```kotlin
+    tick fun hi_every_tick():
+      say hi
+    end
+    
+    // you will got a hi message in your minecraft chat every tick
+    ```
 
-------------------------------------
-✴️ adding storage operation
+- `load` and `tick` combo
 
-   # a:list = ['boon','4681']
-   # b:map = {'hi':5}
-   b.hi = a[1]
+    ```kotlin
+    tick load fun hey():
+      say hi
+    end // you will got a hi message in your minecraft chat every tick and on loaded
+    
+    load tick fun hello():
+      say hello
+    end // you will got a hello message in your minecraft chat every tick and on loaded
+    ```
 
-------------------------------------
-✴️ adding "call" keyword to call mcb that was auto generate (to make code organized)
+## Folder structure
 
-   call "boon4681:main.mcb"
+All of Project-Files in here. MCB used folder structure following by this 3 words.
 
-------------------------------------
-✅ adding "while" and "repeat until"
+\<namespace> → `mcbpack.json` + Your Project-Files
 
-   while <expression>:
-   <some code>
-   end
+```ts
+<namespace>
+   ├─ +static\ //coming soon
+   │        └─ +<Your Static File>
+   ├─ +<Your Folder>\
+   │        └─ +<Your File>.mcb
+   ├─ +<Your File>.mcb
+   └─ mcbpack.json
+```
 
-   repeat:
-   <some code>
-   until <expression>
+### What’s mcbpack.json?
 
-------------------------------------
-✴️ adding "for" keyword to auto loop by range -> example
+The presence of a `mcbpack.json` file in directory indicates that directory is `root` of MCB Project.
 
-   for x[i] in 1..10:
-   end
+`mcbpack.json` ****file is a configuration file specifies The root files and compiler options to let The MCB compiler compile projects.
 
-------------------------------------
-✴️ adding "clock" keyword to schedule function -> example
+#### Example of mcbpack.json
 
-   clock 10t :
-   end
-
-------------------------------------
-✴️ adding modifiers like (load / tick ) to trigger function -> example
-
-   load fun main:  | tick fun main:
-   end             | end
-
-❌ adding poly-fills like (sin / cos / tan / sqrt)
-❌ additional obfustication
-   - obfusticated functions
-   - obfusticated variables
+```json
+{
+   "name": "Hello",
+   "mcVersion": 1.17,
+   "compiler":{
+      "<any-name1>":{
+         "root":["/src/**"],
+         "output":"/dist",
+         "obfusticate": true // comming soon
+      },
+      "<any-name2>":{
+         "root":["/test/**"],
+         "output": "/dist-test"
+      },
+      "<any-name3>":{
+         "root":["/src/**","/test/**"],
+         "output": "/dist"
+      }
+   },
+   // comming soon
+   "dependencies":{
+      "warppp": "1.0"
+   }
+}
 ```
