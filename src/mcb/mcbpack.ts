@@ -12,7 +12,7 @@ interface compiler_struct {
 
 export interface mcbpack_struct {
     name: string,
-    version: string,
+    mcVersion: string,
     description: string,
     compiler: { [key: string]: compiler_struct; }
 }
@@ -28,7 +28,7 @@ const mcbpack_schema = yup.object().shape({
         }
     }).required(),
     description: yup.string(),
-    version: yup.string().required(),
+    mcVersion: yup.string().required(),
     compiler: yup.array().transform((_, a) => Object.values(a)).of(yup.object({
         root: yup.lazy(val => (Array.isArray(val) ? yup.array().of(yup.string()).required() : yup.string().required())),
         output: yup.string().required()

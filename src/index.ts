@@ -108,7 +108,7 @@ loadMCBpack('./test').then( async ({ config, root }) => {
         const mcfunction_outDir = path.join(option.output, `data/${config.name}/functions`)
         const mc_outDir = path.join(option.output, `data/minecraft`)
         const mcTag_function = path.join(mc_outDir, `tags/functions`);
-        const mc_commands = await load_commands(config.version,root);
+        const mc_commands = await load_commands(config.mcVersion,root);
         [option.root].flat(1).forEach(r => {
             new Glob('**/*.mcb', {
                 root: path.join(root, r)
@@ -124,7 +124,7 @@ loadMCBpack('./test').then( async ({ config, root }) => {
         writeFileSync(path.join(option.output, 'pack.mcmeta'), JSON.stringify(
             {
                 "pack": {
-                    "pack_format": Number(config.version[config.version.length - 1]),
+                    "pack_format": Number(config.mcVersion[config.mcVersion.length - 1]),
                     "description": config.description
                 }
             }, null, 4))
