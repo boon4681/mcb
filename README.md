@@ -4,7 +4,7 @@ MCB is a lightweight scripting language that compiles in to mcfunction. It suppo
 
 ## Why build MCB?
 
-Cuz mcfunction is suck. so i build this but there is no cure.
+Cuz mcfunction is suck. so i build this but trust me there is no cure.
 
 ## Language Goals
 
