@@ -67,6 +67,8 @@ import { AsNBTContext } from "./mcbParser";
 import { NbtSetContext } from "./mcbParser";
 import { NbtArrayContext } from "./mcbParser";
 import { StringLiteralContext } from "./mcbParser";
+import { StrExprContext } from "./mcbParser";
+import { StringContentContext } from "./mcbParser";
 import { EntityContext } from "./mcbParser";
 import { NlContext } from "./mcbParser";
 import { NlsContext } from "./mcbParser";
@@ -527,6 +529,20 @@ export interface mcbParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitStringLiteral?: (ctx: StringLiteralContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.strExpr`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitStrExpr?: (ctx: StrExprContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.stringContent`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitStringContent?: (ctx: StringContentContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `mcbParser.entity`.

@@ -279,7 +279,14 @@ nbtArray
     ;
 
 stringLiteral
-    : QUOTE_OPEN LineStrText* QUOTE_CLOSE
+    : QUOTE_OPEN (stringContent|strExpr)* QUOTE_CLOSE
+    ;
+
+strExpr: StrExpression NL* scoreboardIdentifier NL* RCURL; // NOT DONE
+
+stringContent
+    : StrText
+    | StrEscapedChar
     ;
 
 entity: (AT_N_WS|AT_P_WS)ENTITY_SUFFIX;

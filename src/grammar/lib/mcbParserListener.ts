@@ -67,6 +67,8 @@ import { AsNBTContext } from "./mcbParser";
 import { NbtSetContext } from "./mcbParser";
 import { NbtArrayContext } from "./mcbParser";
 import { StringLiteralContext } from "./mcbParser";
+import { StrExprContext } from "./mcbParser";
+import { StringContentContext } from "./mcbParser";
 import { EntityContext } from "./mcbParser";
 import { NlContext } from "./mcbParser";
 import { NlsContext } from "./mcbParser";
@@ -780,6 +782,28 @@ export interface mcbParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitStringLiteral?: (ctx: StringLiteralContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.strExpr`.
+	 * @param ctx the parse tree
+	 */
+	enterStrExpr?: (ctx: StrExprContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.strExpr`.
+	 * @param ctx the parse tree
+	 */
+	exitStrExpr?: (ctx: StrExprContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.stringContent`.
+	 * @param ctx the parse tree
+	 */
+	enterStringContent?: (ctx: StringContentContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.stringContent`.
+	 * @param ctx the parse tree
+	 */
+	exitStringContent?: (ctx: StringContentContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `mcbParser.entity`.

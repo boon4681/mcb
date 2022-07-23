@@ -6,9 +6,11 @@ import ParserErrorListener from './errors/ParserErrorListener'
 import SCBuilder from './mcb/SCBuilder'
 import { writeFileSync, readFileSync, mkdirSync, existsSync, appendFileSync, rmSync } from 'node:fs'
 import path from 'node:path';
-import glob from 'glob'
+import { Glob } from 'glob'
 import { loadMCBpack } from './mcb/mcbpack'
 import * as errors from './errors/errors'
+import { makeNotExistDir } from './utils/file'
+import { load_commands } from './minecraft/meta'
 
 const FnWalker = (input: any, func: Function) => {
     for (var i in input) {
@@ -26,14 +28,16 @@ let SCIDRegistry: Record<string, { id: number }> = {}
 let Loads: string[] = []
 let Ticks: string[] = []
 
-const compiler = (namespace: string, filepath: string, output: string) => {
-    const parPath = path.parse(filepath)
+const compiler = (namespace: string, filepath: string, output: string, root: string,mc_commands:any) => {
+    const parPath = path.parse(path.normalize(filepath))
+    const _root = parPath.dir.replace(root, '')
 
     const input = readFileSync(filepath, 'utf-8')
     const inputStream = new ANTLRInputStream(input);
-    inputStream.name = filepath
-    
+    inputStream.name = root
+
     const lexer = new mcbLexer(inputStream);
+    lexer.setCommands(mc_commands)
     const tokenStream = new CommonTokenStream(lexer);
     const parser = new mcbParser(tokenStream);
 
@@ -44,27 +48,23 @@ const compiler = (namespace: string, filepath: string, output: string) => {
 
     const tree = parser.mcb();
     const scBuilder = new SCBuilder("", "", "", error);
-    const visitor = new Visitor(namespace,parPath.name, scBuilder, error)
+    const visitor = new Visitor(namespace, parPath.name, scBuilder, error)
     visitor.SCIDRegistry = SCIDRegistry
     const str = tree.accept(visitor)
     SCIDRegistry = visitor.SCIDRegistry
-    const outFNDir = path.join(output, parPath.name)
+    const outFNDir = path.join(output, _root, parPath.name)
     const outLoops = path.join(outFNDir, 'loops')
     const outIFs = path.join(outFNDir, 'ifs')
 
     if (Object.keys(str.Functions).length > 0) {
-        if (!existsSync(outFNDir)) {
-            mkdirSync(outFNDir, { recursive: true })
-        }
+        makeNotExistDir(outFNDir)
         FnWalker(str.Functions, (e: any) => {
             writeFileSync(path.join(outFNDir, `${e.name}.mcfunction`), e.value.join('\n'))
         })
     }
 
     if (Object.keys(str.Loops).length > 0) {
-        if (!existsSync(outLoops)) {
-            mkdirSync(outLoops, { recursive: true })
-        }
+        makeNotExistDir(outLoops)
         for (const e in str.Loops) {
             for (const m in str.Loops[e]) {
                 writeFileSync(path.join(outLoops, `${m}.mcfunction`), str.Loops[e][m].value.join('\n'))
@@ -73,9 +73,7 @@ const compiler = (namespace: string, filepath: string, output: string) => {
     }
 
     if (Object.keys(str.IFs).length > 0) {
-        if (!existsSync(outIFs)) {
-            mkdirSync(outIFs, { recursive: true })
-        }
+        makeNotExistDir(outIFs)
         for (const e in str.IFs) {
             for (const m in str.IFs[e]) {
                 writeFileSync(path.join(outIFs, `${m}.mcfunction`), str.IFs[e][m].value.join('\n'))
@@ -86,12 +84,18 @@ const compiler = (namespace: string, filepath: string, output: string) => {
     Ticks.push(...str.Tick)
     writeFileSync(path.join(output, 'load.mcfunction'), Loads.join('\n'))
     writeFileSync(path.join(output, 'tick.mcfunction'), Ticks.join('\n'))
-    writeFileSync(path.join(parPath.dir, `${parPath.name}.json`), JSON.stringify(str, null, 5))
+    const mcb_module = path.resolve(root, '..', '.mcb_module')
+    const mcb_module_mcb = path.resolve(mcb_module, '.mcb')
+    const mcb_module_debug = path.resolve(mcb_module_mcb, 'debug')
+    const mcb_debug_file = path.join(mcb_module_debug, _root)
+
+    makeNotExistDir([mcb_module,mcb_module_mcb,mcb_module_debug,mcb_debug_file])
+    writeFileSync(path.join(mcb_debug_file, `${parPath.name}.json`), JSON.stringify(str, null, 5))
 }
 
 const runOption = 'build-test'
 
-loadMCBpack('./test/mcbpack.json').then(config => {
+loadMCBpack('./test').then( async ({ config, root }) => {
     const option = config.compiler[runOption]
     if (!option) {
         errors.critical({
@@ -103,17 +107,24 @@ loadMCBpack('./test/mcbpack.json').then(config => {
         if (existsSync(option.output)) rmSync(path.join(option.output, '/'), { recursive: true })
         const mcfunction_outDir = path.join(option.output, `data/${config.name}/functions`)
         const mc_outDir = path.join(option.output, `data/minecraft`)
-        const mcTag_function = path.join(mc_outDir, `tags/functions`)
-        glob('./test/**/*.mcb', (er, files) => {
-            if (!er) {
-                for (const file of files) compiler(config.name,file, mcfunction_outDir)
-            }
+        const mcTag_function = path.join(mc_outDir, `tags/functions`);
+        const mc_commands = await load_commands(config.version,root);
+        [option.root].flat(1).forEach(r => {
+            new Glob('**/*.mcb', {
+                root: path.join(root, r)
+            }, (er, files) => {
+                if (!er) {
+                    for (const file of files) {
+                        compiler(config.name, file, mcfunction_outDir, path.join(root, r),mc_commands)
+                    }
+                }
+            })
         })
         if (!existsSync(mcTag_function)) mkdirSync(mcTag_function, { recursive: true })
         writeFileSync(path.join(option.output, 'pack.mcmeta'), JSON.stringify(
             {
                 "pack": {
-                    "pack_format": Number(config.version[config.version.length-1]),
+                    "pack_format": Number(config.version[config.version.length - 1]),
                     "description": config.description
                 }
             }, null, 4))

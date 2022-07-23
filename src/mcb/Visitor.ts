@@ -1,16 +1,16 @@
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor'
-import { AdditiveExpressionContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, EntityNBTExpressionContext, ExpressionContext, ForStatementContext, FunctionCallingContext, FunctionDeclarationContext, FunctionModifierContext, FunctionModifiersContext, IfStatementContext, InputparameterContext, LiteralConstantContext, LoadContext, LocateStatementContext, LoopStatementContext, LoopWithContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardDeclarationContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, StringLiteralContext, TopPriorityObjectContext, WhileDoContext } from '../grammar'
+import { AdditiveExpressionContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, EntityNBTExpressionContext, ExpressionContext, ForStatementContext, FunctionCallingContext, FunctionDeclarationContext, FunctionModifierContext, FunctionModifiersContext, IfStatementContext, InputparameterContext, LiteralConstantContext, LoadContext, LocateStatementContext, LoopStatementContext, LoopWithContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardDeclarationContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, StrExprContext, StringContentContext, StringLiteralContext, TopPriorityObjectContext, WhileDoContext } from '../grammar'
 import { genericErrorHandling } from '../errors/genericErrorHandling'
 import { ParserRuleContext } from 'antlr4ts';
 import SCBuilder from './SCBuilder';
 
-
+// Dear developer who working this project do not change any code in this project if you don't know how it work. 😎
 // type returnValue = {
 //     type: string,
 //     value: any,
 //     statements?: string[]
 // }
-type returnValue = any;
+type returnValue = any; // just for now
 
 function returnBuilder(type: string, value: any, statements?: string[]): returnValue {
     return {
@@ -36,29 +36,43 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
     private AutoName = "mcb"
     private namespace: string
     private folder: string
-    private buildInFunction: {[key:string]:(...a:any)=>any} = {'print':(ctx:any)=>{
-        const p:any[] = this.visitChildren(ctx)
-        //[{"text":"HI"},{"score":{"objective":"x","name":"n"}}]
-        let stack:string[] = []
-        for (const i of p) {
-            switch(i.type){
-                case 'string':
-                case 'literalNumber':
-                    stack.push(
-                        `{"text":"${i.value.replace(/\r/g,'').replace(/\n/g,'\\n')}"}`
-                    )
-                    break
-                case 'ScoreboardIdentifier':
-                    stack.push(
-                        `{"score":{"objective":"${i.value.objective}","name":"${i.value.target}"}}`
-                    )
-                    break
+    private buildInFunction: { [key: string]: (...a: any) => any } = {
+        'print': (ctx: any) => {
+            const p: any[] = this.visitChildren(ctx)
+            const stack: string[] = []
+            for (const i of p) {
+                const sub_stack: string[] = []
+                switch (i.type) {
+                    case 'string':
+                    case 'literalNumber':
+                        for (const n of i.value) {
+                            switch(n.type){
+                                case 'stringcontent':
+                                    sub_stack.push(
+                                        `{"text":"${n.value.replace(/\r/g, '').replace(/\n/g, '\\n')}"}`
+                                    )
+                                    break
+                                case 'ScoreboardIdentifier':
+                                    sub_stack.push(
+                                        `{"score":{"objective":"${n.value.objective}","name":"${n.value.target}"}}`
+                                    )
+                                    break
+                            }
+                        }
+                        break
+                    case 'ScoreboardIdentifier':
+                        sub_stack.push(
+                            `{"score":{"objective":"${i.value.objective}","name":"${i.value.target}"}}`
+                        )
+                        break
+                }
+                stack.push(sub_stack.join(','))
             }
+            if (stack.length == 0) stack.push(`{"text":""}`)
+            const result = stack.join(`,{"text":" "},`)
+            return `tellraw @a [${result}]`
         }
-        if(stack.length == 0) stack.push(`{"text":""}`)
-        const result = stack.join(`,{"text":" "},`)
-        return `tellraw @a [${result}]`
-    }}
+    }
 
     constructor(namespace: string, folder: string, SCBuilder: SCBuilder, error: genericErrorHandling) {
         super()
@@ -140,8 +154,8 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         let nameIndex = 1
         if (ctx.childCount == 5) nameIndex = 2
         const name = ctx.getChild(nameIndex).text
-        if (name in this.buildInFunction) this.error.critical(ctx,"Function overloading is not allow in mcb")
-        if (name.replace(/[a-z0-9\/._-]+/g,'')) this.error.critical(ctx, "Function can be named with only this [a-z0-9/._-] characters set")
+        if (name in this.buildInFunction) this.error.critical(ctx, "Function overloading is not allow in mcb")
+        if (name.replace(/[a-z0-9\/._-]+/g, '')) this.error.critical(ctx, "Function can be named with only this [a-z0-9/._-] characters set")
         if (this.CurrentFN) this.error.critical(ctx, "Function stacking is not allow in mcb")
         if (!this.FUNCRegistry.has(name)) {
             this.FUNCRegistry.add(name)
@@ -170,9 +184,9 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         )
     }
 
-    visitFunctionCalling(ctx: FunctionCallingContext){
+    visitFunctionCalling(ctx: FunctionCallingContext) {
         const name = ctx.getChild(0).text
-        if (name in this.buildInFunction){
+        if (name in this.buildInFunction) {
             const fn = this.buildInFunction[name]
             return fn(ctx.getChild(1))
         }
@@ -183,7 +197,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         return `function ${path}`
     }
 
-    visitInputparameter(ctx:InputparameterContext){
+    visitInputparameter(ctx: InputparameterContext) {
         const p = this.visitChildren(ctx)
         return p
     }
@@ -586,11 +600,11 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         )
     }
 
-    visitLiteralConstant(ctx: LiteralConstantContext){
-        const p:any[] = [this.visitChildren(ctx)].flat(1)
-        if(p[0]){
+    visitLiteralConstant(ctx: LiteralConstantContext) {
+        const p: any[] = [this.visitChildren(ctx)].flat(1)
+        if (p[0]) {
             return p
-        }else{
+        } else {
             return returnBuilder(
                 'literalNumber',
                 ctx.text
@@ -598,12 +612,23 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         }
     }
 
-    visitStringLiteral(ctx: StringLiteralContext){
+    visitStringLiteral(ctx: StringLiteralContext) {
+        const p: any[] = this.visitChildren(ctx)
+        // const p = ctx.children
+        // p?.shift()
+        // p?.pop()
         return returnBuilder(
             'string',
-            ctx.childCount == 3 ? ctx.getChild(1).text : ''
+            p
         )
     }
+
+    visitStringContent(ctx: StringContentContext) {
+        return returnBuilder(
+            'stringcontent',
+            ctx.text
+        )
+    };
 
     visitScoreNscoreExpression(ctx: ScoreNscoreExpressionContext) {
         const p = this.visitChildren(ctx)
