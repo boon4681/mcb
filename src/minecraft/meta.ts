@@ -2,8 +2,9 @@ import { spawn, spawnSync } from 'child_process'
 import { readFileSync, writeFileSync } from 'fs'
 import { writeFile } from 'fs/promises'
 import fetch from 'node-fetch'
+import ora from 'ora'
 import path from 'path'
-import { makeNotExistDir,isExist } from '../utils/file'
+import { makeNotExistDir, isExist } from '../utils/file'
 
 interface Iversion {
     "id": any,
@@ -35,18 +36,18 @@ interface Iversion {
 
 // versions()
 
-export const load_commands = async (minecraft_version:string,root:string) =>{
+export const load_commands = async (minecraft_version: string, root: string) => {
     const mcb_module = path.join(root, '.mcb_module')
     const mcb_module_mcb = path.join(mcb_module, '.mcb')
-    const mcb_resource = path.join(mcb_module_mcb,'resource')
-    const f_path = path.join(mcb_resource,minecraft_version.replace(/\./g,'_')+'.json')
+    const mcb_resource = path.join(mcb_module_mcb, 'resource')
+    const f_path = path.join(mcb_resource, minecraft_version.replace(/\./g, '_') + '.json')
     let load
-    if(!isExist(f_path)){
-        load = await fetch(`https://raw.githubusercontent.com/misode/mcmeta/${minecraft_version}-summary/commands/data.min.json`).then(a=>a.json())
-        makeNotExistDir([mcb_module,mcb_module_mcb,mcb_resource])
-        writeFileSync(f_path,JSON.stringify(load))
-    }else{
-        const f = readFileSync(f_path,'utf-8')
+    if (!isExist(f_path)) {
+        load = await fetch(`https://raw.githubusercontent.com/misode/mcmeta/${minecraft_version}-summary/commands/data.min.json`).then(a => a.json())
+        makeNotExistDir([mcb_module, mcb_module_mcb, mcb_resource])
+        writeFileSync(f_path, JSON.stringify(load))
+    } else {
+        const f = readFileSync(f_path, 'utf-8')
         load = JSON.parse(f)
     }
     return load

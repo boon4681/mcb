@@ -2,7 +2,8 @@ import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor
 import { AdditiveExpressionContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, EntityNBTExpressionContext, ExpressionContext, ForStatementContext, FunctionCallingContext, FunctionDeclarationContext, FunctionModifierContext, FunctionModifiersContext, IfStatementContext, InputparameterContext, LiteralConstantContext, LoadContext, LocateStatementContext, LoopStatementContext, LoopWithContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardDeclarationContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, StrExprContext, StringContentContext, StringLiteralContext, TopPriorityObjectContext, WhileDoContext } from '../grammar'
 import { genericErrorHandling } from '../errors/genericErrorHandling'
 import { ParserRuleContext } from 'antlr4ts';
-import SCBuilder from './SCBuilder';
+import SCBuilder from './scoreboardBuilder';
+import { TerminalNode } from 'antlr4ts/tree';
 
 // Dear developer who working this project do not change any code in this project if you don't know how it work. 😎
 // type returnValue = {
@@ -21,7 +22,6 @@ function returnBuilder(type: string, value: any, statements?: string[]): returnV
 }
 
 class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParserVisitor<returnValue> {
-
     SCIDRegistry: Record<string, { id: number }> = {}
     DISJIDRegistry: Record<string, { id: number }> = {}
     IFIDRegistry: Record<string, { id: number }> = {}
@@ -29,13 +29,10 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
     FUNCRegistry: Set<string> = new Set()
     IFs: { [key: string]: { [key: string]: { path: string, value: string[] } } } = {}
     Loops: { [key: string]: { [key: string]: { path: string, value: string[] } } } = {}
-    private error: genericErrorHandling
-    private SCBuilder: SCBuilder
+
     private CurrentSC = ""
     private CurrentFN = ""
     private AutoName = "mcb"
-    private namespace: string
-    private folder: string
     private buildInFunction: { [key: string]: (...a: any) => any } = {
         'print': (ctx: any) => {
             const p: any[] = this.visitChildren(ctx)
@@ -74,12 +71,8 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         }
     }
 
-    constructor(namespace: string, folder: string, SCBuilder: SCBuilder, error: genericErrorHandling) {
+    constructor(private namespace: string, private folder: string, private SCBuilder: SCBuilder, private error: genericErrorHandling) {
         super()
-        this.namespace = namespace
-        this.SCBuilder = SCBuilder
-        this.folder = folder
-        this.error = error;
     }
 
     protected defaultResult() {
@@ -134,7 +127,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
 
     visitMcb(ctx: McbContext) {
         const p = this.visitChildren(ctx);
-        const Functions = p.filter((a: any) => a.type === 'function' || a.type.startsWith('modded')).map((a: any) => ({name:a.value.name,value:a.statements}))
+        const Functions = p.filter((a: any) => a.type === 'function' || a.type.startsWith('modded')).map((a: any) => ({ name: a.value.name, value: a.statements }))
         const ModdedLoadFunction = p.filter((a: any) => a.type === 'moddedload_function').map((a: any) => `function ${this.namespace}:${this.folder}/${a.value.name}`)
         const ModdedTickFunction = p.filter((a: any) => a.type === 'moddedtick_function').map((a: any) => `function ${this.namespace}:${this.folder}/${a.value.name}`)
         p.filter((a: any) => a.type === 'moddedstacked_function').forEach((a: any) => {
@@ -173,9 +166,9 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             return returnBuilder('moddedstacked_function', {
                 name,
                 stack: [value[0].value].flat(1)
-            },value.slice(1))
+            }, value.slice(1))
         }
-        return returnBuilder('function', {name},value)
+        return returnBuilder('function', { name }, value)
     }
 
     visitFunctionCalling(ctx: FunctionCallingContext) {

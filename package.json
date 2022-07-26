@@ -5,9 +5,12 @@
   "version": "0.1.0",
   "license": "MIT",
   "repository": "https://github.com/boon4681/mcb.git",
+  "bin": {
+    "mcb": "./bin/index.js"
+  },
   "scripts": {
     "dev": "tsc -w -p .",
-    "start": "node bin/index.js",
+    "start": "node bin/mcb.js",
     "build-lg": "ts-node ./tools/g4build.ts",
     "build": "tsc",
     "lint": "eslint -c .eslintrc.json ./src/**"
@@ -15,8 +18,11 @@
   "devDependencies": {
     "@types/debug": "^4.1.7",
     "@types/glob": "^7.2.0",
+    "@types/minimist": "^1.2.2",
     "@types/node": "^17.0.31",
     "@types/node-fetch": "^2.6.1",
+    "@types/prompts": "^2.0.14",
+    "@types/semver": "^7.3.10",
     "@types/yup": "^0.29.13",
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.15.0",
@@ -32,7 +38,11 @@
     "chalk": "4.1.2",
     "glob": "^8.0.1",
     "json-parse-even-better-errors": "^2.3.1",
+    "minimist": "^1.2.6",
     "node-fetch": "2",
+    "ora": "5.4.0",
+    "prompts": "^2.4.2",
+    "semver": "^7.3.7",
     "yup": "^0.32.11"
   }
 }

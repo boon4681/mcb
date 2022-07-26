@@ -13,6 +13,7 @@ interface compiler_struct {
 export interface mcbpack_struct {
     name: string,
     mcVersion: string,
+    author: string,
     description: string,
     compiler: { [key: string]: compiler_struct; }
 }
@@ -27,6 +28,7 @@ const mcbpack_schema = yup.object().shape({
             })
         }
     }).required(),
+    author: yup.string(),
     description: yup.string(),
     mcVersion: yup.string().required(),
     compiler: yup.array().transform((_, a) => Object.values(a)).of(yup.object({
@@ -35,8 +37,8 @@ const mcbpack_schema = yup.object().shape({
     }))
 })
 
-export const loadMCBpack = async (path: string): Promise<{config:mcbpack_struct,root:string}> => {
-    const json_str = readFileSync(Path.join(path,'mcbpack.json'), 'utf-8')
+export const loadmcbpack = async (path: string): Promise<{ config: mcbpack_struct, root: string }> => {
+    const json_str = readFileSync(Path.join(path, 'mcbpack.json'), 'utf-8')
     try {
         parse(json_str)
         const config: mcbpack_struct = JSON.parse(json_str) as mcbpack_struct
@@ -50,15 +52,15 @@ export const loadMCBpack = async (path: string): Promise<{config:mcbpack_struct,
         if (Object.keys(errors_record).length == 0) {
             config.description = config.description ? config.description : ''
             return {
-                config:config,
-                root:path
+                config: config,
+                root: path
             }
         } else {
             for (const err in errors_record) {
                 const is_compiler = err.match(/^compiler(\[([0-9]+)\])/i)
                 const error_msg = is_compiler ? errors_record[err].replace(is_compiler[1], `.${Object.keys(config.compiler)[Number(is_compiler[2])]}`) : errors_record[err]
                 errors.critical({
-                    path:Path.join(path,'mcbpack.json'),
+                    path: Path.join(path, 'mcbpack.json'),
                     preSpace: 2,
                     message: error_msg
                 })
@@ -72,7 +74,7 @@ export const loadMCBpack = async (path: string): Promise<{config:mcbpack_struct,
         const column = lines[line - 1].length
         errors.critical({
             name: 'JSONSyntaxError',
-            path:Path.join(path,'mcbpack.json'),
+            path: Path.join(path, 'mcbpack.json'),
             position: { line, column },
             preSpace: 2,
             message: error.message
