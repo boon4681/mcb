@@ -9,3 +9,5 @@ yarn-error.log
 .eslintrc.json
 bin
 test
+.markdownlint.jsonc
+release.js

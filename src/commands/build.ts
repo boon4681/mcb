@@ -1,7 +1,8 @@
 import chalk from "chalk";
-import { Glob } from "glob";
+import { Glob, GlobSync } from "glob";
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import ora from "ora";
 import prompt from "prompts";
 import { MCB } from "../mcb";
 import { loadmcbpack } from "../mcb/mcbpack";
@@ -10,9 +11,27 @@ import { makeNotExistDir } from "../utils/file";
 import { log } from "../utils/log";
 import { Command } from "./base";
 
-
 export class build extends Command {
-    async exec(...args: any) {
+    command: string = "., build";
+    help_list = (a: string) => [
+        {
+            cmd: `mcb ${a}`,
+            msg: `build mcbpack to minecraft datapack`
+        },
+        {
+            cmd:`mcb ${a} -w`,
+            msg: `Watch input files`,
+            tag: 'soon'
+        }
+    ];
+    cmdhelp = () => [
+        {
+            cmd: `mcb build,.`,
+            msg: `build mcbpack to minecraft datapack`
+        }
+    ]
+    async exec(args: any) {
+        super.exec(args)
         const mcbpack = await loadmcbpack(this.workspace)
         const compiler_options = mcbpack.config.compiler
         const build_options = Object.keys(compiler_options).map(name => {
@@ -59,20 +78,22 @@ export class build extends Command {
         if (existsSync(options.output)) rmSync(path.join(options.output, '/'), { recursive: true })
         const mc_outDir = path.join(options.output, `data/minecraft`)
         const mcTag_function = path.join(mc_outDir, `tags/functions`);
-        log.info('Compiled');
+        log.warn("You cannot canceling the process.")
+        log.info('Compiling ...');
         await new Promise((resolve) => setTimeout(resolve, 500));
-        [options.root].flat(1).forEach(async r => {
-            new Glob('**/*.mcb', {
-                root: path.relative(this.workspace, r)
-            }, async (er, files) => {
-                if (!er) {
-                    for (const file of files) {
-                        const dir = path.relative(r, path.relative(this.workspace, path.join(file, '..')))
-                        await mcb.compile(r, dir, file)
-                    }
-                }
-            })
-        })
+        for (const r of [options.root].flat(1)) {
+            const root = path.join(this.workspace, r)
+            if (!existsSync(root)) {
+                log.error(chalk.red('This path is not exist.', '\n->', JSON.stringify(root)))
+            }
+            const glob = (await new GlobSync('**/*.mcb', {
+                root: root
+            }))
+            for (const file of glob.found) {
+                const dir = path.join(this.workspace, path.join(file, '..'))
+                await mcb.compile(r, path.relative(root, dir), file)
+            }
+        }
         makeNotExistDir(mcTag_function)
         writeFileSync(path.join(options.output, 'pack.mcmeta'), JSON.stringify(
             {
@@ -91,5 +112,7 @@ export class build extends Command {
                 `${config.name}:tick`
             ]
         }, null, 4))
+        log.succeed("Compile success.")
+        console.log()
     }
 }

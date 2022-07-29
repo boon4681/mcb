@@ -1,23 +1,51 @@
-# MCB-Language
+<p align="center"><img width="160px" src="https://media.discordapp.net/attachments/558622428754870272/1002233396099039333/mcb.png"/></p>
 
-MCB is a lightweight scripting language that compiles in to mcfunction. It support functional programming. It giving power to make your coding process faster.
+<h1 align="center">MCB-Language</h1>
+
+**MCB** stand for Mincraft Boon. MCB is a lightweight scripting language that compiles in to mcfunction. It support functional programming, giving power to make your coding process faster.
 
 ## Why build MCB?
 
 Cuz mcfunction is suck. so i build this but trust me there is no cure.
 
-## Language Goals
-
-- To make world better with massively processable variables.
-- Code that possible to read.
-
-## Project status
-
-MCB is now experiment project that created on my own passion. Nothing more about it.
-
 ## Get Started
 
-Clone this respository and start playing with it. Because this language is now experimental so there is no cli to used.
+Requirements:
+
+```yaml
+node js >=v16.0.0
+```
+
+### Installation
+
+```bash
+# install with npm
+npm install -g mcb-lang
+# install with yarn
+yarn global add mcb-lang
+```
+
+### Creating project
+
+```bash
+mcb init
+```
+
+## Powerful CLI
+
+```bash
+# want help?
+mcb help
+   
+# initialize project.
+mcb init
+
+# build project.
+mcb build or mcb .
+
+# tools for project configs and more.
+mcb mk or mcb make
+```
 
 ## Basic syntax
 
@@ -25,9 +53,7 @@ Clone this respository and start playing with it. Because this language is now e
 
 MCB is a statically typed language. This means that variables do have types in declaration.
 
-### Numbers
-
-MCB support only Integer.
+Basic declaration
 > Restrict area no floating variables allowed.
 
 ```ts
@@ -39,64 +65,115 @@ let foo:score dummy
 let bar:score air Boon
 ```
 
+Compiled code
+
+```mcfunction
+scoreboard objectives add foo dummy
+```
+
 Set value in variable
 
 ```ts
 // Format
 <scoreboard_objective>[<target>] = value
+
 // Usage
 foo[x] = 10
-bar[@e[type=minecraft:chicken,limit=1]] = 5
+bar[@s] = 5
+```
+
+Compiled code
+
+```mcfunction
+scoreboard players set x foo 10
+scoreboard players set @s bar 5
+```
+
+### Print out the output
+
+```kotlin
+print("hi ${x[0]}")
+```
+
+### Conditional expressions
+
+```kotlin
+fun hello(){
+   x[a] = 0
+   if(x[a]=0){
+      print("hello")
+   }else{
+      print("hi")
+   }
+}
+```
+
+### for loop
+
+```kotlin
+for(x[i] in 1..5;1){
+   say hi
+}
+```
+
+### while loop
+
+```kotlin
+x[a] = 5
+while(x[a]>0){
+   print("while 1 ${x[a]}")
+   x[a]-=1
+}
 ```
 
 ### Functions
 
-> Input parameters is not support in this version.
-> return output too. 😎
+Input parameters is not support in this version. return output too. 😎
 
-A Function with no Input
-
-```kotlin
-fun hello(){
-   say hello
-}
-
-// this is how you can call function.
-hello()
-```
+> A Function with no Input
+>
+>```kotlin
+>fun hello(){
+>   say hello
+>}
+>
+>// this is how you can call function.
+>hello()
+>```
 
 #### Function Modifiers
 
-- `load` means that the function is run after the datapack has loaded, triggered by `minecraft:tags\functions\load.json`
+`load` means that the function is run after the datapack has loaded, triggered by `minecraft:tags\functions\load.json`
 
-   ```kotlin
-   // you will got a message in your minecraft chat after the datapack was loaded
-   load fun hi_at_start():
-      say hi
-   end
-   ```
+```kotlin
+// you will got a message in your minecraft chat after the datapack was loaded.
+load fun hi_at_start(){
+   print("HI")
+}
+```
 
-- `tick` means that the function is run every tick by `minecraft:tags\functions\tick.json` trigger.
+`tick` means that the function is run every tick by `minecraft:tags\functions\tick.json` trigger.
 
-    ```kotlin
-    tick fun hi_every_tick():
-      say hi
-    end
-    
-    // you will got a hi message in your minecraft chat every tick
-    ```
+```kotlin
+// you will got a hi message in your minecraft chat every tick
+tick fun hi_every_tick(){
+   say hi
+}
+```
 
-- `load` and `tick` combo
+`load` and `tick` combo
 
-    ```kotlin
-    tick load fun hey():
-      say hi
-    end // you will got a hi message in your minecraft chat every tick and on loaded
-    
-    load tick fun hello():
-      say hello
-    end // you will got a hello message in your minecraft chat every tick and on loaded
-    ```
+```kotlin
+// you will got a hi message in your minecraft chat every tick and on loaded.
+tick load fun hey(){
+   say hi
+}
+
+// you will got a hello message in your minecraft chat every tick and on loaded.
+load tick fun hello(){
+   say hello
+}
+```
 
 ## Folder structure
 
@@ -104,7 +181,7 @@ All of Project-Files in here. MCB used folder structure following by this 3 word
 
 \<namespace> → `mcbpack.json` + Your Project-Files
 
-```ts
+```md
 <namespace>
    ├─ +static\ //coming soon
    │        └─ +<Your Static File>
@@ -118,7 +195,7 @@ All of Project-Files in here. MCB used folder structure following by this 3 word
 
 The presence of a `mcbpack.json` file in directory indicates that directory is `root` of MCB Project.
 
-`mcbpack.json` ****file is a configuration file specifies The root files and compiler options to let The MCB compiler compile projects.
+`mcbpack.json` file is a configuration file specifies The root files and compiler options to let The MCB compiler compile projects.
 
 #### Example of mcbpack.json
 

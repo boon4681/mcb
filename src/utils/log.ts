@@ -9,9 +9,14 @@ export const log = {
         console.log(chalk.bgBlue.rgb(255, 255, 255)(" INFO "), ...args)
     },
     warn: (...args: any) => {
-        console.log(chalk.bgYellow.rgb(255, 255, 255)(" WARN "), ...args)
+        console.log(chalk.bgYellow.black(" WARN "), ...args)
     },
     succeed: (...args: any) => {
-        console.log(chalk.bgGreen.rgb(255, 255, 255)(" SUCCESS "), ...args)
+        console.log(chalk.bgGreen.black(" DONE "), ...args)
+    },
+    hi: (...args: any) => {
+        return (color: chalk.ChalkFunction) => {
+            return (a: string) => console.log(color(` ${a} `), ...args)
+        }
     }
 }

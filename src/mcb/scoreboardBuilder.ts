@@ -1,60 +1,41 @@
 import { ParserRuleContext } from "antlr4ts"
 import { genericErrorHandling } from "../errors/genericErrorHandling"
 
-type name = string | ((str: string) => string)
+class Name {
+    constructor(
+        private s_prefix: string,
+        private suffix: (s: string) => string = (s) => {
+            return s
+        }
+    ) { }
+    get prefix(): string {
+        return this.s_prefix
+    }
+    name(s: string) {
+        return [this.prefix, this.suffix(s)].join('.')
+    }
+}
 
 export default class SCBuilder {
-    private name_suffix: name
-    private temp_suffix: name
-    private disj_suffix: name
-    private _disj_name = 'mcb.disj'
-    private error: genericErrorHandling
+    public name = new Name('mcb.sb')
+    public temp = new Name('mcb.temp')
+    public disj = new Name('mcb.disj')
+    public if = new Name('mcb.if')
 
-    constructor(name_suffix: name, temp_suffix: name, disj_suffix: name, error: genericErrorHandling) {
-        this.name_suffix = name_suffix
-        this.temp_suffix = temp_suffix
-        this.disj_suffix = disj_suffix
-        this.error = error
-    }
-
-    name(str: string) {
-        if (typeof this.name_suffix === "function") {
-            return "mcb.sb." + this.name_suffix(str)
-        }
-        return "mcb.sb." + str
-    }
-
-    temp(str: string) {
-        if (typeof this.temp_suffix === "function") {
-            return "mcb.sb." + this.temp_suffix(str)
-        }
-        return "mcb.temp." + str
-    }
-
-    disj(str: string) {
-        if (typeof this.disj_suffix === "function"){
-            return "mcb.disj." + this.disj_suffix(str)
-        }
-        return "mcb.disj." + str
-    }
-
-    disj_name(){
-        return this._disj_name
-    }
-
+    constructor(public error: genericErrorHandling) { }
 
     SCLiteral(CurrentSC: string, node: any, CurrentID: string, operator = "") {
         return [
             this.SCSet(
-                this.temp("0"),
+                this.temp.name("0"),
                 CurrentSC,
                 node.value
             ),
             this.SCOperationSet(
-                this.name(CurrentID),
+                this.name.name(CurrentID),
                 CurrentSC,
                 `${operator}=`,
-                this.temp("0"),
+                this.temp.name("0"),
                 CurrentSC
             )
         ]
@@ -62,7 +43,7 @@ export default class SCBuilder {
 
     SCIdentifierExpression(CurrentSC: string, node: any, CurrentID: string, operator = "") {
         return this.SCOperationSet(
-            this.name(CurrentID),
+            this.name.name(CurrentID),
             CurrentSC,
             `${operator}=`,
             node.value.target,

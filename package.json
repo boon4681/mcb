@@ -1,8 +1,8 @@
 {
-  "name": "mcb",
+  "name": "mcb-lang",
   "author": "boon4681 <46645814+boon4681@users.noreply.github.com>",
   "homepage": "https://www.boon4681.com/",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.1",
   "license": "MIT",
   "repository": "https://github.com/boon4681/mcb.git",
   "bin": {
@@ -11,9 +11,10 @@
   "scripts": {
     "dev": "tsc -w -p .",
     "start": "node bin/mcb.js",
-    "build-lg": "ts-node ./tools/g4build.ts",
+    "build:lg": "ts-node ./tools/g4build.ts",
     "build": "tsc",
-    "lint": "eslint -c .eslintrc.json ./src/**"
+    "lint": "eslint -c .eslintrc.json ./src/**",
+    "release": "node release.js && tsc -p . && yarn publish"
   },
   "devDependencies": {
     "@types/debug": "^4.1.7",
@@ -40,7 +41,7 @@
     "json-parse-even-better-errors": "^2.3.1",
     "minimist": "^1.2.6",
     "node-fetch": "2",
-    "ora": "5.4.0",
+    "ora": "5.4.1",
     "prompts": "^2.4.2",
     "semver": "^7.3.7",
     "yup": "^0.32.11"

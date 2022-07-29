@@ -22,12 +22,14 @@ import { BlockContext } from "./mcbParser";
 import { FunctionModifiersContext } from "./mcbParser";
 import { FunctionModifierContext } from "./mcbParser";
 import { IfStatementContext } from "./mcbParser";
+import { UnstrippedIfStatementContext } from "./mcbParser";
+import { ControlstructBodyContext } from "./mcbParser";
+import { ElseStatementContext } from "./mcbParser";
 import { LoopStatementContext } from "./mcbParser";
 import { LoopWithContext } from "./mcbParser";
 import { ForStatementContext } from "./mcbParser";
 import { WhileDoContext } from "./mcbParser";
 import { RepeatUntilContext } from "./mcbParser";
-import { RepeatUntilBlockContext } from "./mcbParser";
 import { DisconjuctionContext } from "./mcbParser";
 import { ConjuctionContext } from "./mcbParser";
 import { ComparisonContext } from "./mcbParser";
@@ -289,6 +291,39 @@ export interface mcbParserListener extends ParseTreeListener {
 	exitIfStatement?: (ctx: IfStatementContext) => void;
 
 	/**
+	 * Enter a parse tree produced by `mcbParser.unstrippedIfStatement`.
+	 * @param ctx the parse tree
+	 */
+	enterUnstrippedIfStatement?: (ctx: UnstrippedIfStatementContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.unstrippedIfStatement`.
+	 * @param ctx the parse tree
+	 */
+	exitUnstrippedIfStatement?: (ctx: UnstrippedIfStatementContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.controlstructBody`.
+	 * @param ctx the parse tree
+	 */
+	enterControlstructBody?: (ctx: ControlstructBodyContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.controlstructBody`.
+	 * @param ctx the parse tree
+	 */
+	exitControlstructBody?: (ctx: ControlstructBodyContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.elseStatement`.
+	 * @param ctx the parse tree
+	 */
+	enterElseStatement?: (ctx: ElseStatementContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.elseStatement`.
+	 * @param ctx the parse tree
+	 */
+	exitElseStatement?: (ctx: ElseStatementContext) => void;
+
+	/**
 	 * Enter a parse tree produced by `mcbParser.loopStatement`.
 	 * @param ctx the parse tree
 	 */
@@ -342,17 +377,6 @@ export interface mcbParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitRepeatUntil?: (ctx: RepeatUntilContext) => void;
-
-	/**
-	 * Enter a parse tree produced by `mcbParser.repeatUntilBlock`.
-	 * @param ctx the parse tree
-	 */
-	enterRepeatUntilBlock?: (ctx: RepeatUntilBlockContext) => void;
-	/**
-	 * Exit a parse tree produced by `mcbParser.repeatUntilBlock`.
-	 * @param ctx the parse tree
-	 */
-	exitRepeatUntilBlock?: (ctx: RepeatUntilBlockContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `mcbParser.disconjuction`.

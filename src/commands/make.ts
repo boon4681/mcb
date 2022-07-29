@@ -7,6 +7,7 @@ import { Command } from "./base";
 
 
 export class make extends Command {
+    command: string = "mk, make";
     aliases: { [key: string]: string } = {
         'cp': 'compiler-options',
         'cpl': 'compiler-options',
@@ -15,6 +16,21 @@ export class make extends Command {
         'compiler': 'compiler-options',
         'compiler-options': 'compiler-options'
     }
+    help_list = (args: any) => {
+        return [
+            {
+                cmd: `mcb ${args} cp`,
+                msg: 'generate compiler-options',
+                key: 'compiler-options'
+            }
+        ]
+    };
+    cmdhelp = () => [
+        {
+            cmd: `mcb mk,make <option>`,
+            msg: `helper tools make easily uses`
+        }
+    ]
     options_mapper = (option: string) => {
         if (option in this.aliases) {
             return this.aliases[option]
@@ -25,13 +41,15 @@ export class make extends Command {
             process.exit(1)
         }
     }
-    exec = async (args: any) => {
+    async exec(args: any) {
+        super.exec(args)
         const mcbpack_path = this.join('mcbpack.json')
         if (!existsSync(mcbpack_path)) {
             log.error('Please initialized project before run this commands')
             console.log()
             process.exit(1)
         }
+        Object.keys(args).filter(a => a != '_').map(a => this.options_mapper(a))
         const options = this.options_mapper(args?._[1])
         const ans = options ? { options } : await prompt(
             [
@@ -52,7 +70,7 @@ export class make extends Command {
                 }
             }
         )
-        let mcbpack = JSON.parse(readFileSync(mcbpack_path,'utf-8'))
+        let mcbpack = JSON.parse(readFileSync(mcbpack_path, 'utf-8'))
         switch (ans.options) {
             case 'compiler-options':
                 const compiler = await prompt(
@@ -112,6 +130,10 @@ export class make extends Command {
                 mcbpack.compiler[compiler.name] = ans_compiler
                 writeFileSync(mcbpack_path, JSON.stringify(mcbpack, null, 4))
                 break
+            default:
+                log.error(`Unrecognized "${ans.options}" option`)
+                console.log()
+                process.exit(1)
         }
     }
 }

@@ -7,7 +7,21 @@ import { Command } from "./base";
 
 
 export class init extends Command {
-    exec = async (...args: any) => {
+    command: string = "init";
+    help_list = (a: string) => [
+        {
+            cmd: `mcb ${a}`,
+            msg: `initialize mcb project`
+        },
+    ];
+    cmdhelp = () => [
+        {
+            cmd: `mcb init`,
+            msg: `initialize mcb project`
+        }
+    ]
+    async exec(args: any) {
+        super.exec(args)
         let target = this.workspace
         const ans = await prompt(
             [

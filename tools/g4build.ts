@@ -20,7 +20,11 @@ const watcher = watch('./src/grammar/*.g4')
 watcher
     .on('change', (p) => {
         console.log(chalk.greenBright(`[${new Date().toISOString()}] File change detected.`))
-        builder(p)
+        glob('./src/grammar/*.g4', (er, files) => {
+            if (!er) {
+                for (const file of files) builder(file)
+            }
+        })
     })
 
 

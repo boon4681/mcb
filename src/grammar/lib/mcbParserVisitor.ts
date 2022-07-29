@@ -22,12 +22,14 @@ import { BlockContext } from "./mcbParser";
 import { FunctionModifiersContext } from "./mcbParser";
 import { FunctionModifierContext } from "./mcbParser";
 import { IfStatementContext } from "./mcbParser";
+import { UnstrippedIfStatementContext } from "./mcbParser";
+import { ControlstructBodyContext } from "./mcbParser";
+import { ElseStatementContext } from "./mcbParser";
 import { LoopStatementContext } from "./mcbParser";
 import { LoopWithContext } from "./mcbParser";
 import { ForStatementContext } from "./mcbParser";
 import { WhileDoContext } from "./mcbParser";
 import { RepeatUntilContext } from "./mcbParser";
-import { RepeatUntilBlockContext } from "./mcbParser";
 import { DisconjuctionContext } from "./mcbParser";
 import { ConjuctionContext } from "./mcbParser";
 import { ComparisonContext } from "./mcbParser";
@@ -216,6 +218,27 @@ export interface mcbParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	visitIfStatement?: (ctx: IfStatementContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by `mcbParser.unstrippedIfStatement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitUnstrippedIfStatement?: (ctx: UnstrippedIfStatementContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.controlstructBody`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitControlstructBody?: (ctx: ControlstructBodyContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.elseStatement`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitElseStatement?: (ctx: ElseStatementContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by `mcbParser.loopStatement`.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -249,13 +272,6 @@ export interface mcbParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitRepeatUntil?: (ctx: RepeatUntilContext) => Result;
-
-	/**
-	 * Visit a parse tree produced by `mcbParser.repeatUntilBlock`.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	visitRepeatUntilBlock?: (ctx: RepeatUntilBlockContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `mcbParser.disconjuction`.

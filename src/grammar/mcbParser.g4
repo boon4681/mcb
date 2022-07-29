@@ -3,8 +3,7 @@ options { tokenVocab = mcbLexer;}
 
 mcb: NL* topPriorityObject* EOF;
 topPriorityObject
-    : declaration nl?
-    | load nl?
+    : (declaration|load) nl?
     ;
 
 load: statement;
@@ -14,11 +13,11 @@ statements
     ;
 
 statement
-    : ( assignment | loopStatement | ifStatement | commands | scoreboardDeclaration | functionCalling)
+    : ( assignment | loopStatement | ifStatement | commands | scoreboardDeclaration | (functionCalling|functionCalling+))
     ;
 
 commands
-    : COMMANDS CommandStr
+    : COMMANDS CommandStr functionCalling?
     ;
 
 declaration
@@ -71,7 +70,19 @@ functionModifier
     ;
 
 ifStatement
-    : IF NL* disconjuction NL* block
+    : unstrippedIfStatement
+    ;
+
+unstrippedIfStatement
+    : IF NL* LPAREN disconjuction RPAREN NL* block elseStatement?
+    ;
+
+controlstructBody
+    : unstrippedIfStatement | block
+    ;
+
+elseStatement
+    : NL* ELSE NL* controlstructBody
     ;
 
 loopStatement
@@ -83,19 +94,15 @@ loopStatement
 loopWith: commands;
 
 forStatement
-    : FOR NL* scoreboardIdentifier IN range SEMICOLON scoreboardLiteral (SEMICOLON loopWith)? NL* block
+    : FOR NL* LPAREN scoreboardIdentifier IN range SEMICOLON scoreboardLiteral (SEMICOLON loopWith)? RPAREN NL* block
     ;
 
 whileDo
-    : WHILE NL* disconjuction NL* block
+    : WHILE NL* LPAREN disconjuction RPAREN NL* block
     ;
 
 repeatUntil
-    : REPEAT NL* repeatUntilBlock disconjuction
-    ;
-
-repeatUntilBlock
-    : COLON NL* statements NL* UNTIL
+    : REPEAT NL* block NL* UNTIL LPAREN disconjuction RPAREN
     ;
 
 disconjuction
@@ -130,7 +137,7 @@ range
     ;
 
 entityNBTExpression
-    : K_ENTITY entity nbt?
+    : entity nbt?
     ;
 
 blockExpression
@@ -289,7 +296,7 @@ stringContent
     | StrEscapedChar
     ;
 
-entity: (AT_N_WS|AT_P_WS)ENTITY_SUFFIX;
+entity: ENTITY;
 
 nl
     : NL NL*

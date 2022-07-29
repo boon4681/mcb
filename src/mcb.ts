@@ -6,9 +6,6 @@ import ParserErrorListener from './errors/ParserErrorListener'
 import SCBuilder from './mcb/scoreboardBuilder'
 import { writeFileSync, readFileSync, mkdirSync, existsSync, appendFileSync, rmSync } from 'node:fs'
 import path from 'node:path';
-import { Glob } from 'glob'
-import { loadmcbpack } from './mcb/mcbpack'
-import * as errors from './errors/errors'
 import { makeNotExistDir } from './utils/file'
 import { load_commands } from './minecraft/meta'
 import { DebugLogger } from './grammar/debug'
@@ -29,10 +26,6 @@ const FnWalker = (input: any, func: Function) => {
     }
 }
 
-let SCIDRegistry: Record<string, { id: number }> = {}
-let Loads: string[] = []
-let Ticks: string[] = []
-
 export class MCB {
     private SCIDRegistry: Record<string, { id: number }> = {}
     private Loads: string[] = []
@@ -46,7 +39,7 @@ export class MCB {
     private mcb_module_debug = path.resolve(this.mcb_module_mcb, 'debug')
 
     constructor(private namepace: string, private mcVersion: string, output: string, private debug: boolean) {
-        this.output = path.relative(this.workspace, output)
+        this.output = path.resolve(this.workspace, output)
     }
 
     async load_resource() {
@@ -57,66 +50,83 @@ export class MCB {
         spinner.stopAndPersist({ 'prefixText': chalk.green('√'), text: '\b\b' + spinner.text })
     }
 
-    async compile(root: string, dir: string, file_name: string) {
-        const parsed_file_name = path.parse(file_name)
-        const output = path.join(dir, parsed_file_name.name)
-        console.log(chalk.cyan('> ', path.relative(this.workspace, file_name)))
-        const inputStream = this.createInputStream(path.relative(this.workspace, file_name))
-        const { tokens } = this.createLexer(inputStream)
-        const parser = this.createParser(tokens, inputStream)
-        const error = new genericErrorHandling(inputStream)
-        const scoreboardBuilder = new SCBuilder("", "", "", error);
-        const visitor = new Visitor(this.namepace, output.split(path.sep).filter(a => a).join('/'), scoreboardBuilder, error)
-        visitor.SCIDRegistry = this.SCIDRegistry
-        const tree = parser.mcb()
-        const result = tree.accept(visitor)
-        this.SCIDRegistry = visitor.SCIDRegistry
-        const out_dataFN = path.join(this.output, `data/${this.namepace}/functions`)
-        const outFNDir = path.join(out_dataFN, output)
-        const outLoops = path.join(outFNDir, 'loops')
-        const outIFs = path.join(outFNDir, 'ifs')
-        this.Loads.push(...result.Load)
-        this.Ticks.push(...result.Tick)
+    compile(root: string, dir: string, file_name: string) {
+        return new Promise((resolve) => {
+            const parsed_file_name = path.parse(file_name)
+            const output = path.join(dir, parsed_file_name.name)
+            const inputStream = this.createInputStream(path.relative(this.workspace, file_name))
+            const { tokens } = this.createLexer(inputStream)
+            if (this.debug) {
+                const inputStream = this.createInputStream(path.relative(this.workspace, file_name))
+                const { tokens, lexer } = this.createLexer(inputStream)
+                const mcb_debug_file = path.join(this.mcb_module_debug, root, dir)
+                const tokenslist = lexer.getAllTokens()
+                const debug = tokenslist.map(a => {
+                    return `[${a.line}:${a.charPositionInLine}] ${JSON.stringify(a.text)} -> ` + lexer.vocabulary.getSymbolicName(a.type);
+                }).join('\n')
+                writeFileSync(path.join(mcb_debug_file, `${parsed_file_name.name}.lexer.log`),
+                    "// Lexer-Log\n" +
+                    `${debug}\n`
+                )
+            }
 
-        if (Object.keys(result.Functions).length > 0) {
-            makeNotExistDir(outFNDir)
-            FnWalker(result.Functions, (e: any) => {
-                writeFileSync(path.join(outFNDir, `${e.name}.mcfunction`), e.value.join('\n'))
-            })
-        }
+            const parser = this.createParser(tokens, inputStream)
+            const error = new genericErrorHandling(inputStream)
+            const scoreboardBuilder = new SCBuilder(error);
+            const visitor = new Visitor(this.namepace, output.split(path.sep).filter(a => a).join('/'),parsed_file_name.name, scoreboardBuilder, error)
+            log.info(chalk.cyan('> ', path.relative(this.workspace, file_name)))
+            visitor.SCIDRegistry = this.SCIDRegistry
+            visitor.visitTerminal = resolve
+            const tree = parser.mcb()
+            const result = tree.accept(visitor)
+            this.SCIDRegistry = visitor.SCIDRegistry
+            const out_dataFN = path.join(this.output, `data/${this.namepace}/functions`)
+            const outFNDir = path.join(out_dataFN, output)
+            const outLoops = path.join(outFNDir, 'loops')
+            const outIFs = path.join(outFNDir, 'ifs')
+            this.Loads.push(...result.Load)
+            this.Ticks.push(...result.Tick)
 
-        if (Object.keys(result.Loops).length > 0) {
-            makeNotExistDir(outLoops)
-            for (const e in result.Loops) {
-                for (const m in result.Loops[e]) {
-                    writeFileSync(path.join(outLoops, `${m}.mcfunction`), result.Loops[e][m].value.join('\n'))
+            if (Object.keys(result.Functions).length > 0) {
+                makeNotExistDir(outFNDir)
+                FnWalker(result.Functions, (e: any) => {
+                    writeFileSync(path.join(outFNDir, `${e.name}.mcfunction`), e.value.join('\n'))
+                })
+            }
+
+            if (Object.keys(result.Loops).length > 0) {
+                makeNotExistDir(outLoops)
+                for (const e in result.Loops) {
+                    for (const m in result.Loops[e]) {
+                        writeFileSync(path.join(outLoops, `${m}.mcfunction`), result.Loops[e][m].value.join('\n'))
+                    }
                 }
             }
-        }
 
-        if (Object.keys(result.IFs).length > 0) {
-            makeNotExistDir(outIFs)
-            for (const e in result.IFs) {
-                for (const m in result.IFs[e]) {
-                    writeFileSync(path.join(outIFs, `${m}.mcfunction`), result.IFs[e][m].value.join('\n'))
+            if (Object.keys(result.IFs).length > 0) {
+                makeNotExistDir(outIFs)
+                for (const e in result.IFs) {
+                    for (const m in result.IFs[e]) {
+                        writeFileSync(path.join(outIFs, `${m}.mcfunction`), result.IFs[e][m].value.join('\n'))
+                    }
                 }
             }
-        }
-        writeFileSync(path.join(out_dataFN, 'load.mcfunction'), this.Loads.join('\n'))
-        writeFileSync(path.join(out_dataFN, 'tick.mcfunction'), this.Ticks.join('\n'))
-        makeNotExistDir([this.mcb_module, this.mcb_module_mcb])
-        if (this.debug) {
-            const mcb_debug_file = path.join(this.mcb_module_debug, root, dir)
-            const debug = new DebugLogger(tokens, parser)
-            ParseTreeWalker.DEFAULT.walk(debug, tree)
-            makeNotExistDir([this.mcb_module, this.mcb_module_mcb, this.mcb_module_debug, mcb_debug_file])
-            writeFileSync(path.join(mcb_debug_file, `${parsed_file_name.name}.log`),
-                "// Parser-Log\n" +
-                `${debug.log}\n` +
-                "// Compiled-Stack\n" +
-                `${JSON.stringify(result, null, 5)}`
-            )
-        }
+            writeFileSync(path.join(out_dataFN, 'load.mcfunction'), this.Loads.join('\n'))
+            writeFileSync(path.join(out_dataFN, 'tick.mcfunction'), this.Ticks.join('\n'))
+            makeNotExistDir([this.mcb_module, this.mcb_module_mcb])
+            if (this.debug) {
+                const mcb_debug_file = path.join(this.mcb_module_debug, root, dir)
+                const debug = new DebugLogger(tokens, parser)
+                ParseTreeWalker.DEFAULT.walk(debug, tree)
+                makeNotExistDir([this.mcb_module, this.mcb_module_mcb, this.mcb_module_debug, mcb_debug_file])
+                writeFileSync(path.join(mcb_debug_file, `${parsed_file_name.name}.log`),
+                    "// Parser-Log\n" +
+                    `${debug.log}\n` +
+                    "// Compiled-Stack\n" +
+                    `${JSON.stringify(result, null, 5)}`
+                )
+            }
+        })
     }
 
     createInputStream(filepath: string) {
