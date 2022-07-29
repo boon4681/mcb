@@ -7,7 +7,7 @@ import SCBuilder from './mcb/scoreboardBuilder'
 import { writeFileSync, readFileSync, mkdirSync, existsSync, appendFileSync, rmSync } from 'node:fs'
 import path from 'node:path';
 import { makeNotExistDir } from './utils/file'
-import { load_commands } from './minecraft/meta'
+import { load_commands, load_version } from './minecraft/meta'
 import { DebugLogger } from './grammar/debug'
 import { ParseTreeWalker } from 'antlr4ts/tree'
 import ora from 'ora';
@@ -43,11 +43,28 @@ export class MCB {
     }
 
     async load_resource() {
-        const spinner = ora('loading minecraft data').start()
+        let spinner = ora('loading minecraft version').start()
+        spinner.color = 'yellow'
+        await new Promise((resolve) => setTimeout(resolve, 500))
+        const version = await load_version(this.mcVersion, this.workspace)
+        if (version == false) {
+            spinner.stopAndPersist({ 'prefixText': chalk.red('×'), text: '\b\b' + spinner.text })
+        } else {
+            spinner.stopAndPersist({ 'prefixText': chalk.green('√'), text: '\b\b' + spinner.text + ' ' + chalk.yellow(version.release_target) })
+        }
+        spinner = ora('loading minecraft data').start()
         spinner.color = 'yellow'
         await new Promise((resolve) => setTimeout(resolve, 500))
         this.commands = await load_commands(this.mcVersion, this.workspace)
-        spinner.stopAndPersist({ 'prefixText': chalk.green('√'), text: '\b\b' + spinner.text })
+        if (this.commands == false) {
+            spinner.stopAndPersist({ 'prefixText': chalk.red('×'), text: '\b\b' + spinner.text })
+        } else {
+            spinner.stopAndPersist({ 'prefixText': chalk.green('√'), text: '\b\b' + spinner.text })
+        }
+        if (version == false || this.commands == false) {
+            process.exit(1)
+        }
+        return version
     }
 
     compile(root: string, dir: string, file_name: string) {
@@ -73,7 +90,7 @@ export class MCB {
             const parser = this.createParser(tokens, inputStream)
             const error = new genericErrorHandling(inputStream)
             const scoreboardBuilder = new SCBuilder(error);
-            const visitor = new Visitor(this.namepace, output.split(path.sep).filter(a => a).join('/'),parsed_file_name.name, scoreboardBuilder, error)
+            const visitor = new Visitor(this.namepace, output.split(path.sep).filter(a => a).join('/'), parsed_file_name.name, scoreboardBuilder, error)
             log.info(chalk.cyan('> ', path.relative(this.workspace, file_name)))
             visitor.SCIDRegistry = this.SCIDRegistry
             visitor.visitTerminal = resolve

@@ -40,12 +40,39 @@ export const load_commands = async (minecraft_version: string, root: string) => 
     const mcb_module = path.join(root, '.mcb_module')
     const mcb_module_mcb = path.join(mcb_module, '.mcb')
     const mcb_resource = path.join(mcb_module_mcb, 'resource')
+    const f_path = path.join(mcb_resource,'commands_' + minecraft_version.replace(/\./g, '_') + '.json')
+    let load
+    if (!isExist(f_path)) {
+        try {
+            load = await fetch(`https://raw.githubusercontent.com/misode/mcmeta/${minecraft_version}-summary/commands/data.min.json`).then(a => a.json())
+            makeNotExistDir([mcb_module, mcb_module_mcb, mcb_resource])
+            writeFileSync(f_path, JSON.stringify(load))
+        } catch (error) {
+
+        }
+        return false
+    } else {
+        const f = readFileSync(f_path, 'utf-8')
+        load = JSON.parse(f)
+    }
+    return load
+}
+
+export const load_version = async (minecraft_version:string, root: string) => {
+    const mcb_module = path.join(root, '.mcb_module')
+    const mcb_module_mcb = path.join(mcb_module, '.mcb')
+    const mcb_resource = path.join(mcb_module_mcb, 'resource')
     const f_path = path.join(mcb_resource, minecraft_version.replace(/\./g, '_') + '.json')
     let load
     if (!isExist(f_path)) {
-        load = await fetch(`https://raw.githubusercontent.com/misode/mcmeta/${minecraft_version}-summary/commands/data.min.json`).then(a => a.json())
-        makeNotExistDir([mcb_module, mcb_module_mcb, mcb_resource])
-        writeFileSync(f_path, JSON.stringify(load))
+        try {
+            load = await fetch(`https://raw.githubusercontent.com/misode/mcmeta/${minecraft_version}-summary/version.json`).then(a => a.json())
+            makeNotExistDir([mcb_module, mcb_module_mcb, mcb_resource])
+            writeFileSync(f_path, JSON.stringify(load))
+        } catch (error) {
+            
+        }
+        return false
     } else {
         const f = readFileSync(f_path, 'utf-8')
         load = JSON.parse(f)

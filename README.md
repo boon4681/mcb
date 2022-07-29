@@ -2,11 +2,24 @@
 
 <h1 align="center">MCB-Language</h1>
 
+  <p align="center">A lightweight scripting language that compiles in to mcfunction.</p>
+    <p align="center">
+    <a href="https://www.npmjs.com/package/mcb-lang" target="_blank">
+      <img src="https://img.shields.io/npm/v/mcb-lang.svg"/>
+    </a>
+    <a href="https://opensource.org/licenses/MIT" target="_blank">
+      <img src="https://img.shields.io/badge/license-MIT-blue.svg"/>
+    </a>
+    </p>
+</p>
+
+## Description
+
 **MCB** stand for Mincraft Boon. MCB is a lightweight scripting language that compiles in to mcfunction. It support functional programming, giving power to make your coding process faster.
 
-## Why build MCB?
+### Why build MCB?
 
-Cuz mcfunction is suck. so i build this but trust me there is no cure.
+Cuz mcfunction suck so i build MCB but trust me.... there is no cure.
 
 ## Get Started
 

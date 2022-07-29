@@ -73,7 +73,7 @@ export class build extends Command {
             options.output,
             ans.debug
         )
-        await mcb.load_resource()
+        const version = await mcb.load_resource()
         await new Promise((resolve) => setTimeout(resolve, 250))
         if (existsSync(options.output)) rmSync(path.join(options.output, '/'), { recursive: true })
         const mc_outDir = path.join(options.output, `data/minecraft`)
@@ -98,7 +98,7 @@ export class build extends Command {
         writeFileSync(path.join(options.output, 'pack.mcmeta'), JSON.stringify(
             {
                 "pack": {
-                    "pack_format": Number(config.mcVersion[config.mcVersion.length - 1]),
+                    "pack_format": version.data_pack_version,
                     "description": config.description
                 }
             }, null, 4))
