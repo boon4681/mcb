@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import semver from 'semver'
 import minimist from 'minimist'
 import version from './version'

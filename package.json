@@ -2,12 +2,27 @@
   "name": "mcb-lang",
   "author": "boon4681 <46645814+boon4681@users.noreply.github.com>",
   "homepage": "https://www.boon4681.com/",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.5",
   "license": "MIT",
   "repository": "https://github.com/boon4681/mcb.git",
   "bin": {
-    "mcb": "./bin/index.js"
+    "mcb": "./bin/mcb"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "main": "./bin/mcb",
+  "files": [
+    "./bin"
+  ],
+  "keywords": [
+    "TypeScript",
+    "MCB",
+    "Minecraft",
+    "language",
+    "compiler",
+    "transpiler"
+  ],
   "scripts": {
     "dev": "tsc -w -p .",
     "start": "node bin/mcb.js",
