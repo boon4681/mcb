@@ -30,6 +30,7 @@ export class MCB {
     private SCIDRegistry: Record<string, { id: number }> = {}
     private Loads: string[] = []
     private Ticks: string[] = []
+    MCB:Set<string> = new Set<string>()
     private output: string = ""
     private commands: any
 
@@ -82,6 +83,7 @@ export class MCB {
                 const debug = tokenslist.map(a => {
                     return `[${a.line}:${a.charPositionInLine}] ${JSON.stringify(a.text)} -> ` + lexer.vocabulary.getSymbolicName(a.type);
                 }).join('\n')
+                makeNotExistDir(mcb_debug_file)
                 writeFileSync(path.join(mcb_debug_file, `${parsed_file_name.name}.lexer.log`),
                     "// Lexer-Log\n" +
                     `${debug}\n`
@@ -111,6 +113,10 @@ export class MCB {
             const outLoops = path.join(outFNDir, 'loops')
             const outIFs = path.join(outFNDir, 'ifs')
             makeNotExistDir(out_dataFN)
+            const m = [...result.MCB.values()]
+            m.forEach(a=>{
+                this.MCB.add(a)
+            })
             this.Loads.push(...result.Load)
             this.Ticks.push(...result.Tick)
 
@@ -138,7 +144,7 @@ export class MCB {
                     }
                 }
             }
-            writeFileSync(path.join(out_dataFN, 'load.mcfunction'), this.Loads.join('\n'))
+            writeFileSync(path.join(out_dataFN, 'load.mcfunction'), [...this.MCB.values(),...this.Loads].join('\n'))
             writeFileSync(path.join(out_dataFN, 'tick.mcfunction'), this.Ticks.join('\n'))
             makeNotExistDir([this.mcb_module, this.mcb_module_mcb])
             if (this.debug) {

@@ -117,10 +117,11 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             }
         });
         const RunOnload: string[] = []
+        const MCB:Set<string> = new Set<string>()
         if (this.isDisconjuctionEnable) {
-            RunOnload.push(`scoreboard objectives add ${this.SCBuilder.disj.prefix} dummy`)
+            MCB.add(`scoreboard objectives add ${this.SCBuilder.disj.prefix} dummy`)
         }
-        RunOnload.push(`scoreboard objectives add ${this.SCBuilder.if.prefix} dummy`)
+        MCB.add(`scoreboard objectives add ${this.SCBuilder.if.prefix} dummy`)
         RunOnload.push(...p.filter((a: any) => a.type === 'load').map((a: any) => a.value))
         RunOnload.push(...ModdedLoadFunction)
         const RunOnTick = ModdedTickFunction
@@ -130,7 +131,8 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             IFs: this.IFs,
             Functions,
             Load: RunOnload,
-            Tick: RunOnTick
+            Tick: RunOnTick,
+            MCB
         }
     }
 
@@ -753,7 +755,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             try {
                 const data = JSON.parse(k.stdout)
                 console.log(data.console.join("\n"))
-                return data.emit.join('\n')
+                return returnBuilder('load',data.emit)
             } catch (error) {
                 log.error(chalk.red(`    └ @mix error at ${line}:${col}\n cannot parser data\n${k.stdout}`))
                 console.log()
