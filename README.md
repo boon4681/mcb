@@ -188,6 +188,25 @@ load tick fun hello(){
 }
 ```
 
+### @mix
+
+mix another language to generate code
+
+```ts
+@mix(js)
+{
+   console.log("HI")
+   return ["say hi","say hello"]
+}
+```
+
+Mix result
+
+```mcfunction
+say hi
+say hello
+```
+
 ## Folder structure
 
 All of Project-Files in here. MCB used folder structure following by this 3 words.

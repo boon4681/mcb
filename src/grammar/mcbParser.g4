@@ -13,8 +13,16 @@ statements
     ;
 
 statement
-    : ( assignment | loopStatement | ifStatement | commands | scoreboardDeclaration | (functionCalling|functionCalling+))
+    : ( assignment | loopStatement | ifStatement | commands | scoreboardDeclaration | mixAnnotation | (functionCalling|functionCalling+))
     ;
+
+mixAnnotation
+    : (AT_N_WS|AT_P_WS) MIX NL* mixLang NL* mixBlock NL*
+    ;
+
+mixLang: LPAREN Identifier RPAREN;
+
+mixBlock: LCURL MIXCONTENT* RCURL;
 
 commands
     : COMMANDS CommandStr functionCalling?

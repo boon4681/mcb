@@ -68,10 +68,11 @@ export class MCB {
     }
 
     compile(root: string, dir: string, file_name: string) {
-        return new Promise((resolve) => {
+        return new Promise(async (resolve) => {
             const parsed_file_name = path.parse(file_name)
             const output = path.join(dir, parsed_file_name.name)
             const inputStream = this.createInputStream(path.relative(this.workspace, file_name))
+
             const { tokens } = this.createLexer(inputStream)
             if (this.debug) {
                 const inputStream = this.createInputStream(path.relative(this.workspace, file_name))
@@ -90,11 +91,19 @@ export class MCB {
             const parser = this.createParser(tokens, inputStream)
             const error = new genericErrorHandling(inputStream)
             const scoreboardBuilder = new SCBuilder(error);
-            const visitor = new Visitor(this.namepace, output.split(path.sep).filter(a => a).join('/'), parsed_file_name.name, scoreboardBuilder, error)
+            const visitor = new Visitor(
+                this.namepace,
+                output.split(path.sep).filter(a => a).join('/'),
+                parsed_file_name.name,
+                scoreboardBuilder,
+                error
+            )
             log.info(chalk.cyan('> ', path.relative(this.workspace, file_name)))
             visitor.SCIDRegistry = this.SCIDRegistry
-            visitor.visitTerminal = resolve
-            const tree = parser.mcb()
+            visitor.visitTerminal = () => {
+                resolve(null)
+            }
+            const tree = await parser.mcb()
             const result = tree.accept(visitor)
             this.SCIDRegistry = visitor.SCIDRegistry
             const out_dataFN = path.join(this.output, `data/${this.namepace}/functions`)
@@ -148,7 +157,9 @@ export class MCB {
 
     createInputStream(filepath: string) {
         const input = readFileSync(filepath, 'utf-8')
-        return new ANTLRInputStream(input);
+        const stream = new ANTLRInputStream(input)
+        stream.name = filepath
+        return stream;
     }
 
     createLexer(inputStream: ANTLRInputStream) {

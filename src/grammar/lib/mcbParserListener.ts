@@ -8,6 +8,9 @@ import { TopPriorityObjectContext } from "./mcbParser";
 import { LoadContext } from "./mcbParser";
 import { StatementsContext } from "./mcbParser";
 import { StatementContext } from "./mcbParser";
+import { MixAnnotationContext } from "./mcbParser";
+import { MixLangContext } from "./mcbParser";
+import { MixBlockContext } from "./mcbParser";
 import { CommandsContext } from "./mcbParser";
 import { DeclarationContext } from "./mcbParser";
 import { VariableDeclarationContext } from "./mcbParser";
@@ -135,6 +138,39 @@ export interface mcbParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitStatement?: (ctx: StatementContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.mixAnnotation`.
+	 * @param ctx the parse tree
+	 */
+	enterMixAnnotation?: (ctx: MixAnnotationContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.mixAnnotation`.
+	 * @param ctx the parse tree
+	 */
+	exitMixAnnotation?: (ctx: MixAnnotationContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.mixLang`.
+	 * @param ctx the parse tree
+	 */
+	enterMixLang?: (ctx: MixLangContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.mixLang`.
+	 * @param ctx the parse tree
+	 */
+	exitMixLang?: (ctx: MixLangContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `mcbParser.mixBlock`.
+	 * @param ctx the parse tree
+	 */
+	enterMixBlock?: (ctx: MixBlockContext) => void;
+	/**
+	 * Exit a parse tree produced by `mcbParser.mixBlock`.
+	 * @param ctx the parse tree
+	 */
+	exitMixBlock?: (ctx: MixBlockContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `mcbParser.commands`.

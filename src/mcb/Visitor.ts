@@ -1,11 +1,12 @@
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor'
-import { AdditiveExpressionContext, UnstrippedIfStatementContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, ElseStatementContext, EntityNBTExpressionContext, ExpressionContext, ForStatementContext, FunctionCallingContext, FunctionDeclarationContext, FunctionModifierContext, FunctionModifiersContext, IfStatementContext, InputparameterContext, LiteralConstantContext, LoadContext, LocateStatementContext, LoopStatementContext, LoopWithContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardDeclarationContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, StrExprContext, StringContentContext, StringLiteralContext, TopPriorityObjectContext, WhileDoContext } from '../grammar'
+import { AdditiveExpressionContext, UnstrippedIfStatementContext, AdditiveOperatorContext, AsComparisonContext, AsExpressionContext, AssignmentContext, AssignmentOperatorContext, BlockExpressionContext, BlockTagContext, CommandsContext, ComparatorContext, ComparisonContext, ConjuctionContext, DeclarationContext, DisconjuctionContext, ElseStatementContext, EntityNBTExpressionContext, ExpressionContext, ForStatementContext, FunctionCallingContext, FunctionDeclarationContext, FunctionModifierContext, FunctionModifiersContext, IfStatementContext, InputparameterContext, LiteralConstantContext, LoadContext, LocateStatementContext, LoopStatementContext, LoopWithContext, McbContext, mcbParserVisitor, MultiplicativeExpressionContext, MultiplicativeOperatorContext, ParentAssignableExpressionContext, RangeContext, RepeatUntilContext, ScoreboardDeclarationContext, ScoreboardIdentifierContext, ScoreboardLiteralContext, ScoreNrangeExpressionContext, ScoreNscoreExpressionContext, StrExprContext, StringContentContext, StringLiteralContext, TopPriorityObjectContext, WhileDoContext, MixAnnotationContext, MixLangContext, MixBlockContext, mcbParser } from '../grammar'
 import { genericErrorHandling } from '../errors/genericErrorHandling'
 import { ParserRuleContext } from 'antlr4ts';
 import SCBuilder from './scoreboardBuilder';
-import { ErrorNode, TerminalNode } from 'antlr4ts/tree';
 import chalk from 'chalk';
 import { log } from '../utils/log';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 
 // Dear developer who working this project do not change any code in this project if you don't know how it work. 😎
 // type returnValue = {
@@ -55,7 +56,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
                                     break
                                 case 'ScoreboardIdentifier':
                                     sub_stack.push(
-                                        `{"score":{"objective":"${n.value.objective}","name":"${n.value.target}"}}`
+                                        `{"score":{"objective":"${n.value.objective}","name":${JSON.stringify(n.value.target)}}}`
                                     )
                                     break
                             }
@@ -63,7 +64,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
                         break
                     case 'ScoreboardIdentifier':
                         sub_stack.push(
-                            `{"score":{"objective":"${i.value.objective}","name":"${i.value.target}"}}`
+                            `{"score":{"objective":"${i.value.objective}","name":${JSON.stringify(i.value.target)}}`
                         )
                         break
                 }
@@ -75,7 +76,13 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         }
     }
 
-    constructor(private namespace: string, private folder: string, private filename: string, private SCBuilder: SCBuilder, private error: genericErrorHandling) {
+    constructor(
+        private namespace: string,
+        private folder: string,
+        private filename: string,
+        private SCBuilder: SCBuilder,
+        private error: genericErrorHandling
+    ) {
         super()
     }
 
@@ -718,6 +725,46 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             },
             text: ctx.text
         })
+    }
+
+    visitMixAnnotation(ctx: MixAnnotationContext) {
+        const p = this.visitChildren(ctx)
+        const line = ctx._start.line
+        const col = ctx._start.charPositionInLine
+        log.info(chalk.blackBright(`    └ @mix section in ${this.folder}/${this.filename}.mcb:${line}:${col}`))
+        let lang!: string
+        switch (p[0]) {
+            case 'js':
+            case 'javascript':
+                lang = 'node'
+                break
+        }
+        if(lang){
+            const k = spawnSync(lang, [path.join(__dirname, '../../../mix/worker.js')], {
+                'env': {
+                    code:p[1]
+                },
+                'encoding':"utf-8"
+            })
+            if(k.stderr){
+                log.error(chalk.red(`    └ @mix error at ${line}:${col}`))
+                console.log(chalk.red(k.stderr))
+            }
+            try {
+                const data = JSON.parse(k.stdout)
+                console.log(data.console.join("\n"))
+                return data.emit.join('\n')
+            } catch (error) {
+                log.error(chalk.red(`    └ @mix error at ${line}:${col}\n cannot parser data\n${k.stdout}`))
+                console.log()
+            }
+        }
+    }
+    visitMixLang(ctx: MixLangContext) {
+        return ctx.getChild(1).text
+    }
+    visitMixBlock(ctx: MixBlockContext) {
+        return ctx.text.slice(1, -1)
     }
 }
 

@@ -13,7 +13,8 @@
   },
   "main": "./bin/mcb",
   "files": [
-    "./bin"
+    "./bin",
+    "./mix"
   ],
   "keywords": [
     "TypeScript",
@@ -25,7 +26,7 @@
   ],
   "scripts": {
     "dev": "tsc -w -p .",
-    "start": "node bin/mcb.js",
+    "start": "node bin/index.js",
     "build:lg": "ts-node ./tools/g4build.ts",
     "build": "tsc",
     "lint": "eslint -c .eslintrc.json ./src/**",

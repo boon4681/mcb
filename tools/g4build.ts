@@ -22,7 +22,7 @@ watcher
         console.log(chalk.greenBright(`[${new Date().toISOString()}] File change detected.`))
         glob('./src/grammar/*.g4', (er, files) => {
             if (!er) {
-                for (const file of files) builder(file)
+                for (const file of files) if(!file.endsWith('UnicodeClasses.g4')) builder(file)
             }
         })
     })
@@ -30,6 +30,6 @@ watcher
 
 glob('./src/grammar/*.g4', (er, files) => {
     if (!er) {
-        for (const file of files) builder(file)
+        for (const file of files) if(!file.endsWith('UnicodeClasses.g4')) builder(file)
     }
 })

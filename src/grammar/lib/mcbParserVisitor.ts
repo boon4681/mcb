@@ -8,6 +8,9 @@ import { TopPriorityObjectContext } from "./mcbParser";
 import { LoadContext } from "./mcbParser";
 import { StatementsContext } from "./mcbParser";
 import { StatementContext } from "./mcbParser";
+import { MixAnnotationContext } from "./mcbParser";
+import { MixLangContext } from "./mcbParser";
+import { MixBlockContext } from "./mcbParser";
 import { CommandsContext } from "./mcbParser";
 import { DeclarationContext } from "./mcbParser";
 import { VariableDeclarationContext } from "./mcbParser";
@@ -118,6 +121,27 @@ export interface mcbParserVisitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitStatement?: (ctx: StatementContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.mixAnnotation`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitMixAnnotation?: (ctx: MixAnnotationContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.mixLang`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitMixLang?: (ctx: MixLangContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `mcbParser.mixBlock`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitMixBlock?: (ctx: MixBlockContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `mcbParser.commands`.
