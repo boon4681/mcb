@@ -48,9 +48,8 @@ export const load_commands = async (minecraft_version: string, root: string) => 
             makeNotExistDir([mcb_module, mcb_module_mcb, mcb_resource])
             writeFileSync(f_path, JSON.stringify(load))
         } catch (error) {
-
+            return false
         }
-        return false
     } else {
         const f = readFileSync(f_path, 'utf-8')
         load = JSON.parse(f)
@@ -70,9 +69,8 @@ export const load_version = async (minecraft_version:string, root: string) => {
             makeNotExistDir([mcb_module, mcb_module_mcb, mcb_resource])
             writeFileSync(f_path, JSON.stringify(load))
         } catch (error) {
-            
+            return false
         }
-        return false
     } else {
         const f = readFileSync(f_path, 'utf-8')
         load = JSON.parse(f)

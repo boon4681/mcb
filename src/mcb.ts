@@ -110,6 +110,7 @@ export class MCB {
             const outFNDir = path.join(out_dataFN, output)
             const outLoops = path.join(outFNDir, 'loops')
             const outIFs = path.join(outFNDir, 'ifs')
+            makeNotExistDir(out_dataFN)
             this.Loads.push(...result.Load)
             this.Ticks.push(...result.Tick)
 

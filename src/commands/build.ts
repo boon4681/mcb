@@ -85,6 +85,7 @@ export class build extends Command {
             const root = path.join(this.workspace, r)
             if (!existsSync(root)) {
                 log.error(chalk.red('This path is not exist.', '\n->', JSON.stringify(root)))
+                process.exit(1)
             }
             const glob = (await new GlobSync('**/*.mcb', {
                 root: root
