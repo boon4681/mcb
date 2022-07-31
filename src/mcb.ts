@@ -83,7 +83,7 @@ export class MCB {
                 const debug = tokenslist.map(a => {
                     return `[${a.line}:${a.charPositionInLine}] ${JSON.stringify(a.text)} -> ` + lexer.vocabulary.getSymbolicName(a.type);
                 }).join('\n')
-                makeNotExistDir(mcb_debug_file)
+                makeNotExistDir(this.mcb_module_debug)
                 writeFileSync(path.join(mcb_debug_file, `${parsed_file_name.name}.lexer.log`),
                     "// Lexer-Log\n" +
                     `${debug}\n`
