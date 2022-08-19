@@ -7,6 +7,7 @@ import chalk from 'chalk';
 import { log } from '../utils/log';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { RuleNode } from 'antlr4ts/tree';
 
 // Dear developer who working this project do not change any code in this project if you don't know how it work. 😎
 // type returnValue = {
@@ -34,7 +35,6 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
     IFs: { [key: string]: { [key: string]: { path: string, value: string[] } } } = {}
     Loops: { [key: string]: { [key: string]: { path: string, value: string[] } } } = {}
     isDisconjuctionEnable = false
-
     private CurrentSC = ""
     private CurrentFN = ""
     private AutoName = "mcb"
@@ -81,7 +81,8 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         private folder: string,
         private filename: string,
         private SCBuilder: SCBuilder,
-        private error: genericErrorHandling
+        private error: genericErrorHandling,
+        private debug: boolean
     ) {
         super()
     }
@@ -98,6 +99,11 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         if (!aggregate && nextResult)
             return nextResult
         return [aggregate, nextResult].flat(1)
+    }
+
+    visitChildren(node: RuleNode) {
+
+        return super.visitChildren(node)
     }
 
     visitDeclaration(ctx: DeclarationContext) {
@@ -149,6 +155,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
         } else this.error.critical(ctx, "Function overloading is not allow in mcb")
         const value = super.visitChildren(ctx)
         this.CurrentFN = ''
+        if (value[0])
         if (value[0].type === 'modifier') {
             return returnBuilder('moddedstacked_function', {
                 name,

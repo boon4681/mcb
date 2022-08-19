@@ -30,7 +30,7 @@ export class MCB {
     private SCIDRegistry: Record<string, { id: number }> = {}
     private Loads: string[] = []
     private Ticks: string[] = []
-    MCB:Set<string> = new Set<string>()
+    MCB: Set<string> = new Set<string>()
     private output: string = ""
     private commands: any
 
@@ -83,7 +83,7 @@ export class MCB {
                 const debug = tokenslist.map(a => {
                     return `[${a.line}:${a.charPositionInLine}] ${JSON.stringify(a.text)} -> ` + lexer.vocabulary.getSymbolicName(a.type);
                 }).join('\n')
-                makeNotExistDir(this.mcb_module_debug)
+                makeNotExistDir([this.mcb_module_debug, mcb_debug_file])
                 writeFileSync(path.join(mcb_debug_file, `${parsed_file_name.name}.lexer.log`),
                     "// Lexer-Log\n" +
                     `${debug}\n`
@@ -98,7 +98,8 @@ export class MCB {
                 output.split(path.sep).filter(a => a).join('/'),
                 parsed_file_name.name,
                 scoreboardBuilder,
-                error
+                error,
+                this.debug
             )
             log.info(chalk.cyan('> ', path.relative(this.workspace, file_name)))
             visitor.SCIDRegistry = this.SCIDRegistry
@@ -114,7 +115,7 @@ export class MCB {
             const outIFs = path.join(outFNDir, 'ifs')
             makeNotExistDir(out_dataFN)
             const m = [...result.MCB.values()]
-            m.forEach(a=>{
+            m.forEach(a => {
                 this.MCB.add(a)
             })
             this.Loads.push(...result.Load)
@@ -144,7 +145,7 @@ export class MCB {
                     }
                 }
             }
-            writeFileSync(path.join(out_dataFN, 'load.mcfunction'), [...this.MCB.values(),...this.Loads].join('\n'))
+            writeFileSync(path.join(out_dataFN, 'load.mcfunction'), [...this.MCB.values(), ...this.Loads].join('\n'))
             writeFileSync(path.join(out_dataFN, 'tick.mcfunction'), this.Ticks.join('\n'))
             makeNotExistDir([this.mcb_module, this.mcb_module_mcb])
             if (this.debug) {
@@ -152,6 +153,7 @@ export class MCB {
                 const debug = new DebugLogger(tokens, parser)
                 ParseTreeWalker.DEFAULT.walk(debug, tree)
                 makeNotExistDir([this.mcb_module, this.mcb_module_mcb, this.mcb_module_debug, mcb_debug_file])
+                console.log(mcb_debug_file, parsed_file_name.name)
                 writeFileSync(path.join(mcb_debug_file, `${parsed_file_name.name}.log`),
                     "// Parser-Log\n" +
                     `${debug.log}\n` +
