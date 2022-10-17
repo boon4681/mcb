@@ -64,7 +64,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
                         break
                     case 'ScoreboardIdentifier':
                         sub_stack.push(
-                            `{"score":{"objective":"${i.value.objective}","name":${JSON.stringify(i.value.target)}}`
+                            `{"score":{"objective":"${i.value.objective}","name":${JSON.stringify(i.value.target)}}}`
                         )
                         break
                 }
@@ -582,7 +582,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
                 'target': this.SCBuilder.disj.name(ID)
             },
             (p.map((a: any) => a.statements).flat(1).filter((a: any) => a) || [])
-                // MAYBE CAUSING BUGS
+                // BUGS CAUSING
                 // NOTE : MAYBE THIS LINE WILL BREAK THE PROCESS
                 .concat(`scoreboard players set ${this.SCBuilder.disj.name(ID)} ${this.SCBuilder.disj.prefix} 0`)
                 .concat(
@@ -642,7 +642,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
     visitEntityNBTExpression(ctx: EntityNBTExpressionContext) {
         return returnBuilder(
             'comparison',
-            ctx.text
+            `entity ${ctx.text}`
         )
     }
 
@@ -762,7 +762,7 @@ class Visitor extends AbstractParseTreeVisitor<returnValue> implements mcbParser
             try {
                 const data = JSON.parse(k.stdout)
                 console.log(data.console.join("\n"))
-                return returnBuilder('load',data.emit)
+                return data.emit
             } catch (error) {
                 log.error(chalk.red(`    └ @mix error at ${line}:${col}\n cannot parser data\n${k.stdout}`))
                 console.log()

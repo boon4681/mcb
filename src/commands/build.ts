@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { Glob, GlobSync } from "glob";
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { lstat } from "node:fs/promises";
 import path from "node:path";
 import ora from "ora";
 import prompt from "prompts";
@@ -19,7 +20,7 @@ export class build extends Command {
             msg: `build mcbpack to minecraft datapack`
         },
         {
-            cmd:`mcb ${a} -w`,
+            cmd: `mcb ${a} -w`,
             msg: `Watch input files`,
             tag: 'soon'
         }
@@ -87,12 +88,22 @@ export class build extends Command {
                 log.error(chalk.red('This path is not exist.', '\n->', JSON.stringify(root)))
                 process.exit(1)
             }
-            const glob = (await new GlobSync('**/*.mcb', {
-                root: root
-            }))
-            for (const file of glob.found) {
-                const dir = path.join(this.workspace, path.join(file, '..'))
-                await mcb.compile(r, path.relative(root, dir), file)
+            const check = await lstat(root)
+            if (check.isDirectory()) {
+                const glob = (await new GlobSync('**/*.mcb', {
+                    cwd: root
+                }))
+                console.log(glob.found, root)
+                for (const file of glob.found) {
+                    const dir = path.join(root,file,'..')
+                    const relative = path.relative(root, dir)
+                    await mcb.compile(r, relative, path.relative(this.workspace,path.join(root,file)))
+                }
+            } else if (check.isFile()) {
+                await mcb.compile(r, 'not-belong-to-anything', root)
+            } else {
+                log.error(chalk.red('Not support', '\n->', JSON.stringify(root)))
+                process.exit(1)
             }
         }
         makeNotExistDir(mcTag_function)

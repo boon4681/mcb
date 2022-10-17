@@ -1,9 +1,11 @@
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import * as yup from 'yup'
 //@ts-expect-error
 import parse from 'json-parse-even-better-errors'
 import * as errors from '../errors/errors'
 import * as Path from 'node:path'
+import { execFileSync } from 'child_process';
+import { log } from '../utils/log';
 
 interface compiler_struct {
     "root": string | string[],
@@ -38,6 +40,10 @@ const mcbpack_schema = yup.object().shape({
 })
 
 export const loadmcbpack = async (path: string): Promise<{ config: mcbpack_struct, root: string }> => {
+    if(!existsSync(Path.join(path, 'mcbpack.json'))){
+        log.error("Not found mcbpack.json")
+        process.exit(1)
+    }
     const json_str = readFileSync(Path.join(path, 'mcbpack.json'), 'utf-8')
     try {
         parse(json_str)
