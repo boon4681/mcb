@@ -1,13 +1,1 @@
 node_modules
-.DS_Store
-dist
-dist-ssr
-*.local
-legacy
-yarn.lock
-yarn-error.log
-.eslintrc.json
-bin
-test
-.markdownlint.jsonc
-release.js
