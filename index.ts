@@ -32,7 +32,7 @@ class Source {
         return this.input[this.index]
     }
     back() {
-        this.index++
+        this.index--
         return this.input[this.index]
     }
 }
